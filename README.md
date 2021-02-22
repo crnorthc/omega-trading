@@ -4,15 +4,20 @@ A simulated trading web app.
 
 ## Setup
 
-> pip install django djangorestframework
+```
+pip install django djangorestframework
+```
+```
+django-admin starproject omega_trading
+```
+```
+cd omega_trading
+```
+```
+django-admin startapp api
+```
 
-> django-admin starproject omega_trading
-
-> cd omega_trading
-
-> django-admin startapp api
-
-In *omega-trading/omega_trading/omega_trading/setting.py* add **'api.apps.ApiConfig'** into INSTALLED_APPS
+- In *omega-trading/omega_trading/omega_trading/setting.py* add 'api.apps.ApiConfig' into **INSTALLED_APPS**
 
 ## GitHub
 ### Setup
