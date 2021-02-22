@@ -4,24 +4,11 @@ A simulated trading web app.
 
 ## Setup
 
-1. Install Django.
-
+1. In /omega-trading, install Django.
 ```
 pip install django djangorestframework
 ```
-2. Create project.
-```
-django-admin startproject omega_trading
-```
-3. Create first app.
-```
-cd omega_trading
-```
-```
-django-admin startapp api
-```
 
-4. In *omega-trading/omega_trading/omega_trading/setting.py* add 'api.apps.ApiConfig' into **INSTALLED_APPS**
 
 ## GitHub
 ### Setup
