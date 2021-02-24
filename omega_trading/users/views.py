@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from .models import Friends
 from .serializers import CreateUserSerializer, LoginUserSerializer, UpdateUserSerializer, FriendSerializer
 from rest_framework.response import Response
+from .utils import authenticate_request
 
 
 class CreateUserView(APIView):
@@ -59,6 +60,9 @@ class UpdateUserView(APIView):
     serializer_class = UpdateUserSerializer
 
     def put(self, request, format=None):
+        if not authenticate_user(request):
+            Response({'Invalid Request': 'User not Authenticated'},
+                     status=status.HTTP_403_FORBIDDEN)
         serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
             return Response({"Bad Request": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
@@ -87,6 +91,9 @@ class AddFriendView(APIView):
     serializer_class = FriendSerializer
 
     def patch(self, request, format=None):
+        if not authenticate_user(request):
+            Response({'Invalid Request': 'User not Authenticated'},
+                     status=status.HTTP_403_FORBIDDEN)
         serializer = self.class_serializer(data=request.data)
         if not serializer.is_valid():
             return Response({"Bad Request": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
