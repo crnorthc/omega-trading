@@ -4,7 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .serializers import CreateUserSerializer, LoginUserSerializer, UpdateUserSerializer
+from .models import Friends
+from .serializers import CreateUserSerializer, LoginUserSerializer, UpdateUserSerializer, FriendSerializer
 from rest_framework.response import Response
 
 
@@ -59,6 +60,8 @@ class UpdateUserView(APIView):
 
     def put(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
+        if not serializer.is_valid():
+            return Response({"Bad Request": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
         first_name = serializer.data.get('first_name')
         last_name = serializer.data.get('last_name')
         old_username = serializer.data.get('old_username')
@@ -78,3 +81,27 @@ class UpdateUserView(APIView):
                 user.save(update_fields=['username',
                                          'first_name', 'last_name'])
                 return Response({"Successful": "Update Complete"}, status=status.HTTP_200_OK)
+
+
+class AddFriendView(APIView):
+    serializer_class = FriendSerializer
+
+    def patch(self, request, format=None):
+        serializer = self.class_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"Bad Request": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
+        username = serializer.data.get('username')
+        friend_username = serializer.data.get('friend')
+        current_friends = Friends.objects.filter(username=username)
+        if friend_username in current_friends:
+            return Response({"Invalid Request": "Already Friends"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        else:
+            user_queryset = User.objects.filter(username=username)
+            user = user_queryset[0]
+            friend_queryset = User.objects.filter(username=friend_username)
+            friend = friend_queryset[0]
+            friends_first_way = Friends(user=username, friend=friend)
+            friends_first_way.save()
+            friends_other_way = Friends(user=friend, friend=user)
+            friends_other_way.save()
+            return Response({"Success": "Friends addded"}, status=status.HTTP_200_OK)
