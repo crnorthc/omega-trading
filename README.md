@@ -39,7 +39,7 @@ git clone https://github.com/crnorthc/omega-trading.git
 ### Workflow 
 1. Before making changes, pull the updated version.
 ```
-git pull origin
+git pull origin main
 ```
 2. After working, stage your changes.
 ```
