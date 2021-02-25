@@ -8,5 +8,5 @@ class Profile(models.Model):
 
 
 class Friends(models.Model):
-    user = models.ManyToManyField(User)
-    friend = models.ManyToManyField(User)
+    user = models.ManyToManyField(User, related_name='user')
+    friend = models.ManyToManyField(User, related_name='friend')

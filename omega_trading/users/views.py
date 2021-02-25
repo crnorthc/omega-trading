@@ -60,7 +60,7 @@ class UpdateUserView(APIView):
     serializer_class = UpdateUserSerializer
 
     def put(self, request, format=None):
-        if not authenticate_user(request):
+        if not authenticate_request(request):
             Response({'Invalid Request': 'User not Authenticated'},
                      status=status.HTTP_403_FORBIDDEN)
         serializer = self.serializer_class(data=request.data)
@@ -91,7 +91,7 @@ class AddFriendView(APIView):
     serializer_class = FriendSerializer
 
     def patch(self, request, format=None):
-        if not authenticate_user(request):
+        if not authenticate_request(request):
             Response({'Invalid Request': 'User not Authenticated'},
                      status=status.HTTP_403_FORBIDDEN)
         serializer = self.class_serializer(data=request.data)
@@ -107,8 +107,6 @@ class AddFriendView(APIView):
             user = user_queryset[0]
             friend_queryset = User.objects.filter(username=friend_username)
             friend = friend_queryset[0]
-            friends_first_way = Friends(user=username, friend=friend)
-            friends_first_way.save()
-            friends_other_way = Friends(user=friend, friend=user)
-            friends_other_way.save()
+            friends = Friends(user=username, friend=friend)
+            friends.save()
             return Response({"Success": "Friends addded"}, status=status.HTTP_200_OK)
