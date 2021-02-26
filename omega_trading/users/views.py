@@ -38,18 +38,6 @@ class CreateUserView(APIView):
             return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ViewUserView(APIView):
-    serializer_class = UserSerializer
-
-    def get(self, request, format=None):
-        print(self.request.user)
-        serializer = self.serializer_class(data=self.request.user)
-        serializer.is_valid()
-        username = serializer.data.get('username')
-        print(username)
-        return Response(username, status=status.HTTP_200_OK)
-
-
 class LoginUserView(APIView):
     serializer_class = LoginUserSerializer
 
