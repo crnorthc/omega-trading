@@ -36,7 +36,7 @@ npm install react-router-dom
 git clone https://github.com/crnorthc/omega-trading.git
 ```
 
-### Workflow 
+### Workflow - Github
 1. Before making changes, pull the updated version.
 ```
 git pull origin main
@@ -52,4 +52,22 @@ git commit -m "message"
 4. Upload changes to github.
 ```
 git push origin
+```
+
+## Running Project
+
+### Django
+
+- cd into omega-trading/omega_trading
+
+```
+python manage.py runserver
+```
+
+### React
+
+- cd into omega-trading/omega_trading/frontend
+
+```
+npm run dev
 ```
