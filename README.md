@@ -59,7 +59,7 @@ git push origin
 
 ### Django
 
-- cd into omega-trading/omega_trading
+- In omega-trading/omega_trading
 
 ```
 python manage.py runserver
@@ -67,7 +67,7 @@ python manage.py runserver
 
 ### React
 
-- cd into omega-trading/omega_trading/frontend
+- In omega-trading/omega_trading/frontend
 
 ```
 npm run dev
