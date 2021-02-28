@@ -1,3 +1,5 @@
+import string
+import random
 from django.shortcuts import render
 from django.http import JsonResponse
 from rest_framework import status
@@ -7,13 +9,20 @@ from django.contrib.auth.models import User
 from .models import Friends
 from .serializers import *
 from rest_framework.response import Response
-from .utils import authenticate_request
+from .utils import *
 
 
 class CreateUserView(APIView):
     serializer_class = CreateUserSerializer
 
     def post(self, request, format=None):
+        choices = string.ascii_letters + string.digits
+        while True:
+            verification_code = ''.join(
+                random.choice(choices) for i in range(6))
+            queryset = User.objects.filter(verification_code=verification_code)
+            if not queryset.exists():
+                break
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid()
         if 'username' in serializer.errors.keys():
@@ -32,7 +41,9 @@ class CreateUserView(APIView):
                     username=username, email=email, password=password)
                 user.first_name = first_name
                 user.last_name = last_name
+                user.verification_code = verification_code
                 user.save()
+                send_email_verification(email, username, verification_code)
                 return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
@@ -51,8 +62,9 @@ class LoginUserView(APIView):
         if not user_queryset.exists():
             return Response({'Error': 'Invalid Username'}, status=status.HTTP_400_BAD_REQUEST)
         if user is not None:
+            if user.verification_code != '':
+                return Response({"Error": "Verify Email"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             login(request, user)
-            print(CreateUserSerializer(user).data)
             return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'Invalid Password'}, status=status.HTTP_400_BAD_REQUEST)

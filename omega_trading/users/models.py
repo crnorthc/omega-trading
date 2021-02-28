@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     portfolio_amount = models.FloatField(default=25000)
+    verification_code = models.CharField(blank=True, max_length=6)
 
 
 class Friends(models.Model):
