@@ -37,7 +37,7 @@ git clone https://github.com/crnorthc/omega-trading.git
 ```
 
 ### Workflow - Github
-*** In project directory (/omega-trading) ***
+** In project directory (/omega-trading) **
 1. Before making changes, pull the updated version.
 ```
 git pull origin main
