@@ -1,4 +1,4 @@
-from .TopSecret import email_password
+from TopSecret import email_password
 import ssl
 import smtplib
 from rest_framework.response import Response
@@ -7,28 +7,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
 
-def authenticate_request(request):
-    if request.user.is_authenticated:
-        return True
-    else:
-        return False
-
-
-def get_verification_code():
-    choices = string.ascii_letters + string.digits
-    while True:
-        verification_code = ''.join(
-            random.choice(choices) for i in range(6))
-        queryset = Profile.objects.filter(verification_code=verification_code)
-        if not queryset.exists():
-            break
-    return verification_code
-
-
 def send_email_verification(email, username, verification_code):
     message = MIMEMultipart("alternative")
     sender_email = "omegatradingtest@gmail.com"
-    message["Subject"] = "multipart test"
+    message["Subject"] = "Verification Code"
     message["From"] = sender_email
     message["To"] = email
     text = """\
@@ -40,7 +22,7 @@ def send_email_verification(email, username, verification_code):
                 <body>
                     <h1>Hello """ + username + """,</h1>
                     <br>
-                    <h2>Your Verification Code is: </h2> <a href=\"http://127.0.0.1:8000/users/verify-email-link?verification_code=""" + verification_code + """\"> <h2>"""+verification_code + """ </h2></a>
+                    <h2>Your Verification Code is: </h2> <a href=\"http://127.0.0.1:8000/users/verify-email?verification_code=""" + verification_code + """\"> <h2>"""+verification_code + """ </h2></a>
                 </body >
                 </html >
                 """
@@ -56,3 +38,6 @@ def send_email_verification(email, username, verification_code):
         server.sendmail(
             sender_email, email, message.as_string()
         )
+
+
+send_email_verification('crnorthc@eckerd.edu', 'crnorthc', 'KJGHKJ')

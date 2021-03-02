@@ -3,11 +3,23 @@ from django.contrib.auth.models import User
 from .models import Profile, Friends
 
 
-class UserSerializer(serializers.Serializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username',
-                  'email', 'portfolio_amount')
+                  'email')
+
+
+class VerifyEmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('verification_code',)
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('email',)
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -28,7 +40,7 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         fields = ('first_name', 'last_name', 'username')
 
 
-class FriendSerializer(serializers.Serializer):
+class FriendSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends
         fields = ('username', 'friends')

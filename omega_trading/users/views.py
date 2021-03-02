@@ -1,28 +1,26 @@
 import string
 import random
-from django.shortcuts import render
+from django.shortcuts import redirect
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
+from .models import Profile
 from .models import Friends
 from .serializers import *
 from rest_framework.response import Response
 from .utils import *
+from rest_framework.permissions import AllowAny
 
 
 class CreateUserView(APIView):
     serializer_class = CreateUserSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, format=None):
-        choices = string.ascii_letters + string.digits
-        while True:
-            verification_code = ''.join(
-                random.choice(choices) for i in range(6))
-            queryset = User.objects.filter(verification_code=verification_code)
-            if not queryset.exists():
-                break
+        verification_code = get_verification_code()
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid()
         if 'username' in serializer.errors.keys():
@@ -41,12 +39,52 @@ class CreateUserView(APIView):
                     username=username, email=email, password=password)
                 user.first_name = first_name
                 user.last_name = last_name
-                user.verification_code = verification_code
+                profile = Profile(
+                    verification_code=verification_code, user=user)
                 user.save()
+                profile.save()
                 send_email_verification(email, username, verification_code)
                 return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class VerifyEmailLinkView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        verification_code = self.request.query_params.get(
+            'verification_code', None)
+        if verification_code != None:
+            queryset = Profile.objects.filter(
+                verification_code=verification_code)
+            if queryset.exists():
+                profile = queryset[0]
+                profile.verification_code = 'auth'
+                profile.save()
+                return redirect('http://127.0.0.1:8000/users/login')
+            else:
+                print(verification_code)
+                return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
+        return redirect('http://127.0.0.1:8000/users/verify-email')
+
+
+class VerifyEmailView(APIView):
+    serializer_class = VerifyEmailSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            verification_code = serializer.data.get('verification_code')
+            queryset = Profile.objects.filter(
+                verification_code=verification_code)
+            if queryset.exists():
+                profile = queryset[0]
+                profile.verification_code = 'auth'
+                profile.save()
+                return redirect('http://127.0.0.1:8000/users/login')
+        return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginUserView(APIView):
