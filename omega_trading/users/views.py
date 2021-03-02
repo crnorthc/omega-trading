@@ -1,14 +1,9 @@
-import string
-import random
-from django.shortcuts import redirect
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import Profile
-from .models import Friends
+from .models import Profile, Friends
 from .serializers import *
 from rest_framework.response import Response
 from .utils import *

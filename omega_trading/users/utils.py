@@ -1,10 +1,12 @@
 from .TopSecret import email_password
 import ssl
 import smtplib
-from rest_framework.response import Response
+import string
+import random
 from rest_framework import status
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from .models import Profile
 
 
 def authenticate_request(request):
