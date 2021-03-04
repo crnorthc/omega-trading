@@ -7,6 +7,8 @@ import {
     Redirect,
     BrowserRouter as Router
 } from "react-router-dom";
+import "../../static/css/Auth.scss";
+
 
 export default class App extends Component {
     constructor(props) {
