@@ -51,16 +51,7 @@ class VerifyEmailLinkView(APIView):
         verification_code = self.request.query_params.get(
             'verification_code', None)
         if verification_code != None:
-            queryset = Profile.objects.filter(
-                verification_code=verification_code)
-            if queryset.exists():
-                profile = queryset[0]
-                profile.verification_code = 'auth'
-                profile.save()
-                return redirect('http://127.0.0.1:8000/users/login')
-            else:
-                print(verification_code)
-                return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
+            return verify_user(verification_code)
         return redirect('http://127.0.0.1:8000/users/verify-email')
 
 
@@ -72,18 +63,13 @@ class VerifyEmailView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             verification_code = serializer.data.get('verification_code')
-            queryset = Profile.objects.filter(
-                verification_code=verification_code)
-            if queryset.exists():
-                profile = queryset[0]
-                profile.verification_code = 'auth'
-                profile.save()
-                return redirect('http://127.0.0.1:8000/users/login')
+            return verify_user(verification_code)
         return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginUserView(APIView):
     serializer_class = LoginUserSerializer
+    permission_classes = [AllowAny]
 
     def post(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
@@ -95,10 +81,12 @@ class LoginUserView(APIView):
         if not user_queryset.exists():
             return Response({'Error': 'Invalid Username'}, status=status.HTTP_400_BAD_REQUEST)
         if user is not None:
-            if user.verification_code != '':
+            profile = Profile.objects.filter(user_id=user.id)[0]
+            if profile.verification_code != 'auth':
                 return Response({"Error": "Verify Email"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             login(request, user)
-            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+            token = Token.objects.filter(user_id=user.id)
+            return set_cookie(token)
         else:
             return Response({'Error': 'Invalid Password'}, status=status.HTTP_400_BAD_REQUEST)
 

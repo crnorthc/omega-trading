@@ -3,10 +3,15 @@ import ssl
 import smtplib
 import string
 import random
+import datetime
+from django.shortcuts import redirect
+from rest_framework.response import Response
 from rest_framework import status
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from .models import Profile
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
 
 
 def authenticate_request(request):
@@ -14,6 +19,34 @@ def authenticate_request(request):
         return True
     else:
         return False
+
+
+def set_cookie(key):
+    age = 365 * 24 * 60 * 60
+    expires = datetime.datetime.strftime(
+        datetime.datetime.utcnow() + datetime.timedelta(seconds=age),
+        "%a, %d-%b-%Y %H:%M:%S GMT",
+    )
+    headers = {
+        "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires
+    }
+    return Response({"Success": "Email Verified"}, headers=headers, status=status.HTTP_200_OK)
+
+
+def verify_user(verification_code):
+    queryset = Profile.objects.filter(
+        verification_code=verification_code)
+    if queryset.exists():
+        print("it exists")
+        profile = queryset[0]
+        profile.verification_code = 'auth'
+        profile.save()
+        user = User.objects.filter(id=profile.user_id)[0]
+        token = Token.objects.create(user=user)
+        token.save()
+        return set_cookie(token.key)
+    else:
+        return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def get_verification_code():
