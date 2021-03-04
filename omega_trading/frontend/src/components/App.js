@@ -1,6 +1,12 @@
-
-import React, { Component } from "react";
+import AuthPage from "./Auth/Auth.js";
+import React, { Component, Fragment } from "react";
 import { render } from "react-dom";
+import {
+    Route,
+    Switch,
+    Redirect,
+    BrowserRouter as Router
+} from "react-router-dom";
 
 export default class App extends Component {
     constructor(props) {
@@ -8,9 +14,15 @@ export default class App extends Component {
     }
     render() {
         return (
-            <div className="center">
-                Hello
-            </div>
+            <Router>
+                <Fragment>
+                    <div className="container">
+                        <Switch>
+                            <Route exact path='/auth' component={AuthPage} />
+                        </Switch>
+                    </div>
+                </Fragment>
+            </Router>
         )
     }
 }

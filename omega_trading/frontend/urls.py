@@ -4,5 +4,6 @@ from .views import index
 app_name = 'frontend'
 
 urlpatterns = [
-    path('', index, name='')
+    path('', index, name=''),
+    path('auth', index)
 ]
