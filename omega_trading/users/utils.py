@@ -39,7 +39,7 @@ def verify_user(verification_code):
     if queryset.exists():
         print("it exists")
         profile = queryset[0]
-        profile.verification_code = 'auth'
+        profile.verification_code[0:3] = 'auth'
         profile.save()
         user = User.objects.filter(id=profile.user_id)[0]
         token = Token.objects.create(user=user)
@@ -47,6 +47,19 @@ def verify_user(verification_code):
         return set_cookie(token.key)
     else:
         return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def get_user_details(user):
+    queryset = Profile.objects.filter(user_id=user.id)
+    profile = queryset[0]
+    user_info = {
+        "username": user.username,
+        "email": user.email,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+        "portfolio_amount": profile.portfolio_amount
+    }
+    return user_info
 
 
 def get_verification_code():
@@ -60,10 +73,58 @@ def get_verification_code():
     return verification_code
 
 
+def send_email(message, email):
+    sender_email = "omegatradingtest@gmail.com"
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        server.login(sender_email, email_password)
+        server.sendmail(
+            sender_email, email, message.as_string()
+        )
+
+
+def send_password_reset(user):
+    verification_code = get_verification_code()
+    email = user.email
+    queryset = Profile.objects.filter(user_id=user.id)
+    profile = queryset[0]
+    if profile.verification_code != "auth":
+        return Response({"Error": "User has not verified their email"}, status=status.HTTP_400_BAD_REQUEST)
+    profile.verification_code = "auth" + verification_code
+    profile.save()
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "Reset Omega Trading Password"
+    sender_email = "omegatradingtest@gmail.com"
+    message["From"] = sender_email
+    message["To"] = email
+    text = """\
+                Hello """ + user.username + """,
+                The link to reset your password is: http://127.0.0.1:8000/users/reset-password?verification_code=""" + verification_code + "" ""
+
+    html = """\
+                <html>
+                <body>
+                    <h1>Hello """ + user.username + """,</h1>
+                    <br>
+                    <h2> The link to reset your password is:
+                    <br>
+                    <h2></h2><a href=\"http://127.0.0.1:8000/users/reset-password?verification_code=\"""" + verification_code + """\", username=\"""" + user.username + """"\"> <h2>Reset Password</h2></a>
+                </body >
+                </html >
+                """
+
+    part1 = MIMEText(text, "plain")
+    part2 = MIMEText(html, "html")
+    message.attach(part1)
+    message.attach(part2)
+    send_email(message, email)
+
+
 def send_email_verification(email, username, verification_code):
     message = MIMEMultipart("alternative")
+    message["Subject"] = "Omega Trading Email Verification"
     sender_email = "omegatradingtest@gmail.com"
-    message["Subject"] = "multipart test"
     message["From"] = sender_email
     message["To"] = email
     text = """\
@@ -84,10 +145,4 @@ def send_email_verification(email, username, verification_code):
     part2 = MIMEText(html, "html")
     message.attach(part1)
     message.attach(part2)
-
-    context = ssl.create_default_context()
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-        server.login(sender_email, email_password)
-        server.sendmail(
-            sender_email, email, message.as_string()
-        )
+    send_email(message, email)

@@ -128,6 +128,50 @@ class UpdateUserView(APIView):
                 return Response({"Success": "Update Complete"}, status=status.HTTP_200_OK)
 
 
+class ResetPasswordView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+
+        username = self.request.get('username')
+        old_password = self.request.get('old_password')
+        new_password = self.request.get('new_password')
+        user = authenticate(username=username, password=old_password)
+        if user is not None:
+            user.set_password(new_password)
+            user.save()
+            return Response({"Success": "Password Changed"}, status=status.HTTP_200_OK)
+        else:
+            queryset = User.objects.filter(username=username)
+            if not queryset.exists():
+                return Response({"Error": "Invalid Username"}, status=status.HTTP_400_BAD_REQUEST)
+            user = queryset[0]
+            queryset = Profile.objects.filter(user_id=user.id)
+            profile = queryset[0]
+            if old_password == profile.verification_code[4:]:
+                user.set_password(new_password)
+                user.save()
+                return redirect("http://127.0.0.1:8000/login")
+            return Response({"Error": "Invalid Password"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ForgotPasswordView(APIView):
+    serializer_class = EmailSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+        serializer = self.class_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({"Error": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
+        email = serializer.data.get('email')
+        queryset = User.objects.filter(email=email)
+        if not queryset.exists():
+            return Response({"Error": "Invalid Email"}, status=status.HTTP_400_BAD_REQUEST)
+        user = queryset[0]
+        send_password_reset(user)
+        return Response({"Success": "Email Sent"}, status=status.HTTP_200_OK)
+
+
 class AddFriendView(APIView):
     serializer_class = FriendSerializer
 

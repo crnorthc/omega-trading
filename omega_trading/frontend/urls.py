@@ -10,6 +10,4 @@ urlpatterns = [
     path('verify-account', index),
     path('reset-password', index),
     path('forgot-password', index),
-
-   
 ]
