@@ -8,9 +8,9 @@ export default function AuthPage(props) {
     return (
         <div className="Auth">
             <h1 align="center" >Omega Trading</h1>
-            <ButtonGroup aria-label="First Group">
-                <Button className="Login-btn">Login</Button>
-                <Button className="SignUp-btn">SignUp</Button>
+            <ButtonGroup className="AuthButtons" aria-label="First Group">
+                <Button className="Login">Login</Button>
+                <Button className="SignUp">SignUp</Button>
             </ButtonGroup>
         </div>
     )
