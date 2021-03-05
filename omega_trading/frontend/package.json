@@ -1,7 +1,6 @@
 {
   "name": "frontend",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "webpack --mode development --watch",
@@ -29,5 +28,6 @@
     "bootstrap": "^5.0.0-beta2",
     "react-bootstrap": "^1.5.1",
     "react-router-dom": "^5.2.0"
-  }
+  },
+  "description": ""
 }
