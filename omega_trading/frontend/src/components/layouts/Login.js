@@ -1,25 +1,30 @@
 import React, { useState } from 'react';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import MyNavbar from './MyNavbar';
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { login } from "../../actions/auth";
 
 function Login(props) {
 
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
     Login.propTypes = {
+        login: PropTypes.func.isRequired,
+        isAuthenticated: PropTypes.bool
+    }
 
+    if (props.isAuthenticated) {
+        return <Redirect to="/" />
     }
 
     const onSubmit = (e) => {
-        e.preventDefault();
-
+        props.login(username, password);
     }
 
     return (
@@ -30,12 +35,12 @@ function Login(props) {
                 <div className="m-auto text-center" style={{ maxWidth: '400px' }}>
                     <Form  >
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Control name="email" type="email" placeholder="Enter email" className="bg-light mt-3" value={email} onChange={e => setEmail(e.target.value)} />
+                            <Form.Control name="email" type="text" placeholder="Username" className="bg-light mt-3" value={username} onChange={e => setUsername(e.target.value)} />
                         </Form.Group>
                         <Form.Group controlId="formBasicPassword">
                             <Form.Control type="password" name="password" placeholder="Password" className="mt-3" value={password} onChange={e => setPassword(e.target.value)} />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="mt-3 w-100" >
+                        <Button variant="primary" onClick={onSubmit} className="mt-3 w-100" >
                             Login
                         </Button>
                         <p className="mt-2 px-3 text-light bg-dark d-inline-block">or</p>
@@ -53,8 +58,8 @@ function Login(props) {
 }
 
 
-const mapStateToProps = () => ({
-
+const mapStateToProps = (state) => ({
+    isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(mapStateToProps)(Login);
+export default connect(mapStateToProps, { login })(Login);

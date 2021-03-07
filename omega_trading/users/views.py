@@ -39,20 +39,9 @@ class CreateUserView(APIView):
                 user.save()
                 profile.save()
                 send_email_verification(email, username, verification_code)
-                return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+                return Response({"Success": "Verification Email Sent"}, status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'Invalid Data'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class VerifyEmailLinkView(APIView):
-    permission_classes = [AllowAny]
-
-    def get(self, request, format=None):
-        verification_code = self.request.query_params.get(
-            'verification_code', None)
-        if verification_code != None:
-            return verify_user(verification_code)
-        return redirect('http://127.0.0.1:8000/users/verify-email')
 
 
 class VerifyEmailView(APIView):
@@ -60,11 +49,15 @@ class VerifyEmailView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
+
         serializer = self.serializer_class(data=request.data)
+        print(request.data)
+        serializer.is_valid()
+        print(serializer.errors)
         if serializer.is_valid():
             verification_code = serializer.data.get('verification_code')
             return verify_user(verification_code)
-        return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_200_OK)
 
 
 class LoginUserView(APIView):
@@ -86,7 +79,7 @@ class LoginUserView(APIView):
                 return Response({"Error": "Verify Email"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             login(request, user)
             token = Token.objects.filter(user_id=user.id)
-            return set_cookie(token)
+            return set_cookie(token[0].key)
         else:
             return Response({'Error': 'Invalid Password'}, status=status.HTTP_400_BAD_REQUEST)
 

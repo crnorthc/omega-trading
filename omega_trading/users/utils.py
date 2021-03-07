@@ -28,18 +28,17 @@ def set_cookie(key):
         "%a, %d-%b-%Y %H:%M:%S GMT",
     )
     headers = {
-        "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires
+        "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires + "; Path=/"
     }
-    return Response({"Success": "Email Verified"}, headers=headers, status=status.HTTP_200_OK)
+    return Response({"Success": key}, headers=headers, status=status.HTTP_200_OK)
 
 
 def verify_user(verification_code):
     queryset = Profile.objects.filter(
         verification_code=verification_code)
     if queryset.exists():
-        print("it exists")
         profile = queryset[0]
-        profile.verification_code[0:3] = 'auth'
+        profile.verification_code = 'auth'
         profile.save()
         user = User.objects.filter(id=profile.user_id)[0]
         token = Token.objects.create(user=user)
@@ -136,7 +135,7 @@ def send_email_verification(email, username, verification_code):
                 <body>
                     <h1>Hello """ + username + """,</h1>
                     <br>
-                    <h2>Your Verification Code is: </h2> <a href=\"http://127.0.0.1:8000/users/verify-email-link?verification_code=""" + verification_code + """\"> <h2>"""+verification_code + """ </h2></a>
+                    <h2>Your Verification Code is: </h2> <a href=\"http://127.0.0.1:8000/verify-account?verification_code=""" + verification_code + """\"> <h2>"""+verification_code + """ </h2></a>
                 </body >
                 </html >
                 """

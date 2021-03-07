@@ -8,7 +8,7 @@ import MyNavbar from './MyNavbar';
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-function ForgotPassword(props) {
+function ResetPassword(props) {
 
     const [firstPassword, setfirstPassword] = useState('');
     const [secondPassword, setsecondPassword] = useState('');

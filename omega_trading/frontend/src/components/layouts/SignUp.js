@@ -1,26 +1,40 @@
 import React, { useState } from 'react';
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import MyNavbar from './MyNavbar';
 
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { createUser } from "../../actions/auth";
 
 function SignUp(props) {
 
-    const [firstName, setfirstName] = useState('');
-    const [lastName, setlastName] = useState('');
+    const [first_name, setfirstName] = useState('');
+    const [last_name, setlastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [Username, setUsername] = useState('');
+    const [username, setUsername] = useState('');
 
+    SignUp.propTypes = {
+        createUser: PropTypes.func.isRequired,
+        verificationSent: PropTypes.bool
+    }
 
-    const onSubmit = (e) => {
-        e.preventDefault();
+    const handleKeyPress = target => {
+        if (target.charCode == 13) {
+            props.createUser(first_name, last_name, email, password, username);
+        }
+    }
 
+    const onSubmit = () => {
+        props.createUser(first_name, last_name, email, password, username);
+    }
+
+    if (props.verificationSent) {
+        return <Redirect to="/verify-account" />
     }
 
 
@@ -40,33 +54,33 @@ function SignUp(props) {
 
                         <div className="row">
                             <div className="col-6">
-                                <Form.Group controlId="firstName">
-                                    <Form.Control name="firstName" type="text" placeholder="First Name" className="bg-light mt-3" value={firstName} onChange={e => setfirstName(e.target.value)} />
+                                <Form.Group controlId="first_name">
+                                    <Form.Control onKeyPress={handleKeyPress} name="first_name" type="text" placeholder="First Name" className="bg-light mt-3" value={first_name} onChange={e => setfirstName(e.target.value)} />
                                 </Form.Group>
                             </div>
                             <div className="col-6">
-                                <Form.Group controlId="lastName">
-                                    <Form.Control name="lastName" type="text" placeholder="Last Name" className="bg-light mt-3" value={lastName} onChange={e => setlastName(e.target.value)} />
+                                <Form.Group controlId="last_name">
+                                    <Form.Control onKeyPress={handleKeyPress} name="last_name" type="text" placeholder="Last Name" className="bg-light mt-3" value={last_name} onChange={e => setlastName(e.target.value)} />
                                 </Form.Group>
                             </div>
-                            <div className="col-6">
+                            <div className="col-12">
                                 <Form.Group controlId="username">
-                                    <Form.Control name="username" type="text" placeholder="Username" className="bg-light mt-3" value={username} onChange={e => setUsername(e.target.value)} />
+                                    <Form.Control onKeyPress={handleKeyPress} name="username" type="text" placeholder="Username" className="bg-light mt-3" value={username} onChange={e => setUsername(e.target.value)} />
                                 </Form.Group>
                             </div>
                         </div>
 
                         <Form.Group controlId="formBasicEmail">
-                            <Form.Control name="email" type="email" placeholder="Email" className="bg-light mt-3" value={email} onChange={e => setEmail(e.target.value)} />
+                            <Form.Control onKeyPress={handleKeyPress} name="email" type="email" placeholder="Email" className="bg-light mt-3" value={email} onChange={e => setEmail(e.target.value)} />
                         </Form.Group>
 
                         <Form.Group controlId="formBasicPassword">
-                            <Form.Control type="password" name="password" placeholder="Password" className="mt-3" value={password} onChange={e => setPassword(e.target.value)} />
+                            <Form.Control onKeyPress={handleKeyPress} type="password" name="password" placeholder="Password" className="mt-3" value={password} onChange={e => setPassword(e.target.value)} />
                         </Form.Group>
 
-                        <Button variant="primary" type="submit" className="mt-3 w-100" >
+                        <Button variant="primary" onClick={onSubmit} className="mt-3 w-100" >
                             Sign Up
-            </Button>
+                        </Button>
 
                         <p className="mt-2"><Link className="text-muted text-decoration-none" to="/login">Already have an account?</Link></p>
 
@@ -81,8 +95,8 @@ function SignUp(props) {
 
 
 
-const mapStateToProps = () => ({
-
+const mapStateToProps = state => ({
+    verificationSent: state.auth.verificationSent
 });
 
-export default connect(mapStateToProps)(SignUp);
+export default connect(mapStateToProps, { createUser })(SignUp);
