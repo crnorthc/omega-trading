@@ -13,27 +13,30 @@ import {
 } from "react-router-dom";
 import './custom.scss';
 
+// State Stuff
+import { Provider } from 'react-redux';
+import store from './store';
 
 
- class App extends Component {
+class App extends Component {
     constructor(props) {
         super(props);
     }
     render() {
         return (
             <Router>
-                  <Fragment>
-                        <Switch>
+                <Fragment>
+                    <Switch>
                         <Route exact path='/' component={Login} />
-                            <Route exact path='/login' component={Login} />
-                            <Route exact path='/sign-up' component={SignUp} />
-                            <Route exact path='/verify-account' component={VerifyAccount} />
-                            <Route exact path='/forgot-password' component={ForgotPassword} />
-                            <Route exact path='/reset-password' component={ResetPassword} />
-                        </Switch>
-                       
-                        </Fragment> 
+                        <Route exact path='/login' component={Login} />
+                        <Route exact path='/sign-up' component={SignUp} />
+                        <Route exact path='/verify-account' component={VerifyAccount} />
+                        <Route exact path='/forgot-password' component={ForgotPassword} />
+                        <Route exact path='/reset-password' component={ResetPassword} />
+                    </Switch>
+                </Fragment>
             </Router>
+
         );
     }
 }

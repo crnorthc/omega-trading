@@ -1,0 +1,2 @@
+export const USER_CREATED = 'USER_CREATED';
+export const USER_CREATED_FAILED = 'USER_CREATED_FAILED';
