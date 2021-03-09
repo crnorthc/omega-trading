@@ -87,9 +87,9 @@ def send_password_reset(user):
     email = user.email
     queryset = Profile.objects.filter(user_id=user.id)
     profile = queryset[0]
-    if profile.verification_code != "auth":
-        return Response({"Error": "User has not verified their email"}, status=status.HTTP_400_BAD_REQUEST)
-    profile.verification_code = "auth" + verification_code
+    # if profile.verification_code != "auth":
+    # return Response({"Error": "User has not verified their email"}, status=status.HTTP_400_BAD_REQUEST)
+    profile.verification_code = verification_code
     profile.save()
 
     message = MIMEMultipart("alternative")
@@ -99,7 +99,7 @@ def send_password_reset(user):
     message["To"] = email
     text = """\
                 Hello """ + user.username + """,
-                The link to reset your password is: http://127.0.0.1:8000/users/reset-password?verification_code=""" + verification_code + "" ""
+                The link to reset your password is: http://127.0.0.1:8000/reset-password?verification_code=""" + verification_code + "" ""
 
     html = """\
                 <html>
@@ -108,7 +108,7 @@ def send_password_reset(user):
                     <br>
                     <h2> The link to reset your password is:
                     <br>
-                    <h2></h2><a href=\"http://127.0.0.1:8000/users/reset-password?verification_code=\"""" + verification_code + """\", username=\"""" + user.username + """"\"> <h2>Reset Password</h2></a>
+                    <h2></h2><a href=\"http://127.0.0.1:8000/reset-password?verification_code=""" + verification_code + """\"> <h2>Reset Password</h2></a>
                 </body >
                 </html >
                 """
@@ -118,6 +118,7 @@ def send_password_reset(user):
     message.attach(part1)
     message.attach(part2)
     send_email(message, email)
+    return Response({"Success": "Email Sent"}, status=status.HTTP_200_OK)
 
 
 def send_email_verification(email, username, verification_code):

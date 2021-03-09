@@ -57,9 +57,6 @@ function VerifyAccount(props) {
                         <Button variant="primary" onClick={onSubmit} className="mt-3 w-100" >
                             Verify Account
                         </Button>
-
-                        <p className="mt-2"><Link className="text-muted text-decoration-none" to="/ForgotPassword">Resend Code</Link></p>
-
                     </Form>
                 </div>
             </div>

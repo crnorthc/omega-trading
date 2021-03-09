@@ -121,31 +121,40 @@ class UpdateUserView(APIView):
                 return Response({"Success": "Update Complete"}, status=status.HTTP_200_OK)
 
 
+class CheckResetView(APIView):
+    serializer_class = VerifyEmailSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, format=None):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid()
+        print(serializer.data)
+        print(serializer.errors)
+        if serializer.is_valid():
+            reset_code = serializer.data.get("verification_code")
+            queryset = Profile.objects.filter(verification_code=reset_code)
+            if not queryset.exists():
+                return Response({"Error": "Reset Code Failed"}, status=status.HTTP_200_OK)
+            profile = queryset[0]
+            profile.verification_code = "auth"
+            profile.save()
+            return Response({"Success": "Reset Code Checked"}, status=status.HTTP_200_OK)
+        return Response({"Error": "Reset Code Failed"}, status=status.HTTP_200_OK)
+
+
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
-
-        username = self.request.get('username')
-        old_password = self.request.get('old_password')
-        new_password = self.request.get('new_password')
-        user = authenticate(username=username, password=old_password)
-        if user is not None:
-            user.set_password(new_password)
-            user.save()
-            return Response({"Success": "Password Changed"}, status=status.HTTP_200_OK)
-        else:
-            queryset = User.objects.filter(username=username)
-            if not queryset.exists():
-                return Response({"Error": "Invalid Username"}, status=status.HTTP_400_BAD_REQUEST)
-            user = queryset[0]
-            queryset = Profile.objects.filter(user_id=user.id)
-            profile = queryset[0]
-            if old_password == profile.verification_code[4:]:
-                user.set_password(new_password)
-                user.save()
-                return redirect("http://127.0.0.1:8000/login")
-            return Response({"Error": "Invalid Password"}, status=status.HTTP_400_BAD_REQUEST)
+        username = request.data['username']
+        password = request.data['password']
+        queryset = User.objects.filter(username=username)
+        if not queryset.exists():
+            return Response({"Error": "Invalid Username"}, status=status.HTTP_200_OK)
+        user = queryset[0]
+        user.set_password(password)
+        user.save()
+        return Response({"Success": "Password Changed"}, status=status.HTTP_200_OK)
 
 
 class ForgotPasswordView(APIView):
@@ -153,16 +162,15 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
-        serializer = self.class_serializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
-            return Response({"Error": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"Error": "Invalid Email"}, status=status.HTTP_200_OK)
         email = serializer.data.get('email')
         queryset = User.objects.filter(email=email)
         if not queryset.exists():
-            return Response({"Error": "Invalid Email"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"Error": "Invalid Email"}, status=status.HTTP_200_OK)
         user = queryset[0]
-        send_password_reset(user)
-        return Response({"Success": "Email Sent"}, status=status.HTTP_200_OK)
+        return send_password_reset(user)
 
 
 class AddFriendView(APIView):
@@ -172,7 +180,7 @@ class AddFriendView(APIView):
         if not authenticate_request(request):
             Response({'Error': 'User not Authenticated'},
                      status=status.HTTP_403_FORBIDDEN)
-        serializer = self.class_serializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
         if not serializer.is_valid():
             return Response({"Error": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
         username = serializer.data.get('username')

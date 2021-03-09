@@ -7,22 +7,22 @@ import MyNavbar from './MyNavbar';
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import { sendReset } from "../../actions/auth";
 
 function ForgotPassword(props) {
 
     const [email, setEmail] = useState('');
 
     ForgotPassword.propTypes = {
-
+        sendReset: PropTypes.func.isRequired,
+        emailSent: PropTypes.bool
     };
 
-    const onSubmit = (e) => {
-        e.preventDefault();
-
+    const onSubmit = () => {
+        props.sendReset(email);
     };
 
-
-    return (
+    const notSent = (
         <div>
             <MyNavbar />
             <div className="container">
@@ -32,9 +32,9 @@ function ForgotPassword(props) {
                         <Form.Group controlId="email">
                             <Form.Control name="email" type="email" placeholder="Enter Email" className="bg-light mt-3" value={email} onChange={e => setEmail(e.target.value)} />
                         </Form.Group>
-                        <Button variant="primary" type="submit" className="mt-3 w-100" >
+                        <Button variant="primary" onClick={onSubmit} className="mt-3 w-100" >
                             Send Email
-                </Button>
+                        </Button>
                         <p className="mt-2"><Link className="text-muted text-decoration-none" to="/forgot-password">Resend Email</Link></p>
 
                     </Form>
@@ -42,10 +42,22 @@ function ForgotPassword(props) {
             </div>
         </div>
     )
+
+    const sent = (
+        <h1 className="mt-5 mb-4 text-center display-4 text-light">Check Email for Reset Password Link</h1>
+    )
+
+
+    if (props.emailSent) {
+        return sent;
+    }
+    else {
+        return notSent;
+    }
 }
 
-const mapStateToProps = () => ({
-
+const mapStateToProps = (state) => ({
+    emailSent: state.auth.emailSent
 });
 
-export default connect(mapStateToProps)(ForgotPassword);
+export default connect(mapStateToProps, { sendReset })(ForgotPassword);

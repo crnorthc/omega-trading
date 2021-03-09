@@ -1,14 +1,29 @@
-import { USER_CREATED, USER_CREATED_FAILED, EMAIL_VERIFIED, EMAIL_VERIFY_FAILED, LOGIN_SUCCESS, LOGIN_FAILED } from "../actions/types";
+import {
+    USER_CREATED,
+    USER_CREATED_FAILED,
+    EMAIL_VERIFIED,
+    EMAIL_VERIFY_FAILED,
+    LOGIN_SUCCESS,
+    LOGIN_FAILED,
+    EMAIL_FAILED,
+    EMAIL_SENT,
+    RESET_FAILED,
+    RESET_SUCCESS,
+    CHECK_SUCCESS,
+    CHECK_FAILED
+} from "../actions/types";
 
 import { Redirect } from "react-router-dom";
 
 const initialState = {
     user: null,
-    verificationSent: false,
+    emailSent: false,
     emailVerified: false,
     error: false,
     error_message: null,
     isAuthenticated: false,
+    codeChecked: false,
+    passwordReset: false,
     cookie: null
 }
 
@@ -17,11 +32,14 @@ export default function (state = initialState, action) {
         case USER_CREATED:
             return {
                 ...state,
-                verificationSent: true
+                emailSent: true
             }
         case USER_CREATED_FAILED,
             EMAIL_VERIFY_FAILED,
-            LOGIN_FAILED:
+            LOGIN_FAILED,
+            EMAIL_FAILED,
+            RESET_FAILED,
+            CHECK_FAILED:
             return {
                 ...state,
                 error: true,
@@ -30,12 +48,29 @@ export default function (state = initialState, action) {
         case EMAIL_VERIFIED:
             return {
                 ...state,
-                emailVerified: true
+                emailVerified: true,
+                emailSent: false
             }
         case LOGIN_SUCCESS:
             return {
+                ...state,
                 isAuthenticated: true,
                 cookie: action.payload.Success
+            }
+        case EMAIL_SENT:
+            return {
+                ...state,
+                emailSent: true
+            }
+        case RESET_SUCCESS:
+            return {
+                ...state,
+                passwordReset: true
+            }
+        case CHECK_SUCCESS:
+            return {
+                ...state,
+                codeChecked: true
             }
         default:
             return state;

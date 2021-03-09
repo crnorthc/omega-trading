@@ -20,7 +20,7 @@ function SignUp(props) {
 
     SignUp.propTypes = {
         createUser: PropTypes.func.isRequired,
-        verificationSent: PropTypes.bool
+        emailSent: PropTypes.bool
     }
 
     const handleKeyPress = target => {
@@ -33,7 +33,7 @@ function SignUp(props) {
         props.createUser(first_name, last_name, email, password, username);
     }
 
-    if (props.verificationSent) {
+    if (props.emailSent) {
         return <Redirect to="/verify-account" />
     }
 
@@ -43,12 +43,9 @@ function SignUp(props) {
             <MyNavbar />
             <div className="container">
 
-
                 <h1 className="mt-5 mb-4 text-center display-4 text-light">Sign Up</h1>
 
-
                 <div className="m-auto text-center" style={{ maxWidth: '400px' }}>
-
 
                     <Form  >
 
@@ -93,10 +90,8 @@ function SignUp(props) {
 
 
 
-
-
 const mapStateToProps = state => ({
-    verificationSent: state.auth.verificationSent
+    emailSent: state.auth.emailSent
 });
 
 export default connect(mapStateToProps, { createUser })(SignUp);

@@ -25,7 +25,7 @@ class VerifyEmailSerializer(serializers.ModelSerializer):
 
 class EmailSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
+        model = User
         fields = ('email',)
 
 
