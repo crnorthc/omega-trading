@@ -1,5 +1,5 @@
 # Omega Trading
-A simulated trading web app.
+A web app for simulated trading.
 
 
 ## GitHub
