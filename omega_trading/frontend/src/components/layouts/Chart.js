@@ -60,7 +60,6 @@ function Chart(props) {
         // Clean decreasing lines
 
         var gapAngle = 180 - ((180 - (90 + Math.abs(prevAngle))) + 90 + Math.abs(angle));
-        //gapAngle = gapAngle * (Math.PI / 180);
         var triAngle = 90 - (180 - (90 + Math.abs(prevAngle)));
         var triBase = Math.sqrt(8 - (8 * Math.cos(gapAngle)));
         var triHeight = Math.sqrt(4 - (.5 * triBase));
@@ -79,6 +78,25 @@ function Chart(props) {
                 <div className="line-connector" style={triStyle}></div>
             )
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
