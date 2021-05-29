@@ -38,6 +38,88 @@ $danger: #f44336;
   100% { transform: rotate(360deg); }
 }
 
+.data-point {
+  background-color: blue;
+  border-radius: 50%;
+  height: 1.5px;
+  position: absolute;
+  width: 1.5px;
+  bottom: calc(var(--y));
+  left: calc(var(--x) - .75px);
+}
+
+.line-segment {
+  background-color: blue;
+  bottom: var(--y);
+  height: 2px;
+  left: var(--x);
+  position: absolute;
+  transform: rotate(calc(var(--angle) * 1deg));
+  transform-origin: left bottom;
+  width: calc(var(--hypotenuse) * 1px);
+}
+
+.Full-Chart {
+  border-bottom: 1px solid;
+  border-left: 1px solid;
+  height: 350px;
+  margin: 1em;
+  padding: 0;
+  position: relative;
+  width: 800px;
+  background-color: #fff;
+}
+
+.line-connector-temp {
+  width: 0; 
+  height: 0; 
+  bottom: var(--y);
+  left: calc(var(--x) - 2px);
+  position: absolute;
+  border-style: solid;
+  border-width: var(--gap) 2px 0px 2px;
+  transform: rotate(calc(var(--angle) * 1deg));
+  border-color: blue transparent transparent transparent;
+}
+
+.line-connector {
+    position: absolute;
+    width: var(--gap);
+    height: var(--triHeight);
+    background: black;
+    bottom: var(--y);
+    transform: rotate(var(--rotate));
+    left: calc(var(--x) - (var(--gap) / 2));
+}
+.line-connector:before {
+    content: "";
+    position: absolute;
+    width: calc(var(--gap) / 2);
+    height: var(--coverHeight);
+    left: calc(var(--gap) / 4);
+    bottom: calc(var(--triHeight) / 2);
+    transform: rotate(calc((var(--coverAngle) - var(--rotate)) * 1deg));
+    background-color: green;
+}
+
+.line-connector:after {
+    content: "";
+    position: absolute;
+    width: calc(var(--gap) / 2);
+    height: var(--coverHeight);
+    left: calc(var(--gap) / -4);
+    bottom: calc(var(--triHeight) / 2);
+    transform: rotate(calc((var(--coverAngle) - var(--rotate)) * -1deg));
+    background-color: green;
+}
+
+
+.Chart {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 
 
 // Must be at bottom
