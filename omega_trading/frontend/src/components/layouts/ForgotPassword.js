@@ -10,18 +10,14 @@ import { connect } from "react-redux";
 import { sendReset } from "../../actions/auth";
 
 function ForgotPassword(props) {
-
     const [email, setEmail] = useState('');
-
     ForgotPassword.propTypes = {
         sendReset: PropTypes.func.isRequired,
         emailSent: PropTypes.bool
     };
-
     const onSubmit = () => {
         props.sendReset(email);
     };
-
     const notSent = (
         <div>
             <MyNavbar />
@@ -36,7 +32,6 @@ function ForgotPassword(props) {
                             Send Email
                         </Button>
                         <p className="mt-2"><Link className="text-muted text-decoration-none" to="/forgot-password">Resend Email</Link></p>
-
                     </Form>
                 </div>
             </div>
