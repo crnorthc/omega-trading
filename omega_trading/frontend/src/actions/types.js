@@ -10,3 +10,4 @@ export const RESET_FAILED = 'RESET_FAILED';
 export const RESET_SUCCESS = 'RESET_SUCCESS';
 export const CHECK_SUCCESS = 'CHECK_SUCCESS';
 export const CHECK_FAILED = 'CHECK_FAILED';
+export const SEARCH_MADE = 'SEARCH_MADE';
