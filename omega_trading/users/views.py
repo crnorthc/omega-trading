@@ -8,6 +8,8 @@ from .serializers import *
 from rest_framework.response import Response
 from .utils import *
 from rest_framework.permissions import AllowAny
+import time
+import math
 
 
 class CreateUserView(APIView):
@@ -196,3 +198,94 @@ class AddFriendView(APIView):
             friends = Friends(user=username, friend=friend)
             friends.save()
             return Response({"Success": "Friends Addded"}, status=status.HTTP_200_OK)
+
+
+class Buy(APIView):
+
+    def post(self, request, format=None):
+        symbol, quantity, quote, profile, add, start_time = transaction(
+            request, True)
+        if (quote['c'] * quantity) > profile.portfolio_amount:
+            return Response({"Error": "Not Enough Funds"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        profile.portfolio_amount = profile.portfolio_amount - \
+            (quote['c'] * quantity)
+        if str(start_time) in profile.transactions:
+            profile.transactions[str(start_time)].append(add)
+        else:
+            profile.transactions[str(start_time)] = [add]
+        holdings = profile.holdings
+        if symbol in holdings:
+            holdings[symbol] = holdings[symbol] + quantity
+        else:
+            holdings[symbol] = quantity
+        profile.holdings = holdings
+        profile.save()
+        return load_user(request)
+
+
+class Sell(APIView):
+
+    def post(self, request, format=None):
+        symbol, quantity, quote, profile, add, start_time = transaction(
+            request, False)
+
+        profile.portfolio_amount = profile.portfolio_amount + \
+            (quote['c'] * quantity)
+
+        if str(start_time) in profile.transactions:
+            profile.transactions[str(start_time)].append(add)
+        else:
+            profile.transactions[str(start_time)] = [add]
+
+        holdings = profile.holdings
+        holdings[symbol] = holdings[symbol] - quantity
+        profile.save()
+        return load_user(request)
+
+
+class LoadUser(APIView):
+
+    def post(self, request, format=None):
+        return load_user(request)
+
+
+class LoadUserPortfolio(APIView):
+
+    def post(self, request, format=None):
+        period = request.data["period"]
+        current_time = time.time()
+
+        if period == "day":
+            day = time.ctime()[:3]
+            start_time = time.localtime()
+            start_time = (start_time[0], start_time[1], start_time[2], 9,
+                          00, 00, start_time[6], start_time[7], start_time[8])
+            start_time = math.floor(time.mktime(start_time))
+            if day == "Sun":
+                start_time -= (86400 * 2)
+                current_time = start_time + 32400
+            elif day == "Sat":
+                start_time -= 86400
+                current_time = start_time + 32400
+            resolution = "5"
+        else:
+            start_time = time.localtime()
+            start_time = (start_time[0], start_time[1], start_time[2], 9,
+                          30, 00, start_time[6], start_time[7], start_time[8])
+            start_time = math.floor(time.mktime(start_time))
+
+            if period == "week":
+                start_time = start_time - 604800
+                resolution = "15"
+            if period == "month":
+                start_time = start_time - 2592000
+                resolution = "60"
+            if period == "3m":
+                start_time = start_time - 7776000
+                resolution = "D"
+            if period == "y":
+                start_time = start_time - 31536000
+                resolution = "D"
+            if period == "5y":
+                start_time = start_time - 157680000
+                resolution = "W"
