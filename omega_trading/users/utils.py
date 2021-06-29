@@ -1,9 +1,11 @@
 from .TopSecret import email_password
 import ssl
 import smtplib
-import string
-import random
 import datetime
+import time
+import math
+import random
+import string
 from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework import status
@@ -21,6 +23,26 @@ def authenticate_request(request):
         return False
 
 
+def load_user(request):
+    username = request.user.username
+    first_name = request.user.first_name
+    last_name = request.user.last_name
+    email = request.user.email
+    profile = Profile.objects.filter(user_id=request.user.id)
+    profile = profile[0]
+    portfolio_amount = profile.portfolio_amount
+    securities = profile.holdings
+    response = {
+        "username": username,
+        "first_name": first_name,
+        "last_name": last_name,
+        "email": email,
+        "portfolio_amount": portfolio_amount,
+        "holdings": securities
+    }
+    return Response({"Success": response}, status=status.HTTP_200_OK)
+
+
 def set_cookie(key):
     age = 365 * 24 * 60 * 60
     expires = datetime.datetime.strftime(
@@ -31,6 +53,25 @@ def set_cookie(key):
         "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires + "; Path=/"
     }
     return Response({"Success": key}, headers=headers, status=status.HTTP_200_OK)
+
+
+def transaction(request, bought):
+    symbol = request.data["symbol"]
+    quantity = request.data["quantity"]
+    quote = request.data["quote"]
+    profile = Profile.objects.filter(user_id=request.user.id)
+    profile = profile[0]
+
+    current_time = time.time()
+    start_time = time.localtime()
+    start_time = (start_time[0], start_time[1], start_time[2], 1,
+                  00, 00, start_time[6], start_time[7], start_time[8])
+    start_time = math.floor(time.mktime(start_time))
+
+    add = {"bought": bought, "symbol": symbol, "quantity": quantity, "price": quote['c'], "time": current_time, "portfolio_amount": profile.portfolio_amount -
+           (quote['c'] * quantity)}
+
+    return symbol, quantity, quote, profile, add, start_time
 
 
 def verify_user(verification_code):

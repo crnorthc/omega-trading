@@ -44,7 +44,6 @@ function VerifyAccount(props) {
     return (
 
         <div>
-            <MyNavbar />
             <div className="container">
                 <h1 className="mt-5 mb-4 text-center display-4 text-light">Verify Account</h1>
                 <div className="m-auto text-center" style={{ maxWidth: '400px' }}>

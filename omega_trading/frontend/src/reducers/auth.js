@@ -16,15 +16,13 @@ import {
 import { Redirect } from "react-router-dom";
 
 const initialState = {
-    user: null,
     emailSent: false,
     emailVerified: false,
     error: false,
     error_message: null,
     isAuthenticated: false,
     codeChecked: false,
-    passwordReset: false,
-    cookie: null
+    passwordReset: false
 }
 
 export default function (state = initialState, action) {
@@ -54,8 +52,7 @@ export default function (state = initialState, action) {
         case LOGIN_SUCCESS:
             return {
                 ...state,
-                isAuthenticated: true,
-                cookie: action.payload.Success
+                isAuthenticated: true
             }
         case EMAIL_SENT:
             return {

@@ -7,7 +7,8 @@ import MyNavbar from './MyNavbar';
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { login } from "../../actions/auth";
+import { login } from "../../actions/auth.js";
+import { loadUser } from "../../actions/user.js"
 
 function Login(props) {
 
@@ -16,11 +17,17 @@ function Login(props) {
 
     Login.propTypes = {
         login: PropTypes.func.isRequired,
-        isAuthenticated: PropTypes.bool
+        loadUser: PropTypes.func.isRequired,
+        isAuthenticated: PropTypes.bool,
+        userLoaded: PropTypes.bool
     }
 
     if (props.isAuthenticated) {
-        return <Redirect to="/" />
+        props.loadUser(props.cookie)
+    }
+
+    if (props.userLoaded) {
+        return <Redirect to="/chart?symbol=AAPL" />
     }
 
     const onSubmit = (e) => {
@@ -29,7 +36,6 @@ function Login(props) {
 
     return (
         <div>
-            <MyNavbar />
             <div className="container">
                 <h1 className="mt-5 mb-4 text-center display-4 text-light">Login</h1>
                 <div className="m-auto text-center" style={{ maxWidth: '400px' }}>
@@ -59,7 +65,8 @@ function Login(props) {
 
 
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    userLoaded: state.user.userLoaded
 });
 
-export default connect(mapStateToProps, { login })(Login);
+export default connect(mapStateToProps, { login, loadUser })(Login);

@@ -9,11 +9,24 @@ $info: #1e4362;
 $warning: #d29732;
 $danger: #f44336;
 
-.loaderContainer {
-  height: 10em;
-  display: flex;
-  align-items: center;
-  justify-content: center
+button {
+  background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+a {
+  text-decoration: none !important;
+  color: #000 !important;
+}
+
+
+body {
+  background-color: #fff;
 }
 
 .loader {
@@ -39,88 +52,361 @@ $danger: #f44336;
 }
 
 
-// Chart.js
+/******* Chart *******/
 
-.data-point {
-  background-color: blue;
-  border-radius: 50%;
-  height: 1.5px;
-  position: absolute;
-  width: 1.5px;
-  bottom: calc(var(--y));
-  left: calc(var(--x) - .75px);
+.chartContainer {
+  width: 1070px;
+  margin: auto;
+  padding-left: 30px;
+  padding-right: 30px;
 }
 
-.line-segment {
-  background-color: blue;
-  bottom: var(--y);
-  height: 2px;
-  left: var(--x);
-  position: absolute;
-  transform: rotate(calc(var(--angle) * 1deg));
-  transform-origin: left bottom;
-  width: calc(var(--hypotenuse) * 1px);
+.Graph {
+  width: 676px;
+  height: 367px;
+  margin-right: 0px;
+  display: inline-block;
+  vertical-align: top;
 }
 
-.Full-Chart {
-  border-bottom: 1px solid;
-  border-left: 1px solid;
-  height: 350px;
-  margin: 1em;
-  padding: 0;
+.timeSelector {
+  width: 700px;
+  height: 33px;
+  padding-right: 460px;
+  display: flex;
+  align-items: center;
+  border-bottom: rgb(66, 66, 66) 1px solid;
+}
+
+.timePeriod {
+  margin-right: 24px;
+  font-size: 13px;
+  font-weight: 700;
+  padding-bottom: 12px;
+}
+
+.timePeriod:hover {
+  color: rgb(175, 175, 175);
+}
+
+.line {
+  stroke: rgb(66, 66, 66);
+}
+
+.chartTime {
+  left: -50%;
   position: relative;
-  width: 800px;
+}
+
+.graphCont {
+  stroke-width: 2px;
+}
+
+.hiddenPath {
+  stroke: rgb(150, 150, 150)
+}
+
+.selectedPath {
+  stroke: #000 !important;
+}
+
+
+/******* ActionBox *******/
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.action-box {
+  width: 275px;
+  height: 367px;
+  background-color: #fff;
+  margin-right: 0px;
+  float: right;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(66, 66, 66);
+}
+
+.buySell {
+  border-bottom: rgb(66, 66, 66) 1px solid;
+  height: 52px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.buy, .sell {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.buy:hover, .sell:hover {
+  cursor: pointer;
+  color: rgb(177, 177, 177);
+}
+
+.values {
+  width: 273px;
+  height: 157px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 6px;
+}
+
+.investIn, .Amount, .Quantity {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.Quantity {
+  padding-top: 12px;
+  font-weight: 700;
+}
+
+.Amount {
+  border-bottom: rgb(66, 66, 66) 1px solid;
+}
+
+.typeButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 136px;
+  height: 36px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(66, 66, 66);
+}
+
+.dropButtons {
+  width: 136px;
+  height: 110px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(66, 66, 66);
+  position: absolute;
+  overflow: hidden;
   background-color: #fff;
 }
 
-.line-connector-temp {
-  width: 0; 
-  height: 0; 
-  bottom: var(--y);
-  left: calc(var(--x) - 2px);
-  position: absolute;
+.buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 136px;
+  height: 36px;
+}
+
+.typeButton-drop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 136px;
+  height: 36px;
+  border-bottom: rgb(66, 66, 66) 1px solid;
+}
+
+.typeButton-drop-last {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 136px;
+  height: 36px;
+}
+
+#shares:hover, .typeButton-drop-last:hover {
+  background-color: rgb(235, 235, 235) !important;
+}
+
+.amountInput {
+  width: 136px;
+  height: 36px;
+  border-radius: 5px;
   border-style: solid;
-  border-width: var(--gap) 2px 0px 2px;
-  transform: rotate(calc(var(--angle) * 1deg));
-  border-color: blue transparent transparent transparent;
+  border-width: 1px;
+  border-color: rgb(66, 66, 66);
+  text-align: right;
 }
 
-.line-connector {
-    position: absolute;
-    width: var(--gap);
-    height: var(--triHeight);
-    background: black;
-    bottom: var(--y);
-    transform: rotate(var(--rotate));
-    left: calc(var(--x) - (var(--gap) / 2));
-}
-.line-connector:before {
-    content: "";
-    position: absolute;
-    width: calc(var(--gap) / 2);
-    height: var(--coverHeight);
-    left: calc(var(--gap) / 4);
-    bottom: calc(var(--triHeight) / 2);
-    transform: rotate(calc((var(--coverAngle) - var(--rotate)) * 1deg));
-    background-color: green;
+.metric {
+  padding-left: 12px;;
 }
 
-.line-connector:after {
-    content: "";
-    position: absolute;
-    width: calc(var(--gap) / 2);
-    height: var(--coverHeight);
-    left: calc(var(--gap) / -4);
-    bottom: calc(var(--triHeight) / 2);
-    transform: rotate(calc((var(--coverAngle) - var(--rotate)) * -1deg));
-    background-color: green;
+.dropper {
+  display: flex;
+  padding-right: 4px;
+}
+
+.type, .metric{
+  display: inline-block;
+}
+
+.reviewOrder {
+  width: 275px;
+  height: 108px;
+  padding-top: 24px;
+  border-bottom: rgb(66, 66, 66) 1px solid;
+}
+
+.reviewButton {
+  width: 225px;
+  height: 48px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(66, 66, 66);
+  margin-left: 25px;
+}
+
+.reviewButton:hover {
+  background-color: rgb(235, 235, 235);
+}
+
+.Message {
+  width: 275px;
+  height: 48px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+}
+
+.message {
+  text-align: center;
+  width: 245px;
+  font-size: 13px;
+}
+
+/******* NavBar *******/
+
+.symbolSearch {
+  display: inline;
+  margin-left: 50px;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: rgb(122, 122, 122);
+}
+
+.searchIcon {
+  width: 25px;
+  height: 25px;
+  padding-right: 5px;
+  padding-left: 2px;
+  padding-bottom: 2px;
+  border-width: 1px;
+  border-color: #000;
+}
+
+.searchInput {
+  border: none;
+  outline: none;
+  width: 300px;
+}
+
+.dropdown-nav {
+  position: fixed;
+  background-color: #fff;
+  width: 325px;
+  border-style: solid;
+  border-width: 0px 1px 1px 1px;
+  border-color: rgb(122, 122, 122);
+}
+
+.symbol-link {
+  display: block;
+  text-decoration: none;
+  cursor: pointer;
+  padding-left: 20px;
+  padding-top: 10px;
+}
+
+.symbol-link:hover {
+  background-color: rgb(218, 218, 218);
+}
+
+.company-symbol {
+  display: inline;
+  padding-right: 10px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.company {
+  display: inline;
+  color: rgb(58, 58, 58);
+  font-size: 12px;
+}
+
+.NavBar {
+  position: relative;
+  width: 1070px;
+  display: flex;
+  margin: auto;
+  align-items: center;
+  background-color: #fff;
+  margin-bottom: 30px;
+  padding-top: 1rem;
+  padding-bottom: 0.5rem;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.nav-brand {
+  padding-top: 0.3125rem;
+  padding-bottom: 0.3125rem;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#home-link {
+  left: 30px;
+}
+
+.loaderContainer {
+  height: 10em;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+.navLoginSignup {
+  height: 40px;
+  border: #000 1px solid;
+  border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  margin-left: 342px;
 }
 
 
-.Chart {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+.navLogin {
+  padding: 0 12px;
+}
+
+.navSignup {
+  padding: 0 12px;
 }
 
 

@@ -40,7 +40,6 @@ function SignUp(props) {
 
     return (
         <div>
-            <MyNavbar />
             <div className="container">
 
                 <h1 className="mt-5 mb-4 text-center display-4 text-light">Sign Up</h1>

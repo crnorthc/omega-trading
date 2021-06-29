@@ -3,7 +3,9 @@ import SignUp from "./components/layouts/SignUp.js";
 import VerifyAccount from "./components/layouts/VerifyAccount.js";
 import ForgotPassword from "./components/layouts/ForgotPassword.js";
 import ResetPassword from "./components/layouts/ResetPassword.js";
-import Chart from "./components/layouts/Chart.js"
+import ChartDisplay from "./components/layouts/ChartDisplay.js";
+import MyNavbar from "./components/layouts/MyNavbar.js";
+import Home from "./components/layouts/Home.js";
 import React, { Component, Fragment } from "react";
 import { render } from "react-dom";
 import {
@@ -26,15 +28,16 @@ class App extends Component {
     render() {
         return (
             <Router>
+                <MyNavbar />
                 <Fragment>
                     <Switch>
-                        <Route exact path='/' component={Login} />
+                        <Route exact path='/' component={Home} />
                         <Route exact path='/login' component={Login} />
                         <Route exact path='/sign-up' component={SignUp} />
                         <Route exact path='/verify-account' component={VerifyAccount} />
                         <Route exact path='/forgot-password' component={ForgotPassword} />
                         <Route exact path='/reset-password' component={ResetPassword} />
-                        <Route exact path='/chart' component={Chart} />
+                        <Route exact path='/chart' component={ChartDisplay} />
                     </Switch>
                 </Fragment>
             </Router>

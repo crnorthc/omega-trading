@@ -4,12 +4,14 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from .models import Profile, Friends
+from .TopSecret import *
 from .serializers import *
 from rest_framework.response import Response
 from .utils import *
 from rest_framework.permissions import AllowAny
 import time
 import math
+import requests
 
 
 class CreateUserView(APIView):
@@ -289,3 +291,43 @@ class LoadUserPortfolio(APIView):
             if period == "5y":
                 start_time = start_time - 157680000
                 resolution = "W"
+        current_time = str(math.floor(current_time))
+        start_time = str(start_time)
+
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+
+        temp = {}
+        smallest = 1000000
+        smallest_list = None
+
+        # puts everything into {key: {price}}
+        for key, value in profile.holdings.items():
+            r = requests.get(
+                'https://finnhub.io/api/v1/stock/candle?symbol=' + key + '&resolution=' + resolution + '&from=' + start_time + '&to=' + current_time + '&token=' + FINNHUB_API_KEY)
+            if r['t'].length < smallest:
+                smallest_list = r['t']
+            temp[key] = {"price": r['c']}
+
+        # puts everything into a unified size of {key: {time, price}}
+        for key in temp.items():
+            temp[key]['price'] = temp[key]['price'][: (
+                -1) * (smallest - len(temp[key]['price']))]
+            temp[key]['time'] = smallest_list
+
+        current_day = time.localtime(r['t'][0])
+        current_day = (current_day[0], current_day[1], current_day[2], 1,
+                       00, 00, current_day[6], current_day[7], current_day[8])
+        current_day = math.floor(time.mktime(current_day))
+        prev_time = r['t'][0]
+        for i in range(1, len(smallest_list)):
+            day = time.localtime(r['t'][0])
+            day = (day[0], day[1], day[2], 1,
+                   00, 00, day[6], day[7], day[8])
+            day = math.floor(time.mktime(day))
+            if str(day) != str(current_day):
+                current_day = day
+
+            transactions = profile.transactions[current_day]
+            for x in range(transactions):
+                if transaction <
