@@ -10,7 +10,8 @@ import { loadUser } from '../../actions/user.js';
 
 function MyNavbar(props) {
 
-  const [symbol, setSymbol] = useState()
+  const [symbol, setSymbol] = useState();
+  const [show, setShow] = useState(false);
 
   MyNavbar.propTypes = {
     searchSymbols: PropTypes.func.isRequired,
@@ -83,11 +84,13 @@ function MyNavbar(props) {
               placeholder="Search"
               className="searchInput"
               value={symbol}
+              onFocus={(e) => setShow(true)}
+              onBlur={(e) => setShow(false)}
               onChange={e => setSymbol(e.target.value)}
               onKeyUp={onKeyUp} />
           </div>
           <div className="results-nav">
-            {props.noSearch ? noSearch : [(props.listLoading ? loading : dropDown())]}
+            {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
           </div>
         </form>
         {props.isAuthenticated ?

@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import profilePic from '../../static/profilePic.png'
 import { startGame, loadGame } from '../../actions/game';
-import StartGame from './StartGame';
+import CreateGame from './CreateGame';
 import Pregame from './Pregame';
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import Graph from './Graph.js';
 
 
 
@@ -49,7 +47,7 @@ function Lobby(props) {
     }
     else {
         if (props.no_game) {
-            return <StartGame />
+            return <CreateGame />
         }
         else {
             return <Pregame />

@@ -34,7 +34,7 @@ function getCookie() {
 
 }
 
-export const startGame = (amount, bet, positions) => dispatch => {
+export const createGame = (amount, bet, positions, days, hours, mins, code) => dispatch => {
 
     dispatch({
         type: CREATING_GAME
@@ -50,16 +50,29 @@ export const startGame = (amount, bet, positions) => dispatch => {
     var body;
     amount = parseInt(amount)
     bet = parseInt(bet)
+    days = parseInt(days)
+    hours = parseInt(hours)
+    mins = parseInt(mins)
     if (positions == '') {
-        body = JSON.stringify({ amount, bet });
+        if (code !== '') {
+            body = JSON.stringify({ amount, bet, days, hours, mins, code });
+        }
+        else {
+            body = JSON.stringify({ amount, bet, days, hours, mins });
+        }
     }
     else {
-        position = parseInt(positions)
-        body = JSON.stringify({ amount, bet, positions });
+        positions = parseInt(positions)
+        if (code !== '') {
+            body = JSON.stringify({ amount, bet, positions, days, hours, mins, code });
+        }
+        else {
+            body = JSON.stringify({ amount, bet, positions, days, hours, mins });
+        }
     }
 
 
-    axios.post('/game/start', body, config)
+    axios.post('/game/create', body, config)
         .then(res => {
             if (res.data.Error) {
                 dispatch({

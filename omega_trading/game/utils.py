@@ -79,6 +79,7 @@ def get_game_info(game):
         },
         'start_amount': game.start_amount,
         'bet': game.bet,
+        'duration': game.duration,
         'room_code': game.room_code,
         'positions': game.positions,
         'players': game.players,

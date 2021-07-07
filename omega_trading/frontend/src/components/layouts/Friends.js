@@ -11,6 +11,7 @@ import { joinGame, sendGameInvite } from '../../actions/game';
 function Friends(props) {
 
     const [username, setUsername] = useState(null);
+    const [show, setShow] = useState(false);
 
     Friends.propTypes = {
         loadUsers: PropTypes.func.isRequired,
@@ -275,12 +276,14 @@ function Friends(props) {
                     <input type="text"
                         placeholder="Search"
                         className="friendsInput"
+                        onFocus={(e) => setShow(true)}
+                        onBlur={(e) => setShow(false)}
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                         onKeyUp={onKeyUp} />
                 </div>
             </div>
-            {props.users_loaded ? showUsers() : null}
+            {props.users_loaded && show ? showUsers() : null}
             <div className="subHeader">
                 <h4 className="friendsSection">Invites</h4>
             </div>

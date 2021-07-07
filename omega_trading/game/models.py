@@ -13,3 +13,4 @@ class Tournament(models.Model):
     bet = models.FloatField(default=10000)
     positions = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
+    duration = models.JSONField(default=dict)

@@ -37,6 +37,7 @@ body {
   margin: auto;
   padding-left: 30px;
   padding-right: 30px;
+  padding-bottom: 72px;
 }
 
 /******* Lobby *******/
@@ -90,6 +91,16 @@ body {
   text-align: center;
 }
 
+.amountInput-game {
+  width: 151.58px;
+  height: 36px;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: rgb(66, 66, 66);
+  text-align: right;
+}
+
 .code-button {
   width: 136px;
   height: 48px;
@@ -117,13 +128,52 @@ body {
 
 .game-params {
   width: 732px;
-  margin: 48px 72px;
+  margin: 36px 72px 48px 72px;
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.start-amount, .bet, .positions {
+.params {
+  width: 366px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.durationInputs {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.min-input {
+  height: 34px;
+  text-align: center;
+  border-radius: 5px;
+  border: #424242 1px solid;;
+}
+
+.duration {
+  font-size: 16px;
+  font-weight: 550;
+}
+
+.day-duration, .hour-duration, .min-duration {
+  padding: 0px 6px;
+}
+
+.duration-input {
+  text-align: center;
+  height: 34px;
+  width: 36px;
+  border-radius: 5px;
+  border: #424242 1px solid;;
+}
+
+.start-amount, .bet, .positions, .durations {
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -131,11 +181,12 @@ body {
 }
 
 .start-amount {
-  margin-right: 168px;
+  margin-bottom: 24px;
 }
 
 .positions {
-  margin-right: 156px;
+  margin-bottom: 24px;
+  margin-top: 12px;
 }
 
 .rule {
@@ -209,25 +260,48 @@ body {
   font-weight: 550;
 }
 
-.pregame-start-amount {
-  margin-right: 168px;
-}
-
-.pregame-positions {
-  margin-right: 156px;
-}
-
 .pregame-rule {
   font-size: 20px;
   font-weight: 550;
+  width: 136px;
   padding-bottom: 3px;
   margin-bottom: 9px;
   text-align: center;
   border-bottom: rgb(65, 65, 65) 1px solid;
 }
 
+.pregame-positions, .pregame-start-amount {
+  margin-bottom: 48px;
+}
+
+.pregame-duration {
+  font-size: 16px;
+  padding-left: 2px;
+}
+
+.day-duration-game, .hour-duration-game, .min-duration-game {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  padding: 0px 3px;
+  font-size: 18px;
+  font-weight: 550;
+}
+
+.edit-rules {
+  text-align: center;
+}
+
 .players {
   border-top: #000 1px solid;
+}
+
+.enter-params-pregame {
+  margin: 0px 72px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
 }
 
 /******* Account *******/
@@ -297,7 +371,7 @@ body {
 }
 
 .editButton:hover {
-  background-color: rgb(175, 175, 175);
+  background-color: rgb(202, 202, 202);
 }
 
 .friends {

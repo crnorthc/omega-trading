@@ -16,24 +16,34 @@ import json
 Profile = apps.get_model('users', 'Profile')
 
 
-class StartGame(APIView):
+class CreateGame(APIView):
     def post(self, request, format=None):
         user = request.user
-        profile = Profile.objects.filter(user_id=user.id)
-        profile = profile[0]
         amount = request.data['amount']
         bet = request.data['bet']
         room_code = get_room_code()
+        duration = {
+            'days': request.data['days'],
+            'hours': request.data['hours'],
+            'mins': request.data['mins']
+        }
+        if 'code' in request.data:
+            game = get_game(request.data['code'])
+            game.start_amount = amount
+            game.bet = bet
+            game.duration = duration
+            if 'positions' in request.data:
+                game.positions = request.data['positions']
+            game.save()
+            info = get_game_info(game)
+            return Response({'game': info}, status=status.HTTP_200_OK)
         tournament = Tournament(
-            host=user, start_amount=amount, bet=bet, room_code=room_code)
+            host=user, start_amount=amount, bet=bet, room_code=room_code, duration=duration)
         tournament.players[request.user.username] = {
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
             'username': request.user.username
         }
-        if profile.portfolio_amount - bet < 0:
-            return Response({'Error': "You do not have enough funds to cover the bet"}, status=status.HTTP_200_OK)
-        profile.portfolio_amount = profile.portfolio_amount - bet
         game = {
             'host': {
                 'username': request.user.username,
@@ -51,7 +61,8 @@ class StartGame(APIView):
                     'username': request.user.username
                 }
             },
-            'invites': {}
+            'invites': {},
+            'duration': duration
         }
         if 'positions' in request.data:
             tournament.positions = request.data['positions']
