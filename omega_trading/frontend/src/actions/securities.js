@@ -3,10 +3,40 @@ import {
     LIST_LOADING,
     NO_SEARCH,
     SECURITY_LOADED,
-    SECURITY_UPDATED
+    SECURITY_UPDATED,
+    SECURITY_LOADING
 } from './types'
 
 import axios from 'axios';
+
+function saveHistory() {
+    const value = `; ${document.cookie}`;
+    if (value.includes('OmegaToken')) {
+        const parts = value.split(`; ${'OmegaToken'}=`);
+        var cookie = '';
+        if (parts.length === 2) {
+            cookie = parts.pop().split(';').shift()
+        };
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Token " + cookie
+            }
+        };
+
+        var path = window.location.pathname + window.location.search
+
+        const body = JSON.stringify({ path });
+
+        axios.post('/users/history', body, config)
+            .then(res => {
+                return cookie
+            })
+    }
+    else {
+        return
+    }
+}
 
 export const searchSymbols = (search) => dispatch => {
     dispatch({ type: LIST_LOADING })
@@ -45,11 +75,21 @@ export const searchSymbols = (search) => dispatch => {
 
 export const loadSecurity = (symbol, period) => dispatch => {
 
+    saveHistory()
+
     const config = {
         headers: {
             "Content-Type": "application/json"
         }
     };
+
+    dispatch({
+        type: SECURITY_LOADING
+    })
+
+    dispatch({
+        type: NO_SEARCH
+    })
 
     const body = JSON.stringify({ symbol, period });
     axios.post('/securities/load', body, config)

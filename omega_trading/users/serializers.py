@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
-from .models import Profile, Friends
+from .models import Profile
 
 
 class TokenSerializer(serializers.ModelSerializer):
@@ -45,9 +45,3 @@ class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'username')
-
-
-class FriendSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Friends
-        fields = ('username', 'friends')

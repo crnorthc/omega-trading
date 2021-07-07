@@ -1,19 +1,30 @@
 import axios from 'axios';
 import {
     USER_CREATED,
-    USER_CREATED_FAILED,
     EMAIL_VERIFIED,
-    EMAIL_VERIFY_FAILED,
-    LOGIN_FAILED,
     LOGIN_SUCCESS,
-    EMAIL_FAILED,
+    LOGGING_IN,
+    LOGOUT_SUCCESS,
     EMAIL_SENT,
-    RESET_FAILED,
     RESET_SUCCESS,
     CHECK_SUCCESS,
-    CHECK_FAILED
+    ACTION_FAILED
 } from './types';
 
+
+function getCookie() {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${'OmegaToken'}=`);
+    var cookie = '';
+    if (parts.length === 2) {
+        cookie = parts.pop().split(';').shift()
+    };
+    return cookie
+}
+
+function deleteCookie() {
+    document.cookie = "OmegaToken=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT";
+}
 
 export const createUser = (first_name, last_name, email, password, username) => dispatch => {
 
@@ -29,7 +40,7 @@ export const createUser = (first_name, last_name, email, password, username) => 
         .then(res => {
             if (res.data.Error) {
                 dispatch({
-                    type: USER_CREATED_FAILED,
+                    type: ACTION_FAILED,
                     payload: res.data
                 })
             }
@@ -55,7 +66,7 @@ export const verifyEmail = (verification_code) => dispatch => {
         .then(res => {
             if (res.data.Error) {
                 dispatch({
-                    type: EMAIL_VERIFY_FAILED,
+                    type: ACTION_FAILED,
                     payload: res.data
                 })
             }
@@ -63,6 +74,36 @@ export const verifyEmail = (verification_code) => dispatch => {
                 dispatch({
                     type: EMAIL_VERIFIED,
                     payload: res.data
+                })
+            };
+        })
+}
+
+export const autoLogin = (cookie) => dispatch => {
+    dispatch({
+        type: LOGGING_IN
+    })
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + cookie
+        }
+    };
+
+    const body = JSON.stringify({});
+
+    axios.post('/users/autoLogin', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                dispatch({
+                    type: ACTION_FAILED,
+                    payload: res.data
+                })
+            }
+            else {
+                dispatch({
+                    type: LOGIN_SUCCESS,
+                    payload: res.data.Success
                 })
             };
         })
@@ -81,19 +122,45 @@ export const login = (username, password) => dispatch => {
         .then(res => {
             if (res.data.Error) {
                 dispatch({
-                    type: LOGIN_FAILED,
+                    type: ACTION_FAILED,
                     payload: res.data
                 })
             }
             else {
                 dispatch({
                     type: LOGIN_SUCCESS,
-                    payload: res.data
+                    payload: "success"
                 })
             };
         })
 }
 
+export const logout = () => dispatch => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    const body = JSON.stringify({});
+
+    axios.post('/users/logout', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                dispatch({
+                    type: ACTION_FAILED,
+                    payload: res.data
+                })
+            }
+            else {
+                deleteCookie()
+                dispatch({
+                    type: LOGOUT_SUCCESS
+                })
+            };
+        })
+}
 
 export const sendReset = (email) => dispatch => {
 
@@ -108,7 +175,7 @@ export const sendReset = (email) => dispatch => {
         .then(res => {
             if (res.data.Error) {
                 dispatch({
-                    type: EMAIL_FAILED,
+                    type: ACTION_FAILED,
                     payload: res.data
                 })
             }
@@ -134,7 +201,7 @@ export const checkReset = (verification_code) => dispatch => {
         .then(res => {
             if (res.data.Error) {
                 dispatch({
-                    type: CHECK_FAILED,
+                    type: ACTION_FAILED,
                     payload: res.data
                 })
             }
@@ -160,7 +227,7 @@ export const resetForgot = (username, password) => dispatch => {
         .then(res => {
             if (res.data.Error) {
                 dispatch({
-                    type: RESET_FAILED,
+                    type: ACTION_FAILED,
                     payload: res.data
                 })
             }

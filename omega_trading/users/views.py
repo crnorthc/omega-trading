@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from .models import Profile, Friends
+from .models import Profile
 from .TopSecret import *
 from .serializers import *
 from rest_framework.response import Response
@@ -12,6 +12,8 @@ from rest_framework.permissions import AllowAny
 import time
 import math
 import requests
+import string
+import json
 
 
 class CreateUserView(APIView):
@@ -40,6 +42,12 @@ class CreateUserView(APIView):
                 user.last_name = last_name
                 profile = Profile(
                     verification_code=verification_code, user=user)
+                current_day = time.localtime()
+                current_day = (current_day[0], current_day[1], current_day[2], 1,
+                               00, 00, current_day[6], current_day[7], current_day[8])
+                current_day = math.floor(time.mktime(current_day)) - 86400
+                profile.transactions[str(current_day)] = [
+                    {'time': time.time() - 86400, 'securities': [], "portfolio_amount": 25000}]
                 user.save()
                 profile.save()
                 send_email_verification(email, username, verification_code)
@@ -55,13 +63,23 @@ class VerifyEmailView(APIView):
     def post(self, request, format=None):
 
         serializer = self.serializer_class(data=request.data)
-        print(request.data)
         serializer.is_valid()
-        print(serializer.errors)
         if serializer.is_valid():
             verification_code = serializer.data.get('verification_code')
             return verify_user(verification_code)
         return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_200_OK)
+
+
+class AutoLogin(APIView):
+    def post(self, request, format=None):
+        login(request, request.user)
+        token = Token.objects.filter(user_id=request.user.id)
+        headers = set_cookie(token[0].key)
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+        path = profile.latest_path
+        return Response({"Success": path}, headers=headers,
+                        status=status.HTTP_200_OK)
 
 
 class LoginUserView(APIView):
@@ -83,13 +101,19 @@ class LoginUserView(APIView):
                 return Response({"Error": "Verify Email"}, status=status.HTTP_406_NOT_ACCEPTABLE)
             login(request, user)
             token = Token.objects.filter(user_id=user.id)
-            return set_cookie(token[0].key)
+            headers = set_cookie(token[0].key)
+            return Response({"Success": "User Logged In"}, headers=headers,
+                            status=status.HTTP_200_OK)
         else:
             return Response({'Error': 'Invalid Password'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutUserView(APIView):
-    def get(self, request, format=None):
+    def post(self, request, format=None):
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+        profile.latest_path = '/'
+        profile.save()
         logout(request)
         return Response({"Success": "Logout Complete"}, status=status.HTTP_200_OK)
 
@@ -177,31 +201,6 @@ class ForgotPasswordView(APIView):
         return send_password_reset(user)
 
 
-class AddFriendView(APIView):
-    serializer_class = FriendSerializer
-
-    def patch(self, request, format=None):
-        if not authenticate_request(request):
-            Response({'Error': 'User not Authenticated'},
-                     status=status.HTTP_403_FORBIDDEN)
-        serializer = self.serializer_class(data=request.data)
-        if not serializer.is_valid():
-            return Response({"Error": "Invalid Data"}, status=status.HTTP_400_BAD_REQUEST)
-        username = serializer.data.get('username')
-        friend_username = serializer.data.get('friend')
-        current_friends = Friends.objects.filter(username=username)
-        if friend_username in current_friends:
-            return Response({"Error": "Already Friends"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        else:
-            user_queryset = User.objects.filter(username=username)
-            user = user_queryset[0]
-            friend_queryset = User.objects.filter(username=friend_username)
-            friend = friend_queryset[0]
-            friends = Friends(user=username, friend=friend)
-            friends.save()
-            return Response({"Success": "Friends Addded"}, status=status.HTTP_200_OK)
-
-
 class Buy(APIView):
 
     def post(self, request, format=None):
@@ -211,18 +210,20 @@ class Buy(APIView):
             return Response({"Error": "Not Enough Funds"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         profile.portfolio_amount = profile.portfolio_amount - \
             (quote['c'] * quantity)
-        if str(start_time) in profile.transactions:
-            profile.transactions[str(start_time)].append(add)
-        else:
-            profile.transactions[str(start_time)] = [add]
         holdings = profile.holdings
         if symbol in holdings:
             holdings[symbol] = holdings[symbol] + quantity
         else:
             holdings[symbol] = quantity
         profile.holdings = holdings
+        add['total_quantity'] = holdings[symbol]
+        if str(start_time) in profile.transactions:
+            profile.transactions[str(start_time)].append(add)
+        else:
+            profile.transactions[str(start_time)] = [add]
         profile.save()
-        return load_user(request)
+        response = load_user(request=request)
+        return Response({"Success": response}, status=status.HTTP_200_OK)
 
 
 class Sell(APIView):
@@ -230,104 +231,141 @@ class Sell(APIView):
     def post(self, request, format=None):
         symbol, quantity, quote, profile, add, start_time = transaction(
             request, False)
+        if quantity > profile.holdings[symbol]:
+            return Response({"Error": "Not Enough Shares"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         profile.portfolio_amount = profile.portfolio_amount + \
             (quote['c'] * quantity)
 
+        profile.holdings[symbol] = profile.holdings[symbol] - quantity
+        add['total_quantity'] = profile.holdings[symbol]
+        if profile.holdings[symbol] - quantity == 0:
+            del profile.holdings[symbol]
         if str(start_time) in profile.transactions:
             profile.transactions[str(start_time)].append(add)
         else:
             profile.transactions[str(start_time)] = [add]
-
-        holdings = profile.holdings
-        holdings[symbol] = holdings[symbol] - quantity
         profile.save()
-        return load_user(request)
+        response = load_user(request=request)
+        return Response({"Success": response}, status=status.HTTP_200_OK)
 
 
 class LoadUser(APIView):
 
     def post(self, request, format=None):
-        return load_user(request)
+        response = load_user(request=request)
+        return Response({"Success": response}, status=status.HTTP_200_OK)
 
 
 class LoadUserPortfolio(APIView):
 
     def post(self, request, format=None):
         period = request.data["period"]
-        current_time = time.time()
-
-        if period == "day":
-            day = time.ctime()[:3]
-            start_time = time.localtime()
-            start_time = (start_time[0], start_time[1], start_time[2], 9,
-                          00, 00, start_time[6], start_time[7], start_time[8])
-            start_time = math.floor(time.mktime(start_time))
-            if day == "Sun":
-                start_time -= (86400 * 2)
-                current_time = start_time + 32400
-            elif day == "Sat":
-                start_time -= 86400
-                current_time = start_time + 32400
-            resolution = "5"
-        else:
-            start_time = time.localtime()
-            start_time = (start_time[0], start_time[1], start_time[2], 9,
-                          30, 00, start_time[6], start_time[7], start_time[8])
-            start_time = math.floor(time.mktime(start_time))
-
-            if period == "week":
-                start_time = start_time - 604800
-                resolution = "15"
-            if period == "month":
-                start_time = start_time - 2592000
-                resolution = "60"
-            if period == "3m":
-                start_time = start_time - 7776000
-                resolution = "D"
-            if period == "y":
-                start_time = start_time - 31536000
-                resolution = "D"
-            if period == "5y":
-                start_time = start_time - 157680000
-                resolution = "W"
-        current_time = str(math.floor(current_time))
-        start_time = str(start_time)
-
         profile = Profile.objects.filter(user_id=request.user.id)
         profile = profile[0]
+        if request.data['friends']:
+            friend_charts = {}
+            for friend, value in profile.friends.items():
+                user = User.objects.filter(username=friend)
+                user = user[0]
+                portfolio, small = load_portfolio(period, user)
+                friend_charts[friend] = portfolio
+            return Response({"Success": friend_charts}, status=status.HTTP_200_OK)
+        else:
+            if request.data['username'] != False:
+                user = User.objects.filter(username=request.data['username'])
+                user = user[0]
+                numbers, small_charts = load_portfolio(period, user)
+                profile = Profile.objects.filter(user_id=user.id)
+                profile = profile[0]
+                return Response({"Success": {"numbers": numbers, "small_charts": small_charts, 'holdings': profile.holdings}}, status=status.HTTP_200_OK)
+            else:
+                numbers, small_charts = load_portfolio(period, request.user)
+                return Response({"Success": {"numbers": numbers, "small_charts": small_charts}}, status=status.HTTP_200_OK)
 
-        temp = {}
-        smallest = 1000000
-        smallest_list = None
 
-        # puts everything into {key: {price}}
-        for key, value in profile.holdings.items():
-            r = requests.get(
-                'https://finnhub.io/api/v1/stock/candle?symbol=' + key + '&resolution=' + resolution + '&from=' + start_time + '&to=' + current_time + '&token=' + FINNHUB_API_KEY)
-            if r['t'].length < smallest:
-                smallest_list = r['t']
-            temp[key] = {"price": r['c']}
+class SearchUsers(APIView):
+    def post(self, request, format=None):
+        username = request.data['username']
+        query = {}
+        users = User.objects.all().values('username')
+        for i in users:
+            if username in i['username'].lower() and not i['username'] == request.user.username:
+                if request.data['friends']:
+                    profile = Profile.objects.filter(user_id=request.user.id)
+                    profile = profile[0]
+                    if i['username'] in profile.friends:
+                        query[i['username']] = load_user(
+                            username=i['username'])
+                else:
+                    query[i['username']] = load_user(username=i['username'])
+        return Response({"Success": query}, status=status.HTTP_200_OK)
 
-        # puts everything into a unified size of {key: {time, price}}
-        for key in temp.items():
-            temp[key]['price'] = temp[key]['price'][: (
-                -1) * (smallest - len(temp[key]['price']))]
-            temp[key]['time'] = smallest_list
 
-        current_day = time.localtime(r['t'][0])
-        current_day = (current_day[0], current_day[1], current_day[2], 1,
-                       00, 00, current_day[6], current_day[7], current_day[8])
-        current_day = math.floor(time.mktime(current_day))
-        prev_time = r['t'][0]
-        for i in range(1, len(smallest_list)):
-            day = time.localtime(r['t'][0])
-            day = (day[0], day[1], day[2], 1,
-                   00, 00, day[6], day[7], day[8])
-            day = math.floor(time.mktime(day))
-            if str(day) != str(current_day):
-                current_day = day
+class SendInvite(APIView):
+    def post(self, request, format=None):
+        username = request.data['username']
+        unsend = request.data['unsend']
+        sending_profile = Profile.objects.filter(user_id=request.user.id)
+        sending_profile = sending_profile[0]
+        query = User.objects.filter(username=username)
+        user = query[0]
+        current_time = time.time()
+        profile = Profile.objects.filter(user_id=user.id)
+        profile = profile[0]
+        if unsend:
+            del sending_profile.invites[username]
+            del profile.invites[request.user.username]
+        else:
+            if request.user.username in profile.invites or username in sending_profile.invites:
+                return Response({"Success": "Invite Already Sent"}, status=status.HTTP_200_OK)
+            sending_profile.invites[username] = {
+                'time': current_time, 'first_name': user.first_name, 'last_name':  user.last_name, 'sent': True}
+            profile.invites[request.user.username] = {
+                'time': current_time, 'first_name': request.user.first_name, 'last_name':  request.user.last_name, 'sent': False}
+        sending_profile.save()
+        profile.save()
+        response = load_user(request)
+        return Response({"Success": response}, status=status.HTTP_200_OK)
 
-            transactions = profile.transactions[current_day]
-            for x in range(transactions):
-                if transaction <
+
+class AcceptInvite(APIView):
+    def post(self, request, format=None):
+        username = request.data['username']
+        accepted = request.data['accepted']
+        unadd = request.data['unadd']
+        sending_profile = Profile.objects.filter(user_id=request.user.id)
+        sending_profile = sending_profile[0]
+        query = User.objects.filter(username=username)
+        user = query[0]
+        current_time = time.time()
+        profile = Profile.objects.filter(user_id=user.id)
+        profile = profile[0]
+
+        if unadd:
+            del profile.friends[request.user.username]
+            del sending_profile.friends[username]
+        else:
+            del profile.invites[request.user.username]
+            del sending_profile.invites[username]
+
+            if accepted:
+                current_time = time.time()
+                profile.friends[request.user.username] = {
+                    'time': current_time, 'first_name': request.user.first_name, 'last_name': request.user.last_name}
+                sending_profile.friends[username] = {
+                    'time': current_time, 'first_name': user.first_name, 'last_name': user.last_name}
+        profile.save()
+        sending_profile.save()
+        response = load_user(request)
+        return Response({"Success": response}, status=status.HTTP_200_OK)
+
+
+class SaveHistory(APIView):
+    def post(self, request, format=None):
+        path = request.data['path']
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+        profile.latest_path = path
+        profile.save()
+        return Response({"Success": "Path Saved"}, status=status.HTTP_200_OK)

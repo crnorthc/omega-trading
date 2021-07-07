@@ -1,16 +1,13 @@
 import {
     USER_CREATED,
-    USER_CREATED_FAILED,
     EMAIL_VERIFIED,
-    EMAIL_VERIFY_FAILED,
     LOGIN_SUCCESS,
-    LOGIN_FAILED,
-    EMAIL_FAILED,
+    LOGOUT_SUCCESS,
+    LOGGING_IN,
     EMAIL_SENT,
-    RESET_FAILED,
     RESET_SUCCESS,
     CHECK_SUCCESS,
-    CHECK_FAILED
+    ACTION_FAILED
 } from "../actions/types";
 
 import { Redirect } from "react-router-dom";
@@ -22,7 +19,9 @@ const initialState = {
     error_message: null,
     isAuthenticated: false,
     codeChecked: false,
-    passwordReset: false
+    passwordReset: false,
+    logging_in: false,
+    last_path: null
 }
 
 export default function (state = initialState, action) {
@@ -32,12 +31,7 @@ export default function (state = initialState, action) {
                 ...state,
                 emailSent: true
             }
-        case USER_CREATED_FAILED,
-            EMAIL_VERIFY_FAILED,
-            LOGIN_FAILED,
-            EMAIL_FAILED,
-            RESET_FAILED,
-            CHECK_FAILED:
+        case ACTION_FAILED:
             return {
                 ...state,
                 error: true,
@@ -49,11 +43,24 @@ export default function (state = initialState, action) {
                 emailVerified: true,
                 emailSent: false
             }
-        case LOGIN_SUCCESS:
+        case LOGGING_IN:
             return {
                 ...state,
-                isAuthenticated: true
+                logging_in: true,
             }
+        case LOGIN_SUCCESS:
+            var path = null
+            if (action.payload.includes('/')) {
+                path = action.payload
+            }
+            return {
+                ...state,
+                isAuthenticated: true,
+                logging_in: false,
+                last_path: path
+            }
+        case LOGOUT_SUCCESS:
+            return initialState
         case EMAIL_SENT:
             return {
                 ...state,

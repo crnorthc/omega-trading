@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'frontend.apps.FrontendConfig',
     'securities.apps.SecuritiesConfig',
+    'game.apps.GameConfig',
     'rest_framework.authtoken',
     'rest_framework'
 ]

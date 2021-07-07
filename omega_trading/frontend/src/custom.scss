@@ -19,47 +19,444 @@ button {
 	outline: inherit;
 }
 
+h2, .h2, h3, .h3, h4, .h4 {
+  margin-bottom: 0px !important;
+}
+
 a {
   text-decoration: none !important;
   color: #000 !important;
 }
 
-
 body {
   background-color: #fff;
 }
 
-.loader {
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #3498db;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
-  animation: spin 2s linear infinite;
-  margin: 0
-}
-
-/* Safari */
-@-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-
-/******* Chart *******/
-
-.chartContainer {
+.pageContainer {
   width: 1070px;
   margin: auto;
   padding-left: 30px;
   padding-right: 30px;
 }
+
+/******* Lobby *******/
+
+
+/******* StartGame *******/
+.startup {
+  margin: 0 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.create-game {
+  padding: 12px 12px;
+  border-bottom: #000 1px solid;
+}
+
+.rules {
+  padding: 0px 48px 24px 48px;
+}
+
+.rules-title {
+  padding-bottom: 12px;
+  padding-right: 24px;
+  padding-left: 24px;
+  border-bottom: #000 1px solid;
+}
+
+.game-params {
+  width: 732px;
+  margin: 48px 72px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.start-amount, .bet, .positions {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+
+.start-amount {
+  margin-right: 168px;
+}
+
+.positions {
+  margin-right: 156px;
+}
+
+.rule {
+  font-size: 20px;
+  font-weight: 550;
+  padding-bottom: 12px;
+}
+
+.enter-params {
+  display: flex;
+  justify-content: center;
+}
+
+.to-invites {
+  padding: 6px 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.to-invites:hover {
+  background-color: rgb(175, 175, 175);
+}
+
+/******* Pregame *******/
+
+.pregame-subHeader {
+  padding-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.pregame-header {
+  padding: 12px 24px;
+  border-bottom: #000 1px solid;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pregame-title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.host, .room-code {
+  color: rgb(77, 77, 77);
+  padding-left: 12px;
+}
+
+.pregame-rules {
+  padding-bottom: 24px;
+}
+
+.pregameParams {
+  width: 732px;
+  margin: 48px 120px 46px 120px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.pregame-start-amount, .pregame-bet, .pregame-position {
+  width: 136px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 550;
+}
+
+.pregame-start-amount {
+  margin-right: 168px;
+}
+
+.pregame-positions {
+  margin-right: 156px;
+}
+
+.pregame-rule {
+  font-size: 20px;
+  font-weight: 550;
+  padding-bottom: 3px;
+  margin-bottom: 9px;
+  text-align: center;
+  border-bottom: rgb(65, 65, 65) 1px solid;
+}
+
+.players {
+  border-top: #000 1px solid;
+}
+
+/******* Account *******/
+
+.accountHeader {
+  width: 680px;
+  height: 72px;
+  margin: 60px 165px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.account-left {
+  width: 291px;
+  height: 72px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.profilePic-cont {
+  position: relative;
+  height: 70px;
+  width: 70px;
+}
+
+.profilePic {
+  position: absolute;
+}
+
+.addPhoto {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 50%;
+  bottom: 0px;
+  left: 50px;
+}
+
+.names {
+  margin-left: 25px;
+}
+
+.fullName {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.userName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.editProfile {
+  height: 72px;
+  width: 114px;
+  display: flex;
+  align-items: center;
+}
+
+.editButton {
+  width: 114px;
+  height: 36px;
+  border: #000 1px solid;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+.editButton:hover {
+  background-color: rgb(175, 175, 175);
+}
+
+.friends {
+  margin: 0 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.friendsHeader {
+  padding: 12px 24px;
+  border-bottom: #000 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.search-friends {
+  padding: 6px 0px;
+  border: #000 1px solid;
+}
+
+.suggested {
+  border-bottom: #000 1px solid
+}
+
+.otherUser {
+  width: 680px;
+  margin: 0 152px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-left {
+  width: 291px;
+  height: 72px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.sender {
+  padding-left: 24px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.game-user-left {
+  height: 72px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.game-invite {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(100, 100, 100);
+  padding-left: 12px;
+}
+
+.userNames {
+  padding-left: 24px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.fullName-user {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.userName-user {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(100, 100, 100);
+  padding-left: 12px;
+}
+
+.friendsInput {
+  width: 300px;
+  border: none;
+  outline: none;
+}
+
+.subHeader {
+  padding-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.friendsSection {
+  padding-bottom: 12px;
+  padding-right: 24px;
+  padding-left: 24px;
+  border-bottom: #000 1px solid;
+}
+
+.friendsList {
+  display: flex;
+  flex-direction: column;
+}
+
+.invitesList {
+  display: flex;
+  flex-direction: column;
+  border-bottom: #000 1px solid;
+}
+
+.accept, .decline {
+  padding: 7px 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.accept:hover, .decline:hover {
+  background-color: rgb(235, 235, 235);
+}
+
+.accept {
+  margin-right: 12px;
+}
+
+.noList {
+  padding: 36px 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgb(114, 114, 114);
+}
+
+
+/******* Home  *******/
+
+.stocks {
+  border-bottom: rgb(66, 66, 66) 1px solid;
+  height: 52px;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+}
+
+.stockTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 20px;
+  padding-left: 25px;
+}
+
+.stock {
+  height: 60px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.friend {
+  height: 60px;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.left-stock {
+  margin-right: 12px;
+}
+
+.left-friend {
+  width: 40px;
+  margin-right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.stock-symbol {
+  padding-bottom: 2px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.stock-quantity {
+  display: flex;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.small-chart {
+  transform: scaleY(-1);
+}
+
+.small {
+  stroke-width: .5px !important;
+}
+
+.stock-price {
+  margin: 0 0 0 12px;
+  text-align: right;
+  font-size: 13px;
+}
+
+
+
+/******* Chart *******/
 
 .Graph {
   width: 676px;
@@ -137,6 +534,14 @@ input[type=number] {
   border-color: rgb(66, 66, 66);
 }
 
+.noCharts {
+  height: 315px;
+  width: 275px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .buySell {
   border-bottom: rgb(66, 66, 66) 1px solid;
   height: 52px;
@@ -150,8 +555,8 @@ input[type=number] {
   font-size: 15px;
   font-weight: 700;
   line-height: 20px;
-  padding-left: 25px;
-  padding-right: 25px;
+  margin: 0 25px;
+  padding: 14px 0;
 }
 
 .buy:hover, .sell:hover {
@@ -178,6 +583,11 @@ input[type=number] {
 .Quantity {
   padding-top: 12px;
   font-weight: 700;
+  text-overflow: ellipsis;
+}
+
+.type {
+  text-overflow: ellipsis;
 }
 
 .Amount {
@@ -289,7 +699,10 @@ input[type=number] {
 }
 
 .message {
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   width: 245px;
   font-size: 13px;
 }
@@ -337,7 +750,7 @@ input[type=number] {
   padding-top: 10px;
 }
 
-.symbol-link:hover {
+.symbol-link:hover, .logout:hover {
   background-color: rgb(218, 218, 218);
 }
 
@@ -400,13 +813,54 @@ input[type=number] {
   margin-left: 342px;
 }
 
+.accountButtons {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-left: 205px;
+}
 
-.navLogin {
+.accountLink {
+  margin-right: 48px;
+  padding: 7px 0px;
+}
+
+.accountLink:hover {
+  border-bottom: rgb(66, 66, 66) 1px solid;
+}
+
+.logout {
+  padding: 7px 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.navLogin, .navSignup {
   padding: 0 12px;
 }
 
-.navSignup {
-  padding: 0 12px;
+
+/******* Loader *******/
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #000;
+  width: 120px;
+  height: 120px;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 

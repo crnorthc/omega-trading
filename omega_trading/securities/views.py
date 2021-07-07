@@ -36,13 +36,19 @@ class LoadSecurity(APIView):
             start_time = (start_time[0], start_time[1], start_time[2], 9,
                           00, 00, start_time[6], start_time[7], start_time[8])
             start_time = math.floor(time.mktime(start_time))
-            if day == "Sun":
-                start_time -= (86400 * 2)
-                current_time = start_time + 32400
-            elif day == "Sat":
-                start_time -= 86400
-                current_time = start_time + 32400
             resolution = "5"
+            r = requests.get(
+                'https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=' + resolution + '&from=' + str(start_time) + '&to=' + str(math.floor(current_time)) + '&token=' + FINNHUB_API_KEY)
+            r = r.json()
+            while True:
+                if r['s'] == "no_data":
+                    start_time -= 86400
+                    current_time = start_time + 32400
+                    r = requests.get(
+                        'https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=' + resolution + '&from=' + str(start_time) + '&to=' + str(math.floor(current_time)) + '&token=' + FINNHUB_API_KEY)
+                    r = r.json()
+                else:
+                    break
         else:
             start_time = time.localtime()
             start_time = (start_time[0], start_time[1], start_time[2], 9,

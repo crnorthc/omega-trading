@@ -1,10 +1,12 @@
-import React, { Fragment, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, Fragment, useState } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { searchSymbols } from '../../actions/securities';
+import { searchSymbols } from '../../actions/securities.js';
+import { autoLogin, logout } from '../../actions/auth.js';
+import { loadUser } from '../../actions/user.js';
 
 function MyNavbar(props) {
 
@@ -12,10 +14,39 @@ function MyNavbar(props) {
 
   MyNavbar.propTypes = {
     searchSymbols: PropTypes.func.isRequired,
+    autoLogin: PropTypes.func.isRequired,
+    logout: PropTypes.func.isRequired,
+    loadUser: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool,
+    user: PropTypes.object,
     noSearch: PropTypes.bool,
     results: PropTypes.object,
     listLoading: PropTypes.bool
   }
+
+  useEffect(() => {
+    if (!props.isAuthenticated) {
+      const value = `; ${document.cookie}`;
+      var cookie = ""
+      if (value.includes("OmegaToken")) {
+        const parts = value.split(`; ${'OmegaToken'}=`);
+        if (parts.length === 2) {
+          cookie = parts.pop().split(';').shift();
+        }
+        if (cookie.length !== 0) {
+          props.autoLogin(cookie)
+        }
+      }
+    }
+  }, [])
+
+
+  if (props.isAuthenticated && props.user === null) {
+    props.loadUser()
+  }
+
+
+
 
   const onKeyUp = (e) => {
     props.searchSymbols(symbol);
@@ -44,7 +75,7 @@ function MyNavbar(props) {
   return (
     <Fragment>
       <div bg="light" variant="dark" className="NavBar">
-        <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark" to="/login">Omega Trading</Link></div>
+        <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark" to="/">Omega Trading</Link></div>
         <form className="symbolSearch">
           <div className="search-nav">
             <img className="searchIcon" src='../../../static/search.png' />
@@ -59,10 +90,18 @@ function MyNavbar(props) {
             {props.noSearch ? noSearch : [(props.listLoading ? loading : dropDown())]}
           </div>
         </form>
-        <div className="navLoginSignup">
-          <Link to="/login" className="navLogin">Login</Link>
-          <Link to="/sign-up" className="navSignup">Signup</Link>
-        </div>
+        {props.isAuthenticated ?
+          <div className="accountButtons">
+            <Link to='/lobby' className="accountLink">Lobby</Link>
+            <Link to='/account' className="accountLink">Account</Link>
+            <button onClick={(e) => props.logout()} className="logout">Logout</button>
+          </div>
+          :
+          <div className="navLoginSignup">
+            <Link to="/login" className="navLogin">Login</Link>
+            <Link to="/sign-up" className="navSignup">Signup</Link>
+          </div>
+        }
       </div>
     </Fragment>
   )
@@ -72,7 +111,9 @@ function MyNavbar(props) {
 const mapStateToProps = (state) => ({
   results: state.securities.results,
   noSearch: state.securities.noSearch,
-  listLoading: state.securities.listLoading
+  listLoading: state.securities.listLoading,
+  isAuthenticated: state.auth.isAuthenticated,
+  user: state.user.user
 });
 
-export default connect(mapStateToProps, { searchSymbols })(MyNavbar);
+export default connect(mapStateToProps, { searchSymbols, autoLogin, loadUser, logout })(MyNavbar);

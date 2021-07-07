@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import queryString from 'query-string';
 import Graph from './Graph';
+import { Redirect } from 'react-router-dom';
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { loadSecurity, updateSymbol } from '../../actions/securities.js';
-import { buy } from '../../actions/user.js';
+import { buy, loadUser, sell } from '../../actions/user.js';
 
 function ChartDisplay(props) {
     const noStyle = {
@@ -24,15 +24,22 @@ function ChartDisplay(props) {
     const [sharStyle, setShar] = useState(noStyle)
     const [period, setPeriod] = useState("day")
     const [value, setValue] = useState(null)
+    const [symbol, setSymbol] = useState(null)
+    const [type, setType] = useState('buy')
 
     ChartDisplay.propTypes = {
-        loadSecurity: PropTypes.func.isRequired,
-        updateSymbol: PropTypes.func.isRequired,
+        loadUser: PropTypes.func.isRequired,
         buy: PropTypes.func.isRequired,
-        security: PropTypes.object,
+        sell: PropTypes.func.isRequired,
+        isAuthenticated: PropTypes.bool,
         securityLoaded: PropTypes.bool,
         symbol: PropTypes.string,
-        current_value: PropTypes.number
+        current_value: PropTypes.number,
+        user: PropTypes.object
+    }
+
+    if (!props.isAuthenticated) {
+        return <Redirect to='/login'></Redirect>
     }
 
     useEffect(() => {
@@ -40,24 +47,10 @@ function ChartDisplay(props) {
         if (!props.error) {
             const keys = Object.keys(values);
             if (keys.length != 0) {
-                props.loadSecurity(values.symbol, period)
+                setSymbol(values.symbol)
             }
         }
-    }, [period])
-
-    useEffect(() => {
-        if (props.securityLoaded) {
-            const interval = setInterval(() => {
-                props.updateSymbol(props.symbol)
-            }, 5000)
-            return () => clearInterval(interval)
-        }
     })
-
-    useEffect(() => {
-        setValue(props.current_value)
-    }, [props.current_value])
-
 
     const onClick = (e) => {
         if (drop === true) {
@@ -104,29 +97,60 @@ function ChartDisplay(props) {
         "border-bottom": "rgb(66, 66, 66) 2px solid"
     }
 
-    const setDollarQuantity = (quantity) => {
-        if (value !== null) {
+    const changeQuantity = (quantity) => {
+        if (props.current_value !== null) {
             if (quantity === "") {
                 setQuantity(0)
             }
             else {
-                setQuantity(Number(quantity) / (props.current_value * .99))
+                if (props.current_value !== null) {
+                    if (metric === "Dollars") {
+                        setQuantity(Number(quantity) / (props.current_value * .99))
+                    }
+                    else {
+                        setQuantity(Number(quantity) * props.current_value)
+                    }
+                }
             }
         }
     }
 
 
-    const submitOrder = () => {
-        props.buy(props.symbol, quantity)
+    const submitOrder = (sellAll) => {
+        if (type === "buy") {
+            if ((quantity * props.current_value) < props.user.portfolio_amount) {
+                props.buy(props.symbol, quantity)
+            }
+            else {
+                alert("You do not have enough purchasing power!")
+            }
+        }
+        else {
+            if (sellAll) {
+                props.sell(props.symbol, props.user.holdings[props.symbol])
+            }
+            else {
+                if (quantity < props.user.holdings[props.symbol]) {
+                    props.sell(props.symbol, quantity)
+                }
+                else {
+                    alert("You do not have enough shares to sell!")
+                }
+            }
+        }
     }
+
+    const typeStyle = (
+        { "border-bottom": "rgb(66, 66, 66) 2px solid" }
+    )
 
     return (
         <div>
-            <div className="chartContainer">
+            <div className="pageContainer">
                 <div className="Graph">
                     <h1 className="symbol-title">{props.symbol}</h1>
                     <div>
-                        {props.securityLoaded ? <Graph value={value} numbers={props.security} period={period} width={676} /> : <div></div>}
+                        {symbol !== null ? <Graph plain={false} symbol={symbol} value={value} period={period} width={676} /> : <div></div>}
                     </div>
                     <div className="timeSelector">
                         <button style={period == "day" ? dayStyle : null} onClick={(e) => changePeriod("day")} className="timePeriod">1D</button>
@@ -139,8 +163,8 @@ function ChartDisplay(props) {
                 </div>
                 <div className="action-box">
                     <div className="buySell">
-                        <button className="buy">Buy {props.symbol}</button>
-                        <button className="sell">Sell {props.symbol}</button>
+                        <button className="buy" style={type === 'buy' ? typeStyle : null} onClick={e => setType('buy')}>Buy {props.symbol}</button>
+                        <button className="sell" style={type === 'sell' ? typeStyle : null} onClick={e => setType('sell')}>Sell {props.symbol}</button>
                     </div>
                     <div className="values">
                         <div className="investIn">
@@ -160,26 +184,40 @@ function ChartDisplay(props) {
                         <div className="Amount">
                             <div className="type">Amount</div>
                             {metric === "Dollars" ?
-                                <input onChange={e => setDollarQuantity(e.target.value)} className="amountInput"
+                                <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput"
                                     placeholder="$0.00"
                                     type="number" min=".01" /> :
-                                <input onChange={e => setQuantity(e.target.value)} className="amountInput"
+                                <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput"
                                     placeholder="0"
                                     type="number" min="1" />
                             }
                         </div>
                         <div className="Quantity">
-                            <div className="type">Est. Quantity</div>
-                            <div className="quantity">{quantity.toFixed(3)}</div>
+                            {metric === "Dollars" ? <div className="type">Est. Quantity</div> : <div className="type">Est. Cost</div>}
+                            {metric === "Dollars" ? <div className="quantity">{quantity.toFixed(3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div> : <div className="quantity">${quantity.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>}
                         </div>
                     </div>
                     <div className="reviewOrder">
-                        <button onClick={(e) => submitOrder()} className="reviewButton">Review Order</button>
+                        <button onClick={(e) => submitOrder(false)} className="reviewButton">Review Order</button>
                     </div>
                     <div className="Message">
-                        <div className="message">
-                            {message}
-                        </div>
+                        {props.user !== null ? type === "buy" ?
+                            <div className="message">
+                                ${props.user.portfolio_amount.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} buying power available
+                            </div>
+                            : metric === 'Dollars' ?
+                                <div className="message">
+                                    <div className="amountAvailable">${(props.user.holdings[props.symbol] * props.current_value).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Available</div>
+                                    <button className="sellAll" onClick={(e) => submitOrder(true)}>Sell All</button>
+                                </div>
+                                :
+                                <div className="message">
+                                    <div className="amountAvailable">{props.user.holdings[props.symbol].toFixed(6).toString()} Shares Available</div>
+                                    <button className="sellAll" onClick={(e) => submitOrder(true)}>Sell All</button>
+                                </div>
+                            :
+                            <div></div>
+                        }
                     </div>
                 </div>
             </div>
@@ -189,10 +227,11 @@ function ChartDisplay(props) {
 
 
 const mapStateToProps = (state) => ({
-    security: state.securities.security,
     securityLoaded: state.securities.securityLoaded,
+    isAuthenticated: state.auth.isAuthenticated,
     symbol: state.securities.symbol,
-    current_value: state.securities.current_value
+    current_value: state.securities.current_value,
+    user: state.user.user
 });
 
-export default connect(mapStateToProps, { loadSecurity, updateSymbol, buy })(ChartDisplay);
+export default connect(mapStateToProps, { buy, sell, loadUser })(ChartDisplay);
