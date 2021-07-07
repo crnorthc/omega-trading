@@ -46,10 +46,9 @@ def uninvite(profile, username, room_code):
     game = Tournament.objects.filter(room_code=room_code)
     game = game[0]
     del game.invites[username]
-    game.save()
     del profile.invites[room_code]
     profile.save()
-    return get_game_info(game)
+    return game
 
 
 def get_room_code():

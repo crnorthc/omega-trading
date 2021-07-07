@@ -84,7 +84,9 @@ class SendInvite(APIView):
         profile = profile[0]
         game = get_game(room_code)
         if request.data['unadd']:
-            info = uninvite(game, profile, username, room_code)
+            game = uninvite(game, profile, username, room_code)
+            game.save()
+            info = get_game_info(game)
             return Response({'game': info}, status=status.HTTP_200_OK)
         else:
             if username in game.invites:
@@ -117,7 +119,9 @@ class JoinGame(APIView):
             game.save()
             info = get_game_info(game)
         else:
-            info = uninvite(profile, request.user.username, room_code)
+            game = uninvite(profile, request.user.username, room_code)
+            game.save()
+            info = get_game_info(game)
             if request.data['accepted']:
                 game.players[username] = {
                     'first_name': request.user.first_name,
