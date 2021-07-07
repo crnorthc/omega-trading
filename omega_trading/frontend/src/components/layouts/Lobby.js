@@ -35,7 +35,7 @@ function Lobby(props) {
         if (!props.game_loaded && !props.game_loading) {
             props.loadGame()
         }
-    }, [])
+    })
 
 
     if ((!props.game_loading && !props.game_loaded) || props.game_loading) {

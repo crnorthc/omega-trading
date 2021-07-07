@@ -1,4 +1,5 @@
 import {
+    LOGOUT_SUCCESS,
     GAME_CREATED,
     CREATING_GAME,
     GAME_LOADED,
@@ -19,6 +20,8 @@ const initialState = {
 
 export default function (state = initialState, action) {
     switch (action.type) {
+        case LOGOUT_SUCCESS:
+            return initialState
         case CREATING_GAME:
             return {
                 ...state,
@@ -45,11 +48,23 @@ export default function (state = initialState, action) {
                 game: action.payload
             }
         case GAME_JOINED:
-            return {
-                ...state,
-                game_loading: false,
-                game_loaded: true,
-                game: action.payload.game
+            if (action.payload.unadd) {
+                return {
+                    ...state,
+                    game_loading: false,
+                    game_loaded: false,
+                    game: null,
+                    no_game: true
+                }
+            }
+            else {
+                return {
+                    ...state,
+                    game_loading: false,
+                    game_loaded: true,
+                    game: action.payload.game,
+                    no_game: false
+                }
             }
         case NO_GAME:
             return {

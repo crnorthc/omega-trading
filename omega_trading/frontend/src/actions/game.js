@@ -123,9 +123,14 @@ export const joinGame = (username, accepted, unadd, room_code) => dispatch => {
                 console.log("oops")
             }
             else {
+                var response = {
+                    game: res.data.game,
+                    user: res.data.user,
+                    unadd: unadd
+                }
                 dispatch({
                     type: GAME_JOINED,
-                    payload: res.data
+                    payload: response
                 })
             };
         })

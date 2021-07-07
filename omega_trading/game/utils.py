@@ -38,17 +38,20 @@ def load_user(request=None, username=None):
 
 def get_game(room_code):
     game = Tournament.objects.filter(room_code=room_code)
-    game = game[0]
-    return game
+    if game.exists():
+        game = game[0]
+        return game
+    return Response({"Error": "No Room Found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 def uninvite(profile, username, room_code):
     game = Tournament.objects.filter(room_code=room_code)
     game = game[0]
-    del game.invites[username]
-    del profile.invites[room_code]
-    profile.save()
-    return game
+    if username in game.invites:
+        del game.invites[username]
+    if room_code in profile.invites:
+        del profile.invites[room_code]
+    return game, profile
 
 
 def get_room_code():

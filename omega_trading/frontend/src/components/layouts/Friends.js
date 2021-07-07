@@ -286,7 +286,7 @@ function Friends(props) {
             </div>
             <div className="invitesList">
                 {props.friendsOnly ?
-                    Object.keys(props.game.invites).length > 0 ? invitesList() : <div className="noList">Invite Players to start a game</div>
+                    Object.keys(props.game.invites).length > 0 ? invitesList() : <div className="noList">Invite friends to start a game</div>
                     :
                     Object.keys(props.user.invites).length > 0 ? invitesList() : <div className="noList">You have no invites at this time</div>
                 }

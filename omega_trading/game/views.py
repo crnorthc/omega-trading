@@ -62,13 +62,19 @@ class StartGame(APIView):
 
 class LoadGame(APIView):
     def post(self, request, format=None):
+        print(request.user)
         user_id = request.user.id
         game = Tournament.objects.filter(host_id=user_id).filter(active=True)
+        print(game.exists())
         if not game.exists():
             game = Tournament.objects.filter(
                 players__has_key=request.user.username).filter(active=True)
             if not game.exists():
                 return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
+            else:
+                print(get_game_info(game[0]))
+        else:
+            print(get_game_info(game[0]))
         game = game[0]
         info = get_game_info(game)
         return Response({'game': info}, status=status.HTTP_200_OK)
@@ -84,8 +90,9 @@ class SendInvite(APIView):
         profile = profile[0]
         game = get_game(room_code)
         if request.data['unadd']:
-            game = uninvite(game, profile, username, room_code)
+            game, profile = uninvite(game, profile, username, room_code)
             game.save()
+            profile.save()
             info = get_game_info(game)
             return Response({'game': info}, status=status.HTTP_200_OK)
         else:
@@ -119,7 +126,8 @@ class JoinGame(APIView):
             game.save()
             info = get_game_info(game)
         else:
-            game = uninvite(profile, request.user.username, room_code)
+            game, profile = uninvite(profile, request.user.username, room_code)
+            profile.save()
             game.save()
             info = get_game_info(game)
             if request.data['accepted']:
