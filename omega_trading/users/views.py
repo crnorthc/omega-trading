@@ -204,12 +204,18 @@ class ForgotPasswordView(APIView):
 class Buy(APIView):
 
     def post(self, request, format=None):
-        symbol, quantity, quote, profile, add, start_time = transaction(
-            request, True)
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+        symbol, quantity, quote, add, start_time = transaction(
+            request, True, profile)
         if (quote['c'] * quantity) > profile.portfolio_amount:
             return Response({"Error": "Not Enough Funds"}, status=status.HTTP_406_NOT_ACCEPTABLE)
-        profile.portfolio_amount = profile.portfolio_amount - \
-            (quote['c'] * quantity)
+        if request.data['dollars']:
+            profile.portfolio_amount = profile.portfolio_amount - \
+                request.data['quantity']
+        else:
+            profile.portfolio_amount = profile.portfolio_amount - \
+                (quote['c'] * quantity)
         holdings = profile.holdings
         if symbol in holdings:
             holdings[symbol] = holdings[symbol] + quantity
@@ -229,13 +235,19 @@ class Buy(APIView):
 class Sell(APIView):
 
     def post(self, request, format=None):
-        symbol, quantity, quote, profile, add, start_time = transaction(
-            request, False)
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+        symbol, quantity, quote, add, start_time = transaction(
+            request, False, profile)
         if quantity > profile.holdings[symbol]:
             return Response({"Error": "Not Enough Shares"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
-        profile.portfolio_amount = profile.portfolio_amount + \
-            (quote['c'] * quantity)
+        if request.data['dollars']:
+            profile.portfolio_amount = profile.portfolio_amount + \
+                request.data['quantity']
+        else:
+            profile.portfolio_amount = profile.portfolio_amount + \
+                (quote['c'] * quantity)
 
         profile.holdings[symbol] = profile.holdings[symbol] - quantity
         add['total_quantity'] = profile.holdings[symbol]
@@ -280,7 +292,8 @@ class LoadUserPortfolio(APIView):
                 profile = profile[0]
                 return Response({"Success": {"numbers": numbers, "small_charts": small_charts, 'holdings': profile.holdings}}, status=status.HTTP_200_OK)
             else:
-                numbers, small_charts = load_portfolio(period, request.user)
+                numbers, small_charts = load_portfolio(
+                    period, request.user, True)
                 return Response({"Success": {"numbers": numbers, "small_charts": small_charts}}, status=status.HTTP_200_OK)
 
 

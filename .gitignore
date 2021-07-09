@@ -2,3 +2,4 @@ omega_trading/omega_trading/secrets.py
 omega_trading/users/TopSecret.py
 omega_trading/frontend/node_modules
 omega_trading/securities/TopSecret.py
+omega_trading/game/TopSecret.py

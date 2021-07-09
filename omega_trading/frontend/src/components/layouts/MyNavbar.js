@@ -85,7 +85,6 @@ function MyNavbar(props) {
               className="searchInput"
               value={symbol}
               onFocus={(e) => setShow(true)}
-              onBlur={(e) => setShow(false)}
               onChange={e => setSymbol(e.target.value)}
               onKeyUp={onKeyUp} />
           </div>

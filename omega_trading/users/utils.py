@@ -24,23 +24,20 @@ def authenticate_request(request):
         return False
 
 
-def load_portfolio(period, user):
+def load_portfolio(period, user, me=False):
     current_time = time.time()
     interval = None
+    start_time = time.localtime()
 
+    profile = Profile.objects.filter(user_id=user.id)
+    profile = profile[0]
+
+    # Part 1 Determining the period
     if period == "day":
-        day = time.ctime()[:3]
-        start_time = time.localtime()
         start_time = (start_time[0], start_time[1], start_time[2], 9,
                       00, 00, start_time[6], start_time[7], start_time[8])
         start_time = math.floor(time.mktime(start_time))
 
-        # if day == "Sun":
-        # start_time -= (86400 * 2)
-        # current_time = start_time + 32400
-        # elif day == "Sat":
-        # start_time -= 86400
-        # current_time = start_time + 32400
         resolution = "5"
         interval = 300
         r = requests.get(
@@ -57,35 +54,32 @@ def load_portfolio(period, user):
                 break
 
     else:
-        start_time = time.localtime()
         start_time = (start_time[0], start_time[1], start_time[2], 9,
                       30, 00, start_time[6], start_time[7], start_time[8])
         start_time = math.floor(time.mktime(start_time))
 
         if period == "week":
-            start_time = start_time - 604800
+            start_time -= 604800
             resolution = "15"
             interval = 900
         if period == "month":
-            start_time = start_time - 2592000
+            start_time -= 2592000
             resolution = "60"
             interval = 3600
         if period == "3m":
-            start_time = start_time - 7776000
+            start_time -= 7776000
             resolution = "D"
             interval = 86400
         if period == "y":
-            start_time = start_time - 31536000
+            start_time -= 31536000
             resolution = "D"
             interval = 86400
         if period == "5y":
-            start_time = start_time - 157680000
+            start_time -= 157680000
             resolution = "W"
             interval = 1209600
 
-    profile = Profile.objects.filter(user_id=user.id)
-    profile = profile[0]
-
+    # Part 2: determines if there have been no transactions
     if len(profile.transactions) == 1:
         numbers = []
         count = 0
@@ -100,92 +94,83 @@ def load_portfolio(period, user):
     current_time = str(math.floor(current_time))
     start_time = str(start_time)
 
+    # Part 3: Generate the lists of prices for each symbol owned
     temp = {}
-    smallest = 1000000
-    smallest_list = None
-
+    times = []
     small_charts = {}
 
-    symbols_held = []
-
+    # Generates the list of prices for each symbol
     for key, value in profile.transactions.items():
         for t in value:
             if 'symbol' in t:
-                if not t['symbol'] in symbols_held:
-                    symbols_held.append(t['symbol'])
+                s = t['symbol']
+                if not s in temp:
+                    r = requests.get(
+                        'https://finnhub.io/api/v1/stock/candle?symbol=' + s + '&resolution=' + resolution + '&from=' + start_time + '&to=' + current_time + '&token=' + FINNHUB_API_KEY)
+                    r = r.json()
+                    temp[s] = r['c']
+                    times.append(r['t'])
+                    if s in profile.holdings:
+                        small_charts[s] = []
+                        for i in range(len(r['t']) - 1):
+                            small_charts[s].append(
+                                {'time': r['t'][i], 'price': r['c'][i]})
+    times = min(times, key=len)
 
-    # puts everything into {key: {[price]}}
-    for key in symbols_held:
-        r = requests.get(
-            'https://finnhub.io/api/v1/stock/candle?symbol=' + key + '&resolution=' + resolution + '&from=' + start_time + '&to=' + current_time + '&token=' + FINNHUB_API_KEY)
-        r = r.json()
-        if len(r['t']) < smallest:
-            smallest = len(r['t'])
-            smallest_list = r['t']
-        temp[key] = r['c']
-        if key in profile.holdings:
-            small_charts[key] = []
-            for i in range(len(r['t']) - 1):
-                small_charts[key].append(
-                    {'time': r['t'][i], 'price': r['c'][i]})
-
-    # puts everything into a unified size of {key: {[price]}}
+    # transforms each list of symbol prices to uniform length
     for key, value in temp.items():
-        temp[key] = temp[key][(-1) * smallest:]
+        temp[key] = temp[key][(-1) * len(times):]
 
-    current_day = time.localtime(smallest_list[0])
-    current_day = (current_day[0], current_day[1], current_day[2], 1,
-                   00, 00, current_day[6], current_day[7], current_day[8])
-    current_day = math.floor(time.mktime(current_day))
-    prev_time = smallest_list[0]
+    # Find the first day of the selected period
+    first_day = time.localtime(times[0])
+    first_day = (first_day[0], first_day[1], first_day[2], 1,
+                 00, 00, first_day[6], first_day[7], first_day[8])
+    first_day = math.floor(time.mktime(first_day))
+    prev_time = times[0]
     latest_day = 0
-    goal = []
     days = []
     latest_holdings = {}
+    # Part 4: Get the list of days in ascending order
     for key, value in profile.transactions.items():
         days.append(float(key))
     days.sort()
 
+    # Part 5: Get the account holdings, portfolio amount, latest_day, and latest transaction at the begining day of period
     latest_amount = 0
-    for i in range(len(days)):
-        if current_day > days[i]:
-            for s in profile.transactions[str(math.floor(days[i]))]:
-                if 'symbol' in s:
-                    if s['symbol'] in latest_holdings:
-                        if s['bought']:
-                            latest_holdings[s['symbol']] += s['quantity']
-                        else:
-                            latest_holdings[s['symbol']] -= s['quantity']
-                    else:
-                        latest_holdings[s['symbol']] = s['total_quantity']
-                latest_amount = s['portfolio_amount']
-
-    if latest_amount == 0:
-        latest_amount = 25000
-
-    latest_security = []
-    if current_day < days[0]:
+    if first_day < days[0]:
         latest_day = profile.transactions[str(
             math.floor(days[0]))]
     else:
-        for i in days:
-            if current_day >= i:
+        for day in days:
+            if first_day > day:
                 latest_day = profile.transactions[str(
-                    math.floor(i))]
-        latest_transaction = latest_day[-1]
+                    math.floor(day))]
+                for s in latest_day:
+                    if 'symbol' in s:
+                        if s['symbol'] in latest_holdings:
+                            if s['bought']:
+                                latest_holdings[s['symbol']] += s['quantity']
+                            else:
+                                latest_holdings[s['symbol']] -= s['quantity']
+                        else:
+                            latest_holdings[s['symbol']] = s['total_quantity']
+                    latest_amount = s['portfolio_amount']
+                latest_transaction = latest_day[-1]
+    if latest_amount == 0:
+        latest_amount = 25000
 
+    goal = []
     recent_found = False
-    for i in range(0, len(smallest_list)):
-        day = time.localtime(smallest_list[i])
+    for i in range(len(times)):
+        day = time.localtime(times[i])
         day = (day[0], day[1], day[2], 1,
                00, 00, day[6], day[7], day[8])
         day = math.floor(time.mktime(day))
-        add = {"time": smallest_list[i], 'securities': []}
+        add = {"time": times[i], 'securities': []}
 
         # if the time period is before transactions
         if (day <= days[0]):
-            add['portfolio_amount'] = profile.transactions[str(
-                math.floor(days[0]))][0]['portfolio_amount']
+            add['portfolio_amount'] = latest_amount
             recent_found = True
         # if the time period is after transactions
         else:
@@ -195,7 +180,7 @@ def load_portfolio(period, user):
                 latest_day = profile.transactions[str(day)]
                 for x in latest_day:
                     # if there were transactions during the time period
-                    if float(x['time']) <= float(smallest_list[i]) and float(x['time']) > float(prev_time):
+                    if float(x['time']) <= float(times[i]) and float(x['time']) > float(prev_time):
                         if x['symbol'] in latest_holdings:
                             if x['bought']:
                                 latest_holdings[x['symbol']
@@ -220,7 +205,7 @@ def load_portfolio(period, user):
                     add['securities'].append(
                         {'symbol': key, 'total_quantity': value, 'price': temp[key][i]})
 
-        prev_time = smallest_list[i]
+        prev_time = times[i]
         goal.append(add)
 
     numbers = []
@@ -301,12 +286,10 @@ def set_cookie(key):
     return headers
 
 
-def transaction(request, bought):
+def transaction(request, bought, profile):
     symbol = request.data["symbol"]
     quantity = request.data["quantity"]
     quote = request.data["quote"]
-    profile = Profile.objects.filter(user_id=request.user.id)
-    profile = profile[0]
 
     current_time = time.time()
     start_time = time.localtime()
@@ -314,10 +297,23 @@ def transaction(request, bought):
                   00, 00, start_time[6], start_time[7], start_time[8])
     start_time = math.floor(time.mktime(start_time))
 
-    add = {"bought": bought, "symbol": symbol, "quantity": quantity, "price": quote['c'], "time": current_time, "portfolio_amount": profile.portfolio_amount -
-           (quote['c'] * quantity)}
+    if request.data['dollars']:
+        quantity = quantity
+    else:
+        quantity = quote['c'] * quantity
 
-    return symbol, quantity, quote, profile, add, start_time
+    if bought:
+        portfolio_amount = profile.portfolio_amount - quantity
+    else:
+        portfolio_amount = profile.portfolio_amount + quantity
+
+    if request.data['dollars']:
+        quantity = quantity / quote['c']
+
+    add = {"bought": bought, "symbol": symbol, "quantity": quantity,
+           "price": quote['c'], "time": current_time, "portfolio_amount": portfolio_amount}
+
+    return symbol, quantity, quote, add, start_time
 
 
 def verify_user(verification_code):

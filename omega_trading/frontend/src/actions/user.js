@@ -211,7 +211,7 @@ export const loadUsers = (username, friends) => dispatch => {
 }
 
 
-export const buy = (symbol, quantity) => dispatch => {
+export const buy = (symbol, quantity, dollars) => dispatch => {
 
     const config = {
         headers: {
@@ -229,7 +229,7 @@ export const buy = (symbol, quantity) => dispatch => {
             }
             else {
                 var quote = res.data
-                var body = JSON.stringify({ symbol, quantity, quote });
+                var body = JSON.stringify({ symbol, quantity, quote, dollars });
                 axios.post('/users/buy', body, config)
                     .then(res => {
                         if (res.data.Error) {
@@ -247,7 +247,7 @@ export const buy = (symbol, quantity) => dispatch => {
 }
 
 
-export const sell = (symbol, quantity) => dispatch => {
+export const sell = (symbol, quantity, dollars) => dispatch => {
 
     const config = {
         headers: {
@@ -265,7 +265,7 @@ export const sell = (symbol, quantity) => dispatch => {
             }
             else {
                 var quote = res.data
-                var body = JSON.stringify({ symbol, quantity, quote });
+                var body = JSON.stringify({ symbol, quantity, quote, dollars });
                 axios.post('/users/sell', body, config)
                     .then(res => {
                         if (res.data.Error) {

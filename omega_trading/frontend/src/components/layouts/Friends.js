@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import profilePic from '../../static/profilePic.png'
 import { loadUsers, hideResults, sendInvite, acceptInvite } from '../../actions/user.js';
-import { joinGame, sendGameInvite } from '../../actions/game';
+import { joinGame, sendGameInvite, setColor } from '../../actions/game';
 
 function Friends(props) {
 
@@ -18,6 +18,7 @@ function Friends(props) {
         acceptInvite: PropTypes.func.isRequired,
         hideResults: PropTypes.func.isRequired,
         sendInvite: PropTypes.func.isRequired,
+        setColor: PropTypes.func.isRequired,
         sendGameInvite: PropTypes.func.isRequired,
         joinGame: PropTypes.func.isRequired,
         user: PropTypes.object,
@@ -44,6 +45,36 @@ function Friends(props) {
         }
     }
 
+    const get_colors = (i) => {
+        const colors = ['black', 'blue', 'red', 'orange', 'green', 'hotpink', 'purple']
+        var colors_taken = []
+        for (const player in props.game.players) {
+            colors_taken.push(props.game.players[player].color)
+        }
+        var temp = []
+        if (i.username == props.user.username) {
+            for (const color in colors) {
+                if (colors_taken.includes(colors[color]) && colors[color] != props.game.players[i.username].color) {
+                    temp.push(
+                        <svg style={{ 'background-color': colors[color] }} height="15" width="15">
+                            <line x1="0" y1="0" x2="15" y2="15" style={{ "stroke": "#fff", "stroke-width": "2" }} />
+                            <line x1="0" y1="15" x2="15" y2="0" style={{ "stroke": "#fff", "stroke-width": "2" }} />
+                        </svg>
+                    )
+                }
+                else {
+                    if (colors[color] == props.game.players[i.username].color) {
+                        temp.push(<button style={{ 'background-color': colors[color] }} className='myChoice'></button>)
+                    }
+                    else {
+                        temp.push(<button onClick={(e) => props.setColor(colors[color], props.game.room_code)} style={{ 'background-color': colors[color] }} className='colorChoice'></button>)
+                    }
+                }
+            }
+            return temp
+        }
+    }
+
     const friendsList = () => {
         var friends = []
         var list = [];
@@ -62,10 +93,14 @@ function Friends(props) {
                             <img className="userPic" src={profilePic} width={40} />
                         </div>
                         <div className="userNames">
-                            <div className="fullName-user">{list[i].first_name} {list[i].last_name}</div>
+                            <div style={{ 'color': props.game.players[list[i].username].color }} className="fullName-user">{list[i].first_name} {list[i].last_name}</div>
                             <div className="userName-user">@{i}</div>
                         </div>
                     </div>
+                    {props.friendsOnly ?
+                        get_colors(list[i])
+                        : null
+                    }
                     <div className="addFriend">
                         {props.friendsOnly ?
                             i == props.game.host.username ?
@@ -277,7 +312,6 @@ function Friends(props) {
                         placeholder="Search"
                         className="friendsInput"
                         onFocus={(e) => setShow(true)}
-                        onBlur={(e) => setShow(false)}
                         value={username}
                         onChange={e => setUsername(e.target.value)}
                         onKeyUp={onKeyUp} />
@@ -316,4 +350,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game
 });
 
-export default connect(mapStateToProps, { sendGameInvite, joinGame, loadUsers, hideResults, sendInvite, acceptInvite })(Friends);
+export default connect(mapStateToProps, { setColor, sendGameInvite, joinGame, loadUsers, hideResults, sendInvite, acceptInvite })(Friends);

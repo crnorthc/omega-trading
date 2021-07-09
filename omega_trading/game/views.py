@@ -58,11 +58,13 @@ class CreateGame(APIView):
                 request.user.username: {
                     'first_name': request.user.first_name,
                     'last_name': request.user.last_name,
-                    'username': request.user.username
+                    'username': request.user.username,
+                    'color': 'black'
                 }
             },
             'invites': {},
-            'duration': duration
+            'duration': duration,
+            'active': False
         }
         if 'positions' in request.data:
             tournament.positions = request.data['positions']
@@ -73,19 +75,13 @@ class CreateGame(APIView):
 
 class LoadGame(APIView):
     def post(self, request, format=None):
-        print(request.user)
         user_id = request.user.id
         game = Tournament.objects.filter(host_id=user_id).filter(active=True)
-        print(game.exists())
         if not game.exists():
             game = Tournament.objects.filter(
                 players__has_key=request.user.username).filter(active=True)
             if not game.exists():
                 return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
-            else:
-                print(get_game_info(game[0]))
-        else:
-            print(get_game_info(game[0]))
         game = game[0]
         info = get_game_info(game)
         return Response({'game': info}, status=status.HTTP_200_OK)
@@ -141,12 +137,111 @@ class JoinGame(APIView):
             profile.save()
             game.save()
             info = get_game_info(game)
-            if request.data['accepted']:
+            if request.data['accepted'] and not player_in_game(request.user.username):
                 game.players[username] = {
                     'first_name': request.user.first_name,
                     'last_name': request.user.last_name,
-                    'username': request.user.username
+                    'username': request.user.username,
+                    'color': get_color(game)
                 }
                 game.save()
                 info = get_game_info(game)
+            else:
+                return Response({"Error", "Player already in Game"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return Response({'game': info, 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+
+
+class StartGame(APIView):
+    def post(self, request, format=None):
+        game = Tournament.objects.filter(host_id=request.user.id)
+        game = game[0]
+        start_time = math.floor(time.time())
+        end_time = start_time
+        if game.duration['days'] != None:
+            end_time += (game.duration['days'] * 86400)
+        if game.duration['hours'] != None:
+            end_time += (game.duration['hours'] * 3600)
+        if game.duration['mins'] != None:
+            end_time += (game.duration['mins'] * 60)
+        game.start_time = start_time
+        game.end_time = end_time
+        current_day = time.localtime()
+        current_day = (current_day[0], current_day[1], current_day[2], 1,
+                       00, 00, current_day[6], current_day[7], current_day[8])
+        current_day = math.floor(time.mktime(current_day)) - 86400
+        for player, value in game.players.items():
+            value['transactions'] = [
+                {'time': time.time() - 86400, 'securities': [], "cash": game.start_amount}]
+            value['holdings'] = {}
+            value['amount'] = game.start_amount
+        game.save()
+        info = get_game_info(game)
+        return Response({'game': info}, status=status.HTTP_200_OK)
+
+
+class Buy(APIView):
+
+    def post(self, request, format=None):
+        game = get_game(request.data['room_code'])
+        player = game.players[request.user.username]
+        symbol, quantity, quote, add = transaction(
+            request, True, player)
+        if (quote['c'] * quantity) > player['cash']:
+            return Response({"Error": "Not Enough Funds"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        if request.data['dollars']:
+            player['cash'] = player['cash'] - \
+                request.data['quantity']
+        else:
+            player['cash'] = player['cash'] - \
+                (quote['c'] * quantity)
+        holdings = player['holdings']
+        if symbol in holdings:
+            holdings[symbol] = holdings[symbol] + quantity
+        else:
+            holdings[symbol] = quantity
+        player['holdings'] = holdings
+        add['total_quantity'] = holdings[symbol]
+        player['transactions'].append(add)
+        game.save()
+        info = get_game_info(game)
+        return Response({"game": info}, status=status.HTTP_200_OK)
+
+
+class Sell(APIView):
+
+    def post(self, request, format=None):
+        game = get_game(request.data['room_code'])
+        player = game.players[request.user.username]
+        symbol, quantity, quote, add = transaction(
+            request, False, player)
+
+        if quantity > player['holdings'][symbol]:
+            return Response({"Error": "Not Enough Shares"}, status=status.HTTP_406_NOT_ACCEPTABLE)
+
+        if request.data['dollars']:
+            player['cash'] = player['cash'] + \
+                request.data['quantity']
+        else:
+            player['cash'] = player['cash'] + \
+                (quote['c'] * quantity)
+
+        player['holdings'][symbol] = player['holdings'][symbol] - quantity
+        add['total_quantity'] = player['holdings'][symbol]
+        if player['holdings'][symbol] - quantity == 0:
+            del player['holdings'][symbol]
+        player['transactions'].append(add)
+        game.save()
+        info = get_game_info(game)
+        return Response({"game": game}, status=status.HTTP_200_OK)
+
+
+class SetColor(APIView):
+    def post(self, request, format=None):
+        color = request.data['color']
+        game = get_game(request.data['room_code'])
+        if color_taken(game, color):
+            return Response({"Error": "Color Taken"}, status=status.HTTP_400_BAD_REQUEST)
+        game.players[request.user.username]['color'] = color
+        game.save()
+        info = get_game_info(game)
+        return Response({"game": info}, status=status.HTTP_200_OK)

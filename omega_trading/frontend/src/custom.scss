@@ -43,7 +43,7 @@ body {
 /******* Lobby *******/
 
 
-/******* StartGame *******/
+/******* CreateGame *******/
 .startup {
   margin: 0 12px;
   border: #000 1px solid;
@@ -67,6 +67,14 @@ body {
   font-size: 28px;
   font-weight: 700;
   text-align: center;
+  align-items: center;
+}
+
+.creategameParams {
+  width: 732px;
+  margin: 48px 78px 46px 78px;
+  display: flex;
+  flex-direction: row;
   align-items: center;
 }
 
@@ -135,10 +143,11 @@ body {
 }
 
 .params {
+  height: 214px;
   width: 366px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -161,6 +170,13 @@ body {
   font-weight: 550;
 }
 
+.game-durations {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+
 .day-duration, .hour-duration, .min-duration {
   padding: 0px 6px;
 }
@@ -180,19 +196,10 @@ body {
   align-items: center;
 }
 
-.start-amount {
-  margin-bottom: 24px;
-}
-
-.positions {
-  margin-bottom: 24px;
-  margin-top: 12px;
-}
-
 .rule {
   font-size: 20px;
   font-weight: 550;
-  padding-bottom: 12px;
+  padding-bottom: 3px;
 }
 
 .enter-params {
@@ -230,7 +237,7 @@ body {
 .pregame-title {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: baseline;
 }
 
 .host, .room-code {
@@ -248,6 +255,18 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.duration-inputs {
+  height: 36px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.pregame-amount, .pregame-position, .pregame-bet-amount {
+  height:36px;
 }
 
 .pregame-start-amount, .pregame-bet, .pregame-position {
@@ -271,7 +290,7 @@ body {
 }
 
 .pregame-positions, .pregame-start-amount {
-  margin-bottom: 48px;
+  margin-bottom: 24px;
 }
 
 .pregame-duration {
@@ -302,6 +321,37 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-direction: row;
+}
+
+.startgame-section {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.work {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 12px;
+}
+
+.noAction {
+  font-size: 18px;
+  font-weight: 600;
+  color: #727272;
+}
+
+.editButtonHidden {
+  width: 114px;
+  height: 36px;
+  border: #727272 1px solid;
+  border-radius: 5px;
+  background-color: #dfdfdf;;
+  color: #727272;
+  cursor: default !important;
 }
 
 /******* Account *******/
@@ -412,6 +462,27 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.colorChoices {
+  width: 200px;
+  height: 72px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.colorChoice {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+}
+
+.myChoice {
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
 }
 
 .sender {
@@ -648,7 +719,7 @@ input[type=number] {
 
 .action-box {
   width: 275px;
-  height: 367px;
+  height: 400px;
   background-color: #fff;
   margin-right: 0px;
   float: right;
@@ -664,6 +735,23 @@ input[type=number] {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.gameChoice {
+  display: flex;
+  flex-direction: row;
+  border-bottom: rgb(66, 66, 66) 1px solid;
+}
+
+.mode-choice {
+  border-right: rgb(66, 66, 66) 1px solid;
+}
+
+.modeChoice, .mode-choice {
+  width: 137px;
+  height: 33px;
+  font-size: 18px;
+  font-weight: 550;
 }
 
 .buySell {

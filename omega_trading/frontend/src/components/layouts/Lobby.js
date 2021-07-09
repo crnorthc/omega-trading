@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom';
 import { startGame, loadGame } from '../../actions/game';
 import CreateGame from './CreateGame';
 import Pregame from './Pregame';
+import Game from './Game';
 
 // State Stuff
 import PropTypes from "prop-types";
@@ -26,7 +27,8 @@ function Lobby(props) {
         isAuthenticated: PropTypes.bool,
         game_loaded: PropTypes.bool,
         game_loading: PropTypes.bool,
-        no_game: PropTypes.bool
+        no_game: PropTypes.bool,
+        game: PropTypes.object,
     }
 
     useEffect(() => {
@@ -50,7 +52,13 @@ function Lobby(props) {
             return <CreateGame />
         }
         else {
-            return <Pregame />
+            if (props.game.active) {
+                return <Game />
+            }
+            else {
+                return <Pregame />
+            }
+
         }
     }
 }
@@ -60,7 +68,8 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     game_loaded: state.game.game_loaded,
     game_loading: state.game.game_loading,
-    no_game: state.game.no_game
+    no_game: state.game.no_game,
+    game: state.game.game
 });
 
 export default connect(mapStateToProps, { startGame, loadGame })(Lobby);

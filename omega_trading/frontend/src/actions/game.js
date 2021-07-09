@@ -34,6 +34,26 @@ function getCookie() {
 
 }
 
+function getData(game) {
+    var players = game.players
+    for (const player in game.players) {
+        var temp = []
+        for (let i = 0; i < game.players[player].numbers.length; i++) {
+            var time = game.players[player].numbers[i].time
+            var date = new Date(time * 1000)
+            var year = date.getFullYear()
+            var month = date.getMonth()
+            var day = date.getDate()
+            var hours = date.getHours()
+            var mins = date.getMinutes()
+            temp.push({ time: { year: year, month: month, day: day, hours: hours, minutes: mins }, price: game.players[player].numbers[i]['price'] })
+        }
+        players[player].numbers = temp
+    }
+    game.players = players
+    return game
+}
+
 export const createGame = (amount, bet, positions, days, hours, mins, code) => dispatch => {
 
     dispatch({
@@ -114,7 +134,7 @@ export const loadGame = () => dispatch => {
             else {
                 dispatch({
                     type: GAME_LOADED,
-                    payload: res.data.game
+                    payload: getData(res.data.game)
                 })
             };
         })
@@ -168,6 +188,122 @@ export const sendGameInvite = (username, unadd, room_code) => dispatch => {
                 dispatch({
                     type: GAME_LOADED,
                     payload: res.data.game
+                })
+            };
+        })
+}
+
+export const gameSell = (symbol, quantity, dollars, room_code) => dispatch => {
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body = JSON.stringify({ symbol });
+
+    axios.post('/securities/update', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log("oops")
+            }
+            else {
+                var quote = res.data
+                var body = JSON.stringify({ symbol, quantity, quote, dollars, room_code });
+                axios.post('/game/sell', body, config)
+                    .then(res => {
+                        if (res.data.Error) {
+                            console.log("oops")
+                        }
+                        else {
+                            dispatch({
+                                type: GAME_LOADED,
+                                payload: res.data.game
+                            })
+                        };
+                    })
+            };
+        })
+}
+
+export const gameBuy = (symbol, quantity, dollars, room_code) => dispatch => {
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body = JSON.stringify({ symbol });
+
+    axios.post('/securities/update', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log("oops")
+            }
+            else {
+                var quote = res.data
+                var body = JSON.stringify({ symbol, quantity, quote, dollars, room_code });
+                axios.post('/game/buy', body, config)
+                    .then(res => {
+                        if (res.data.Error) {
+                            console.log("oops")
+                        }
+                        else {
+                            dispatch({
+                                type: GAME_LOADED,
+                                payload: res.data.game
+                            })
+                        };
+                    })
+            };
+        })
+}
+
+export const setColor = (color, room_code) => dispatch => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body = JSON.stringify({ color, room_code });
+    axios.post('/game/color', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log("oops")
+            }
+            else {
+                dispatch({
+                    type: GAME_LOADED,
+                    payload: res.data.game
+                })
+            };
+        })
+}
+
+export const startGame = () => dispatch => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body = JSON.stringify({});
+    axios.post('/game/start', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log("oops")
+            }
+            else {
+                dispatch({
+                    type: GAME_LOADED,
+                    payload: getData(res.data.game)
                 })
             };
         })
