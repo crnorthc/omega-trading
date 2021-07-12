@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import { startGame, loadGame } from '../../actions/game';
+import { startGame, loadGame, loadHistory } from '../../actions/game';
 import CreateGame from './CreateGame';
 import Pregame from './Pregame';
 import Game from './Game';
@@ -24,10 +24,14 @@ function Lobby(props) {
 
     Lobby.propTypes = {
         startGame: PropTypes.func.isRequired,
+        loadHistory: PropTypes.func.isRequired,
         isAuthenticated: PropTypes.bool,
         game_loaded: PropTypes.bool,
         game_loading: PropTypes.bool,
         no_game: PropTypes.bool,
+        history_loaded: PropTypes.bool,
+        history_loading: PropTypes.bool,
+        history: PropTypes.object,
         game: PropTypes.object,
     }
 
@@ -35,8 +39,10 @@ function Lobby(props) {
         if (!props.game_loaded && !props.game_loading) {
             props.loadGame()
         }
+        if (!props.history_loaded && !props.history_loading && props.game_loaded) {
+            props.loadHistory()
+        }
     })
-
 
     if ((!props.game_loading && !props.game_loaded) || props.game_loading) {
         return (
@@ -68,8 +74,10 @@ const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     game_loaded: state.game.game_loaded,
     game_loading: state.game.game_loading,
+    history_loaded: state.game.history_loaded,
+    history_loading: state.game.history_loading,
     no_game: state.game.no_game,
     game: state.game.game
 });
 
-export default connect(mapStateToProps, { startGame, loadGame })(Lobby);
+export default connect(mapStateToProps, { startGame, loadGame, loadHistory })(Lobby);

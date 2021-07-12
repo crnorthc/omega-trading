@@ -42,6 +42,44 @@ body {
 
 /******* Lobby *******/
 
+/******* History *******/
+.game-history {
+  margin: 72px 12px 0px 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.history-title {
+  border-bottom: #000 1px solid;
+  height: 60px;
+  font-size: 28px;
+  font-weight: 700;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-history {
+  padding: 24px 0px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgb(114, 114, 114);
+}
+
+/******* Game *******/
+
+.gameContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.leaderboard {
+  font-size: 16px;
+  font-weight: 700;
+}
 
 /******* CreateGame *******/
 .startup {

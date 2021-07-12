@@ -144,8 +144,8 @@ function ChartDisplay(props) {
             dollarMetric = true
         }
         if (type === "buy") {
-            if (mode == 'game') {
-                if ((quantity * props.current_value) < props.user.portfolio_amount) {
+            if (mode != 'game') {
+                if (Number(quantity * props.current_value) < props.user.portfolio_amount) {
                     props.buy(props.symbol, amount, dollarMetric)
                 }
                 else {
@@ -153,7 +153,7 @@ function ChartDisplay(props) {
                 }
             }
             else {
-                if ((quantity * props.current_value) < props.game.players[props.user.username]['cash']) {
+                if (Number(quantity * props.current_value) < props.game.players[props.user.username]['cash']) {
                     props.gameBuy(props.symbol, amount, dollarMetric, props.game.room_code)
                 }
                 else {
@@ -163,7 +163,7 @@ function ChartDisplay(props) {
         }
         else {
             if (sellAll) {
-                if (mode == 'game') {
+                if (mode != 'game') {
                     props.sell(props.symbol, props.user.holdings[props.symbol])
                 }
                 else {
@@ -171,7 +171,7 @@ function ChartDisplay(props) {
                 }
             }
             else {
-                if (props.no_game) {
+                if (mode != 'game') {
                     if (quantity < props.user.holdings[props.symbol]) {
                         props.sell(props.symbol, amount, dollarMetric)
                     }
@@ -181,7 +181,7 @@ function ChartDisplay(props) {
                 }
                 else {
                     if (quantity < props.game.players[props.user.username]['holdings'][props.symbol]) {
-                        props.sell(props.symbol, amount, dollarMetric, props.game.room_code)
+                        props.gameSell(props.symbol, amount, dollarMetric, props.game.room_code)
                     }
                     else {
                         alert("You do not have enough shares to sell!")
@@ -224,7 +224,7 @@ function ChartDisplay(props) {
                         </div>
                     </div>
                     <div className="action-box">
-                        {props.game.active ?
+                        {!props.no_game ?
                             <div className='gameChoice'>
                                 <button className="mode-choice" style={mode === 'nogame' ? modeStyle : null} onClick={e => setMode('nogame')}>Portfolio</button>
                                 <button className="modeChoice" style={mode === 'game' ? modeStyle : null} onClick={e => setMode('game')}>Game</button>

@@ -98,7 +98,8 @@ def load_portfolio(period, user, me=False):
     temp = {}
     times = []
     small_charts = {}
-
+    print(start_time)
+    print(current_time)
     # Generates the list of prices for each symbol
     for key, value in profile.transactions.items():
         for t in value:

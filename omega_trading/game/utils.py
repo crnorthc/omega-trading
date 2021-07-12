@@ -76,7 +76,12 @@ def get_game_info(game):
     user = User.objects.filter(username=game.host.username)
     user = user[0]
     players = {}
+    me = {}
+    charts = {}
+    holdings = {}
     for player, value in game.players.items():
+        if value['username'] == user.username:
+            me = value
         players[player] = {
             'username': value['username'],
             'first_name': value['first_name'],
@@ -84,8 +89,13 @@ def get_game_info(game):
             'color': value['color']
         }
         if game.start_time != "":
-            players[player]['numbers'] = load_portfolio(value, game)
-        print(type(players[player]['numbers'][0]['time']))
+            players[player]['numbers'], players[player]['amount'] = load_portfolio(
+                value, game)
+            players[player]['cash'] = value['amount']
+            charts = load_charts(me, game)
+            if 'holdings' in me:
+                holdings = me['holdings']
+
     return {
         'host': {
             'username': user.username,
@@ -99,8 +109,35 @@ def get_game_info(game):
         'positions': game.positions,
         'players': players,
         'invites': game.invites,
-        'active': game.start_time != ""
+        'active': game.start_time != "",
+        'charts': charts,
+        'holdings': holdings
     }
+
+
+def load_charts(player, game):
+    current_time = math.floor(time.time())
+    start_time = game.start_time
+    charts = {}
+    if 'transactions' in player:
+        try:
+            player['transactions'][1]
+        except IndexError:
+            return charts
+        if current_time - player['transactions'][1]['time'] > 300:
+            current_time = str(math.floor(time.time()))
+            for t in player['transactions']:
+                if 'symbol' in t:
+                    s = t['symbol']
+                    if not s in charts and s in player['holdings']:
+                        r = requests.get(
+                            'https://finnhub.io/api/v1/stock/candle?symbol=' + s + '&resolution=5&from=' + start_time + '&to=' + current_time + '&token=' + FINNHUB_API_KEY)
+                        r = r.json()
+                        charts[s] = []
+                        for i in range(len(r['t']) - 1):
+                            charts[s].append(
+                                {'time': r['t'][i], 'price': r['c'][i]})
+    return charts
 
 
 def load_portfolio(player, game):
@@ -108,13 +145,35 @@ def load_portfolio(player, game):
     start_time = int(game.start_time)
     end_time = int(game.end_time)
 
+    if current_time > end_time:
+        current_time = end_time
+
     # Part 3: Generate the lists of prices for each symbol owned
     temp = {}
     times = []
-    small_charts = {}
 
     # When player has no transactions
-    if len(player['transactions']) == 1:
+    try:
+        if current_time - player['transactions'][1]['time'] < 300:
+            numbers = []
+            count = 0
+            current_time = time.time()
+            while True:
+                if (start_time + (300 * count) <= current_time):
+                    add = {'time': start_time + (300 * count)}
+                    add['price'] = game.start_amount
+                    numbers.append(add)
+                    count += 1
+                else:
+                    if start_time + (300 * count) <= end_time:
+                        add = {'time': start_time + (300 * count)}
+                        add['price'] = None
+                        numbers.append(add)
+                        count += 1
+                    else:
+                        break
+            return numbers, game.start_amount
+    except IndexError:
         numbers = []
         count = 0
         current_time = time.time()
@@ -132,10 +191,10 @@ def load_portfolio(player, game):
                     count += 1
                 else:
                     break
-        return numbers
+        return numbers, game.start_amount
 
     # Generates the list of prices for each symbol
-    for t in player['transactions'].items():
+    for t in player['transactions']:
         if 'symbol' in t:
             s = t['symbol']
             if not s in temp:
@@ -144,11 +203,6 @@ def load_portfolio(player, game):
                 r = r.json()
                 temp[s] = r['c']
                 times.append(r['t'])
-                if s in player.holdings:
-                    small_charts[s] = []
-                    for i in range(len(r['t']) - 1):
-                        small_charts[s].append(
-                            {'time': r['t'][i], 'price': r['c'][i]})
     times = min(times, key=len)
 
     # transforms each list of symbol prices to uniform length
@@ -161,22 +215,26 @@ def load_portfolio(player, game):
     goal = []
     prev_time = times[0]
     standard_time = start_time
-    for i in range(1, (end_time - start_time) / 300):
+    worth = game.start_amount
+    for i in range(1, int((end_time - start_time) / 300)):
         if i >= (len(times)):
-            goal.append(None)
+            if standard_time > current_time:
+                goal.append({'time': standard_time, 'price': None})
+            else:
+                goal.append({'time': standard_time, 'price': worth})
         else:
-            for x in range(latest_transaction, len(player['transactions'])):
+            for x in player['transactions']:
                 if x['time'] >= prev_time and x['time'] < times[i]:
                     latest_transaction = i
                     latest_holdings[x['symbol']] = x['total_quantity']
                     latest_amount = x['cash']
-            add = {'time': standard_time, 'amount': latest_amount}
+            add = {'time': standard_time, 'price': latest_amount}
             for key, value in latest_holdings.items():
-                add['amount'] += temp[key][i] * value
+                add['price'] += temp[key][i] * value
+            worth = add['price']
             goal.append(add)
         standard_time += 300
-
-    return goal
+    return goal, worth
 
 
 def player_in_game(username):
@@ -198,9 +256,9 @@ def transaction(request, bought, player):
         quantity = quote['c'] * quantity
 
     if bought:
-        cash = player['cash'] - quantity
+        cash = player['amount'] - quantity
     else:
-        cash = player['cash'] + quantity
+        cash = player['amount'] + quantity
 
     if request.data['dollars']:
         quantity = quantity / quote['c']
@@ -224,3 +282,16 @@ def get_color(game):
     if color_taken(game, color):
         return get_color(game)
     return color
+
+
+def get_history(games):
+    temp = {}
+    for game in games:
+        temp[game['room_code']] = {
+            'players': game['players'],
+            'start_amount': game['start_amount'],
+            'bet': game['bet'],
+            'start_time': game['start_time'],
+            'end_time': game['end_time']
+        }
+    return temp

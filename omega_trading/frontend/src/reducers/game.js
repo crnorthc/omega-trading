@@ -5,6 +5,9 @@ import {
     GAME_LOADED,
     GAME_JOINED,
     GAME_LOADING,
+    HISTORY_LOADED,
+    HISTORY_LOADING,
+    NO_HISTORY,
     NO_GAME
 } from "../actions/types";
 
@@ -15,6 +18,10 @@ const initialState = {
     game_loading: false,
     game_loaded: false,
     no_game: false,
+    no_history: false,
+    history: null,
+    history_loading: false,
+    history_loaded: false,
     game: null
 }
 
@@ -72,6 +79,25 @@ export default function (state = initialState, action) {
                 game_loading: false,
                 no_game: true,
                 game_loaded: true
+            }
+        case HISTORY_LOADING:
+            return {
+                ...state,
+                history_loading: true
+            }
+        case HISTORY_LOADED:
+            return {
+                ...state,
+                history_loaded: true,
+                history_loading: false,
+                history: action.payload
+            }
+        case NO_HISTORY:
+            return {
+                ...state,
+                history_loading: false,
+                no_history: true,
+                history_loaded: true
             }
         default:
             return state;

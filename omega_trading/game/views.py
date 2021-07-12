@@ -42,7 +42,8 @@ class CreateGame(APIView):
         tournament.players[request.user.username] = {
             'first_name': request.user.first_name,
             'last_name': request.user.last_name,
-            'username': request.user.username
+            'username': request.user.username,
+            'color': 'black'
         }
         game = {
             'host': {
@@ -83,6 +84,24 @@ class LoadGame(APIView):
             if not game.exists():
                 return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
         game = game[0]
+        current_time = time.time()
+        if game.end_time != '':
+            if int(game.end_time) <= current_time:
+                game.room_code = None
+                game.invites = {}
+                game.active = False
+                for player, value in game.players.items():
+                    x, worth = load_portfolio(value, game)
+                    temp = {
+                        'username': value['username'],
+                        'first_name': value['first_name'],
+                        'last_name': value['last_name'],
+                        'color': value['color']
+                    }
+                    temp['worth'] = worth
+                    game.players[player] = temp
+                game.save()
+                return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
         info = get_game_info(game)
         return Response({'game': info}, status=status.HTTP_200_OK)
 
@@ -186,13 +205,13 @@ class Buy(APIView):
         player = game.players[request.user.username]
         symbol, quantity, quote, add = transaction(
             request, True, player)
-        if (quote['c'] * quantity) > player['cash']:
+        if (quote['c'] * quantity) > player['amount']:
             return Response({"Error": "Not Enough Funds"}, status=status.HTTP_406_NOT_ACCEPTABLE)
         if request.data['dollars']:
-            player['cash'] = player['cash'] - \
+            player['amount'] = player['amount'] - \
                 request.data['quantity']
         else:
-            player['cash'] = player['cash'] - \
+            player['amount'] = player['amount'] - \
                 (quote['c'] * quantity)
         holdings = player['holdings']
         if symbol in holdings:
@@ -219,10 +238,10 @@ class Sell(APIView):
             return Response({"Error": "Not Enough Shares"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         if request.data['dollars']:
-            player['cash'] = player['cash'] + \
+            player['amount'] = player['amount'] + \
                 request.data['quantity']
         else:
-            player['cash'] = player['cash'] + \
+            player['amount'] = player['amount'] + \
                 (quote['c'] * quantity)
 
         player['holdings'][symbol] = player['holdings'][symbol] - quantity
@@ -245,3 +264,16 @@ class SetColor(APIView):
         game.save()
         info = get_game_info(game)
         return Response({"game": info}, status=status.HTTP_200_OK)
+
+
+class GameHistory(APIView):
+    def post(self, request, format=None):
+        user_id = request.user.id
+        games = Tournament.objects.filter(host_id=user_id).filter(active=False)
+        if not games.exists():
+            games = Tournament.objects.filter(
+                players__has_key=request.user.username).filter(active=False)
+            if not games.exists():
+                return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
+        history = get_history(games)
+        return Response({"games": history}, status=status.HTTP_200_OK)

@@ -27,4 +27,7 @@ export const GAME_LOADING = 'GAME_LOADING';
 export const GAME_LOADED = 'GAME_LOADED';
 export const NO_GAME = 'NO_GAME';
 export const GAME_JOINED = 'GAME_JOINED';
+export const HISTORY_LOADING = 'HISTORY_LOADING';
+export const HISTORY_LOADED = 'HISTORY_LOADED';
+export const NO_HISTORY = 'NO_HISTORY';
 

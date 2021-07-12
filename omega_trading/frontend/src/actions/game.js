@@ -5,6 +5,9 @@ import {
     GAME_LOADED,
     GAME_JOINED,
     GAME_LOADING,
+    HISTORY_LOADED,
+    HISTORY_LOADING,
+    NO_HISTORY,
     NO_GAME
 } from './types';
 
@@ -38,20 +41,61 @@ function getData(game) {
     var players = game.players
     for (const player in game.players) {
         var temp = []
-        for (let i = 0; i < game.players[player].numbers.length; i++) {
-            var time = game.players[player].numbers[i].time
-            var date = new Date(time * 1000)
-            var year = date.getFullYear()
-            var month = date.getMonth()
-            var day = date.getDate()
-            var hours = date.getHours()
-            var mins = date.getMinutes()
-            temp.push({ time: { year: year, month: month, day: day, hours: hours, minutes: mins }, price: game.players[player].numbers[i]['price'] })
+        if ('numbers' in game.players[player]) {
+            for (let i = 0; i < game.players[player].numbers.length; i++) {
+                var time = game.players[player].numbers[i].time
+                var date = new Date(time * 1000)
+                var year = date.getFullYear()
+                var month = date.getMonth()
+                var day = date.getDate()
+                var hours = date.getHours()
+                var mins = date.getMinutes()
+                temp.push({ time: { year: year, month: month, day: day, hours: hours, minutes: mins }, price: game.players[player].numbers[i]['price'] })
+            }
+            players[player].numbers = temp
         }
-        players[player].numbers = temp
+        game.players = players
     }
-    game.players = players
+    if ('charts' in game) {
+        var charts = game.charts
+        for (const chart in game.charts) {
+            var temp = []
+            for (let i = 0; i < game.charts[chart].length; i++) {
+                var time = game.charts[chart][i].time
+                var date = new Date(time * 1000)
+                var year = date.getFullYear()
+                var month = date.getMonth()
+                var day = date.getDate()
+                var hours = date.getHours()
+                var mins = date.getMinutes()
+                temp.push({ time: { year: year, month: month, day: day, hours: hours, minutes: mins }, price: game.charts[chart][i]['price'] })
+            }
+            charts[chart] = temp
+        }
+        game.charts = charts
+    }
     return game
+}
+
+function getDates(games) {
+    var temp = games
+    for (game in games) {
+        var start_date = Date(games[game].start_time * 1000)
+        var end_date = Date(games[game].end_time * 1000)
+        temp[game].start_time = {
+            'year': start_date.getFullYear(),
+            'month': start_date.getMonth(),
+            'day': start_date.getDate(),
+            'mins': start_date.getMinutes()
+        }
+        temp[game].end_time = {
+            'year': end_date.getFullYear(),
+            'month': end_date.getMonth(),
+            'day': end_date.getDate(),
+            'mins': end_date.getMinutes()
+        }
+    }
+    return temp
 }
 
 export const createGame = (amount, bet, positions, days, hours, mins, code) => dispatch => {
@@ -304,6 +348,37 @@ export const startGame = () => dispatch => {
                 dispatch({
                     type: GAME_LOADED,
                     payload: getData(res.data.game)
+                })
+            };
+        })
+}
+
+export const loadHistory = () => dispatch => {
+
+    dispatch({
+        type: HISTORY_LOADING
+    })
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body = JSON.stringify({});
+
+    axios.post('/game/history', body, config)
+        .then(res => {
+            if (res.status == 204) {
+                dispatch({
+                    type: NO_HISTORY
+                })
+            }
+            else {
+                dispatch({
+                    type: HISTORY_LOADED,
+                    payload: getDates(res.data.games)
                 })
             };
         })

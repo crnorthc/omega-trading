@@ -93,7 +93,7 @@ function Friends(props) {
                             <img className="userPic" src={profilePic} width={40} />
                         </div>
                         <div className="userNames">
-                            <div style={{ 'color': props.game.players[list[i].username].color }} className="fullName-user">{list[i].first_name} {list[i].last_name}</div>
+                            <div style={props.friendsOnly ? { 'color': props.game.players[list[i].username].color } : null} className="fullName-user">{list[i].first_name} {list[i].last_name}</div>
                             <div className="userName-user">@{i}</div>
                         </div>
                     </div>
