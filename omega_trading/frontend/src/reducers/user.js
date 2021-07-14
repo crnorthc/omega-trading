@@ -8,7 +8,9 @@ import {
     UPDATE_USER,
     FRIENDS_LOADED,
     HISTORY_SAVED,
-    GAME_JOINED
+    GAME_JOINED,
+    LOADING,
+    LEADERBOARD_LOADED
 } from "../actions/types";
 
 import { Redirect } from "react-router-dom";
@@ -21,13 +23,20 @@ const initialState = {
     users: null,
     users_loaded: false,
     invites_sent: null,
-    friends_charts: null
+    friends_charts: null,
+    loading: false,
+    leaderboard: null
 }
 
 export default function (state = initialState, action) {
     switch (action.type) {
         case LOGOUT_SUCCESS:
             return initialState
+        case LOADING:
+            return {
+                ...state,
+                loading: true
+            }
         case USER_LOADED:
             return {
                 ...state,
@@ -73,6 +82,12 @@ export default function (state = initialState, action) {
                 ...state,
                 portfolio: action.payload.data,
                 small_charts: charts
+            }
+        case LEADERBOARD_LOADED:
+            return {
+                ...state,
+                loading: false,
+                leaderboard: action.payload
             }
         default:
             return state;

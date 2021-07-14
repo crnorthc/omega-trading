@@ -1,7 +1,7 @@
 // Overwrite theme variables
 
 $primary: #00b405;
-$secondary: #C3F43C;
+$secondary: #c3f43c;
 $dark: #000;
 $light: #fff;
 $success: #55a76a;
@@ -11,15 +11,20 @@ $danger: #f44336;
 
 button {
   background: none;
-	color: inherit;
-	border: none;
-	padding: 0;
-	font: inherit;
-	cursor: pointer;
-	outline: inherit;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
 
-h2, .h2, h3, .h3, h4, .h4 {
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4 {
   margin-bottom: 0px !important;
 }
 
@@ -40,7 +45,63 @@ body {
   padding-bottom: 72px;
 }
 
-/******* Lobby *******/
+/******* Variables *******/
+.ai-c {
+  align-items: center;
+}
+
+.jc-s {
+  justify-content: space-between;
+}
+
+.jc-c {
+  justify-content: center;
+}
+
+.fr {
+  display: flex;
+  flex-direction: row;
+}
+
+.fc {
+  display: flex;
+  flex-direction: column;
+}
+
+/******* Leaderboard *******/
+
+.leaderboard-title {
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.Leaderboard {
+  margin: 0 12px;
+  border: #000 1px solid;
+  border-radius: 5px;
+}
+
+.leaderboard-buttons {
+  display: flex;
+  flex-direction: row;
+  border-bottom: #000 1px solid;
+}
+
+.leaderboard-button {
+  width: 493px;
+  height: 60px;
+  text-align: center;
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.rank {
+  margin: 24px 96px;
+  font-size: 22px;
+  font-weight: 550;
+}
 
 /******* History *******/
 .game-history {
@@ -54,10 +115,6 @@ body {
   height: 60px;
   font-size: 28px;
   font-weight: 700;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
 }
 
 .no-history {
@@ -68,8 +125,60 @@ body {
   color: rgb(114, 114, 114);
 }
 
+.history-game {
+  font-size: 16px;
+  font-weight: 550;
+  padding: 12px 0px;
+}
+
+.history-headers {
+  padding-top: 24px;
+  margin-bottom: 12px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.header {
+  width: 328px;
+}
+
+.history-header {
+  padding: 0px 24px 12px 24px;
+  border-bottom: #000 1px solid;
+}
+
+.history-date {
+  width: 328px;
+}
+
+.history-rules {
+  width: 328px;
+}
+
+.history-rules-cont {
+  width: 200px;
+}
+
+.history-results {
+  width: 328px;
+}
+
+.history-bet {
+  padding-left: 6px;
+}
+
+.history-player {
+  width: 200px;
+}
+
+.arrow {
+  padding: 0 6px;
+  font-size: 24px;
+}
+
 /******* Game *******/
 
+// NOT FOUND
 .gameContainer {
   display: flex;
   flex-direction: row;
@@ -90,30 +199,24 @@ body {
 
 .game-selection {
   border-bottom: #000 1px solid;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 }
 
 .create-game {
   border-right: #000 1px solid;
 }
 
-.join-game, .create-game {
+.join-game,
+.create-game {
   height: 60px;
   width: 492px;
   font-size: 28px;
   font-weight: 700;
   text-align: center;
-  align-items: center;
 }
 
 .creategameParams {
   width: 732px;
   margin: 48px 78px 46px 78px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
 }
 
 .enter-code {
@@ -200,7 +303,7 @@ body {
   height: 34px;
   text-align: center;
   border-radius: 5px;
-  border: #424242 1px solid;;
+  border: #424242 1px solid;
 }
 
 .duration {
@@ -215,7 +318,9 @@ body {
   align-items: center;
 }
 
-.day-duration, .hour-duration, .min-duration {
+.day-duration,
+.hour-duration,
+.min-duration {
   padding: 0px 6px;
 }
 
@@ -224,10 +329,13 @@ body {
   height: 34px;
   width: 36px;
   border-radius: 5px;
-  border: #424242 1px solid;;
+  border: #424242 1px solid;
 }
 
-.start-amount, .bet, .positions, .durations {
+.start-amount,
+.bet,
+.positions,
+.durations {
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -278,7 +386,8 @@ body {
   align-items: baseline;
 }
 
-.host, .room-code {
+.host,
+.room-code {
   color: rgb(77, 77, 77);
   padding-left: 12px;
 }
@@ -303,11 +412,15 @@ body {
   justify-content: center;
 }
 
-.pregame-amount, .pregame-position, .pregame-bet-amount {
-  height:36px;
+.pregame-amount,
+.pregame-position,
+.pregame-bet-amount {
+  height: 36px;
 }
 
-.pregame-start-amount, .pregame-bet, .pregame-position {
+.pregame-start-amount,
+.pregame-bet,
+.pregame-position {
   width: 136px;
   display: flex;
   flex-direction: column;
@@ -327,7 +440,8 @@ body {
   border-bottom: rgb(65, 65, 65) 1px solid;
 }
 
-.pregame-positions, .pregame-start-amount {
+.pregame-positions,
+.pregame-start-amount {
   margin-bottom: 24px;
 }
 
@@ -336,7 +450,9 @@ body {
   padding-left: 2px;
 }
 
-.day-duration-game, .hour-duration-game, .min-duration-game {
+.day-duration-game,
+.hour-duration-game,
+.min-duration-game {
   display: flex;
   flex-direction: row;
   align-items: baseline;
@@ -387,7 +503,7 @@ body {
   height: 36px;
   border: #727272 1px solid;
   border-radius: 5px;
-  background-color: #dfdfdf;;
+  background-color: #dfdfdf;
   color: #727272;
   cursor: default !important;
 }
@@ -482,7 +598,7 @@ body {
 }
 
 .suggested {
-  border-bottom: #000 1px solid
+  border-bottom: #000 1px solid;
 }
 
 .otherUser {
@@ -592,13 +708,15 @@ body {
   border-bottom: #000 1px solid;
 }
 
-.accept, .decline {
+.accept,
+.decline {
   padding: 7px 12px;
   border: #000 1px solid;
   border-radius: 5px;
 }
 
-.accept:hover, .decline:hover {
+.accept:hover,
+.decline:hover {
   background-color: rgb(235, 235, 235);
 }
 
@@ -612,7 +730,6 @@ body {
   font-weight: 600;
   color: rgb(114, 114, 114);
 }
-
 
 /******* Home  *******/
 
@@ -678,7 +795,7 @@ body {
 }
 
 .small {
-  stroke-width: .5px !important;
+  stroke-width: 0.5px !important;
 }
 
 .stock-price {
@@ -686,8 +803,6 @@ body {
   text-align: right;
   font-size: 13px;
 }
-
-
 
 /******* Chart *******/
 
@@ -733,13 +848,12 @@ body {
 }
 
 .hiddenPath {
-  stroke: rgb(150, 150, 150)
+  stroke: rgb(150, 150, 150);
 }
 
 .selectedPath {
   stroke: #000 !important;
 }
-
 
 /******* ActionBox *******/
 
@@ -751,7 +865,7 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type=number] {
+input[type="number"] {
   -moz-appearance: textfield;
 }
 
@@ -785,7 +899,8 @@ input[type=number] {
   border-right: rgb(66, 66, 66) 1px solid;
 }
 
-.modeChoice, .mode-choice {
+.modeChoice,
+.mode-choice {
   width: 137px;
   height: 33px;
   font-size: 18px;
@@ -801,7 +916,8 @@ input[type=number] {
   align-items: center;
 }
 
-.buy, .sell {
+.buy,
+.sell {
   font-size: 15px;
   font-weight: 700;
   line-height: 20px;
@@ -809,7 +925,8 @@ input[type=number] {
   padding: 14px 0;
 }
 
-.buy:hover, .sell:hover {
+.buy:hover,
+.sell:hover {
   cursor: pointer;
   color: rgb(177, 177, 177);
 }
@@ -822,7 +939,9 @@ input[type=number] {
   padding-top: 6px;
 }
 
-.investIn, .Amount, .Quantity {
+.investIn,
+.Amount,
+.Quantity {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -892,7 +1011,8 @@ input[type=number] {
   height: 36px;
 }
 
-#shares:hover, .typeButton-drop-last:hover {
+#shares:hover,
+.typeButton-drop-last:hover {
   background-color: rgb(235, 235, 235) !important;
 }
 
@@ -907,7 +1027,7 @@ input[type=number] {
 }
 
 .metric {
-  padding-left: 12px;;
+  padding-left: 12px;
 }
 
 .dropper {
@@ -915,7 +1035,8 @@ input[type=number] {
   padding-right: 4px;
 }
 
-.type, .metric{
+.type,
+.metric {
   display: inline-block;
 }
 
@@ -1000,7 +1121,8 @@ input[type=number] {
   padding-top: 10px;
 }
 
-.symbol-link:hover, .logout:hover {
+.symbol-link:hover,
+.logout:hover {
   background-color: rgb(218, 218, 218);
 }
 
@@ -1049,7 +1171,7 @@ input[type=number] {
   height: 10em;
   display: flex;
   align-items: center;
-  justify-content: center
+  justify-content: center;
 }
 
 .navLoginSignup {
@@ -1068,7 +1190,7 @@ input[type=number] {
   display: flex;
   align-items: center;
   flex-direction: row;
-  margin-left: 205px;
+  margin-left: 67px;
 }
 
 .accountLink {
@@ -1086,10 +1208,10 @@ input[type=number] {
   border-radius: 5px;
 }
 
-.navLogin, .navSignup {
+.navLogin,
+.navSignup {
   padding: 0 12px;
 }
-
 
 /******* Loader *******/
 .loader {
@@ -1104,16 +1226,22 @@ input[type=number] {
 
 /* Safari */
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-
-
 // Must be at bottom
-@import "~bootstrap/scss/bootstrap.scss"
+@import "~bootstrap/scss/bootstrap.scss";

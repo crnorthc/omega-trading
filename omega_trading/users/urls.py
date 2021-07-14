@@ -14,9 +14,10 @@ urlpatterns = [
     path('buy', Buy.as_view()),
     path('sell', Sell.as_view()),
     path('load', LoadUser.as_view()),
-    path('portfolio', LoadUserPortfolio.as_view()),
+    path('portfolio', LoadPortfolio.as_view()),
     path('search-user', SearchUsers.as_view()),
     path('invite', SendInvite.as_view()),
     path('accept', AcceptInvite.as_view()),
-    path('history', SaveHistory.as_view())
+    path('history', SaveHistory.as_view()),
+    path('leaderboard', Leaderboard.as_view())
 ]

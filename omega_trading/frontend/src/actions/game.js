@@ -79,20 +79,14 @@ function getData(game) {
 
 function getDates(games) {
     var temp = games
-    for (game in games) {
-        var start_date = Date(games[game].start_time * 1000)
-        var end_date = Date(games[game].end_time * 1000)
+    for (const game in games) {
+        var date = new Date(games[game].start_time * 1000)
         temp[game].start_time = {
-            'year': start_date.getFullYear(),
-            'month': start_date.getMonth(),
-            'day': start_date.getDate(),
-            'mins': start_date.getMinutes()
-        }
-        temp[game].end_time = {
-            'year': end_date.getFullYear(),
-            'month': end_date.getMonth(),
-            'day': end_date.getDate(),
-            'mins': end_date.getMinutes()
+            'year': date.getFullYear(),
+            'month': date.getMonth(),
+            'day': date.getDate(),
+            'hour': date.getHours(),
+            'mins': date.getMinutes()
         }
     }
     return temp
@@ -147,6 +141,48 @@ export const createGame = (amount, bet, positions, days, hours, mins, code) => d
             else {
                 dispatch({
                     type: GAME_CREATED,
+                    payload: res.data.game
+                })
+            };
+        })
+}
+
+export const editGame = (amount, bet, positions, days, hours, mins, code) => dispatch => {
+
+    dispatch({
+        type: GAME_LOADING
+    })
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body;
+    amount = parseInt(amount)
+    bet = parseInt(bet)
+    days = parseInt(days)
+    hours = parseInt(hours)
+    mins = parseInt(mins)
+    if (positions == '') {
+        body = JSON.stringify({ amount, bet, days, hours, mins, code });
+    }
+    else {
+        positions = parseInt(positions)
+        body = JSON.stringify({ amount, bet, positions, days, hours, mins, code });
+    }
+
+
+    axios.post('/game/edit', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log('oops')
+            }
+            else {
+                dispatch({
+                    type: GAME_LOADED,
                     payload: res.data.game
                 })
             };

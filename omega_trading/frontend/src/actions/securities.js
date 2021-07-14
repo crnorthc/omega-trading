@@ -45,7 +45,7 @@ export const searchSymbols = (search) => dispatch => {
             "Content-Type": "application/json"
         }
     };
-    var returnData
+
     const body = JSON.stringify({ search });
     if (search !== "") {
         axios.post('/securities/search', body, config)
@@ -54,15 +54,9 @@ export const searchSymbols = (search) => dispatch => {
                     console.log("ooops")
                 }
                 else {
-                    if (res.data.result.length > 9) {
-                        returnData = res.data.result.slice(0, 6)
-                    }
-                    else {
-                        returnData = res.data.result
-                    }
                     dispatch({
                         type: SEARCH_MADE,
-                        payload: returnData
+                        payload: res.data
                     })
                 };
             })

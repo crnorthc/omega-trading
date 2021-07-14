@@ -94,6 +94,7 @@ function MyNavbar(props) {
         </form>
         {props.isAuthenticated ?
           <div className="accountButtons">
+            <Link to='/leaderboard' className="accountLink">Leaderboard</Link>
             <Link to='/lobby' className="accountLink">Lobby</Link>
             <Link to='/account' className="accountLink">Account</Link>
             <button onClick={(e) => props.logout()} className="logout">Logout</button>

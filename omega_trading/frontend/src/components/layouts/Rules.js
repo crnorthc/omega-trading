@@ -196,7 +196,7 @@ function Rules(props) {
                         <div className="subHeader">
                             <h4 className="rules-title">Rules</h4>
                         </div>
-                        <div className='creategameParams'>
+                        <div className='creategameParams fr ai-c'>
                             <div className='params'>
                                 <div className='start-amount'>
                                     <div className='rule'>Start Amount</div>

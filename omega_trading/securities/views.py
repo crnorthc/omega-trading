@@ -19,7 +19,24 @@ class SearchSymbols(APIView):
         search = request.data["search"]
         r = requests.get('https://finnhub.io/api/v1/search?q=' +
                          search + '&token='+FINNHUB_API_KEY)
-        return Response(r.json(), status=status.HTTP_200_OK)
+        r = r.json()
+
+        values = []
+        count = 0
+
+        while True:
+            if len(search) == 0:
+                break
+            for result in r['result']:
+                if len(values) >= 6:
+                    break
+                if result['description'].lower().startswith(search):
+                    values.append(result)
+                if result['symbol'].lower().startswith(search):
+                    values.append(result)
+            search = search[:-1]
+        
+        return Response(values, status=status.HTTP_200_OK)
 
 
 class LoadSecurity(APIView):

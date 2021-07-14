@@ -7,8 +7,8 @@ import {
     HIDE_RESULTS,
     UPDATE_USER,
     FRIENDS_LOADED,
-    FRIEND_LOADED,
-    HISTORY_SAVED
+    LOADING,
+    LEADERBOARD_LOADED
 } from './types';
 
 function getCookie() {
@@ -292,4 +292,32 @@ export const saveHistory = () => dispatch => {
     dispatch({
         type: HISTORY_SAVED
     })
+}
+
+export const loadLeaderboard = () => dispatch => {
+    dispatch({
+        type: LOADING
+    })
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    const body = JSON.stringify({});
+
+    axios.post('/users/leaderboard', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log("oops")
+            }
+            else {
+                dispatch({
+                    type: LEADERBOARD_LOADED,
+                    payload: res.data
+                })
+            };
+        })
 }

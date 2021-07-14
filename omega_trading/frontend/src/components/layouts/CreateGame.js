@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createGame, loadGame, joinGame } from '../../actions/game';
+import { loadGame, joinGame } from '../../actions/game';
 import Rules from './Rules';
 
 // State Stuff
@@ -37,7 +37,7 @@ function CreateGame(props) {
     )
 
     const timeString = (time) => {
-        var stringTime = time.minutes
+        var stringTime = time.mins
         if (stringTime === 0) {
             stringTime = stringTime + "0"
         }
@@ -45,19 +45,20 @@ function CreateGame(props) {
             stringTime = "0" + stringTime
         }
         stringTime = ":" + stringTime
-        if (time.hours > 12) {
-            stringTime = (time.hours - 12) + stringTime + " PM"
+        if (time.hour > 12) {
+            stringTime = (time.hour - 12) + stringTime + " PM"
         }
         else {
-            stringTime = time.hours + stringTime + " AM"
+            stringTime = time.hour + stringTime + " AM"
         }
-        if (props.period !== "day") {
-            stringTime = months[time.month] + " " + time.day + ", " + stringTime
-            if (props.period !== "week" && props.period !== "month") {
-                stringTime = months[time.month] + " " + time.day + ", " + time.year
-            }
-        }
-        return stringTime
+        var stringDate = time.month + "/" + time.day + "/" + time.year
+        return (
+            <div>
+                <div>{stringDate}</div>
+                <div>{stringTime}</div>
+            </div>
+
+        )
     }
 
     const getLeaderboard = (game) => {
@@ -68,47 +69,98 @@ function CreateGame(props) {
                 worth: game.players[player].worth
             })
         }
-        numbers.sort((a, b) => parseFloat(a.worth) - parseFloat(b.worth))
+        numbers.sort((a, b) => parseFloat(b.worth) - parseFloat(a.worth))
         for (const number in numbers) {
             numbers[number] = (
-                <div className='history-player'>
-                    <div style={{ 'color': game.players[numbers[number].username].color }} className="history-leaderboard">{parseInt(number) + 1}. {numbers[number].username}</div>
-                    <div className="history-leaderboard">${numbers[number].worth.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                <div className='history-player fr jc-s'>
+                    <div style={{ 'color': game.players[numbers[number].username].color }}>{parseInt(number) + 1}. {numbers[number].username}</div>
+                    <div className='history-bet'>${numbers[number].worth.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
                 </div>
             )
         }
         return numbers
     }
 
+    const getDuration = (duration) => {
+        var dur = ''
+        console.log(duration)
+        if (duration.mins != null && duration.mins != 0) {
+            dur = duration.mins + ' mins'
+        }
+        if (duration.hours != null && duration.hours != 0) {
+            var hours = duration.hours
+            if (duration.hours == 1) {
+                dur = hours + ' hour ' + dur
+            }
+            else {
+                dur = hours + ' hours ' + dur
+            }
+        }
+        if (duration.days != null && duration.days != 0) {
+            var days = duration.days
+            if (duration.days == 1) {
+                dur = days + ' day ' + dur
+            }
+            else {
+                dur = days + ' days ' + dur
+            }
+        }
+        return dur
+    }
+
     const getHistory = () => {
         var temp = []
         for (const game in props.history) {
             temp.push(
-                <div className='history-game'>
-                    <div className='left-history'>
-                        <div className='history-time'>{timeString(props.history[game].start_time) - timeString(props.history[game].end_time)}</div>
-                        <div className='history-amount'>Start Amount: ${props.history[game].start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                        <div className='history-bet'>Bet: ${props.history[game].start_bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                    </div>
-                    <div className='right-history'>
+                <div className='history-game fr ai-c'>
+                        <div className='history-date fc ai-c jc-c'>
+                            {timeString(props.history[game].start_time)}
+                        </div>
+                        <div className='history-rules fc ai-c jc-c'>
+                            <div className='history-rules-cont fc'>
+                                <div className='fr jc-s'>
+                                    <div>Duration</div>
+                                    <div>{getDuration(props.history[game].duration)}</div>
+                                </div>
+                                <div className='fr jc-s'>
+                                    <div>Start Amount</div>
+                                    <div>${props.history[game].start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                                </div>                                
+                                <div className='fr jc-s'>
+                                    <div>Bet</div> 
+                                    <div>${props.history[game].bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                                </div>                                
+                                <div className='fr jc-s'>
+                                    <div>Positions</div> 
+                                    <div>{props.history[game].positions == 0 ? 'Unlimited' : props.history[game].positions}</div>
+                                </div>                                
+                            </div>
+                        </div>
+                    <div className='history-results fc ai-c jc-c'>                        
                         {getLeaderboard(props.history[game])}
                     </div>
                 </div>
             )
         }
+        return temp
     }
 
     return (
         <div className='pageContainer'>
             <div className="startup">
-                <div className='game-selection'>
-                    <button style={type == 'create' ? style : null} onClick={(e) => setType('create')} className='create-game'>Create a Game</button>
-                    <button style={type == 'join' ? style : null} onClick={(e) => setType('join')} className='join-game'>Join a Game</button>
+                <div className='game-selection fr ai-c'>
+                    <button style={type == 'create' ? style : null} onClick={(e) => setType('create')} className='create-game ai-c'>Create a Game</button>
+                    <button style={type == 'join' ? style : null} onClick={(e) => setType('join')} className='join-game ai-c'>Join a Game</button>
                 </div>
                 {type == 'create' ? <Rules edit={false} /> : join_game}
             </div>
             <div className='game-history'>
-                <h1 className='history-title'>History</h1>
+                <div className='history-title fr ai-c jc-c'>History</div>
+                <div className='history-headers fr'>
+                    <div className='header fr ai-c jc-c'><h4 className='history-header'>Start Time</h4></div>
+                    <div className='header'><h4 className='history-header'>Rules</h4></div>
+                    <div className='header'><h4 className='history-header'>Results</h4></div>
+                </div>
                 {props.no_history ?
                     <div className='no-history'>
                         Check back after you have completed games to see past results!

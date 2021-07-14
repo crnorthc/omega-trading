@@ -117,23 +117,6 @@ function Game(props) {
         return dots
     }
 
-
-    const followGraphPoint = (e) => {
-        var left = e.clientX - ((screenWidth - 1070) / 2) - 30
-        if (screenWidth <= 1010) {
-            left = e.clientX - 30
-        }
-        if (Math.round(left % (676 / metrics.maxPoints)) == 0 && left <= 676) {
-            var tempPoint = Math.round(left / (676 / metrics.maxPoints))
-            if (props.game.players[props.user.username].numbers[tempPoint].price != null) {
-                setPoint(tempPoint)
-                setLeft(left)
-                setTime(props.game.players[props.user.username].numbers[point].time)
-                setShift(e.clientX)
-            }
-        }
-    }
-
     const removeGraphPoint = () => {
         ShowLine(false)
         setLeft(null)
@@ -215,7 +198,6 @@ function Game(props) {
 
     const getLeaderboard = () => {
         var numbers = []
-        var temp = []
         for (const player in props.game.players) {
             numbers.push({
                 username: props.game.players[player].username,
@@ -252,6 +234,22 @@ function Game(props) {
         </div>
     )
 
+    const followGraphPoint = (e) => {
+        var left = e.clientX - ((screenWidth - 1070) / 2) - 30
+        if (screenWidth <= 1010) {
+            left = e.clientX - 30
+        }
+        if (Math.round(left % (676 / metrics.maxPoints)) == 0 && left <= 676) {
+            var tempPoint = Math.round(left / (676 / metrics.maxPoints))
+            if (props.game.players[props.user.username].numbers[tempPoint].price != null) {
+                setPoint(tempPoint)
+                setLeft(left)
+                setTime(props.game.players[props.user.username].numbers[point].time)
+                setShift(e.clientX)
+            }
+        }
+    }
+
     return (
         <div className='pageContainer'>
             <div className='Graph'>
@@ -276,22 +274,19 @@ function Game(props) {
                             onMouseEnter={(e) => addGraphPoint()}
                             onMouseLeave={(e) => removeGraphPoint()}
                         >
-                            <div style={
-                                {
-                                    left: timeShift + "px",
-                                    position: "absolute"
-                                }
-                            }>
-                                <div className="chartTime">{timeString()}</div>
-                            </div>
                             {showLine && (left !== null || point !== null) ?
-                                <svg width={676} height={250}>
-                                    <g className="line">
-                                        <line x1={left} x2={left} y1={25} y2={225} />
-                                    </g>
-                                    {lines}
-                                    {getDots()}
-                                </svg>
+                                <div>
+                                    <div style={{ left: timeShift + "px", position: "absolute" }}>
+                                        <div className="chartTime">{timeString()}</div>
+                                    </div>
+                                    <svg width={676} height={250}>
+                                        <g className="line">
+                                            <line x1={left} x2={left} y1={25} y2={225} />
+                                        </g>
+                                        {lines}
+                                        {getDots()}
+                                    </svg>
+                                </div>
                                 :
                                 <svg width={676} height={250}>
                                     {lines}

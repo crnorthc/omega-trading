@@ -13,5 +13,6 @@ urlpatterns = [
     path('chart', index),
     path('account', index),
     path('portfolio', index),
-    path('lobby', index)
+    path('lobby', index),
+    path('leaderboard', index)
 ]

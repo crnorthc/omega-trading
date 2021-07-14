@@ -9,6 +9,7 @@ import Home from "./components/layouts/Home.js";
 import Account from './components/layouts/Account.js';
 import Portfolio from './components/layouts/Portfolio.js';
 import Lobby from "./components/layouts/Lobby.js";
+import Leaderboard from "./components/layouts/Leaderboard.js";
 import React, { Fragment, useEffect, useState } from "react";
 import { render } from "react-dom";
 import {
@@ -35,6 +36,7 @@ function App(props) {
                     <Route exact path='/account' component={Account} />
                     <Route exact path='/portfolio' component={Portfolio} />
                     <Route exact path='/lobby' component={Lobby} />
+                    <Route exaxt path='/leaderboard' component={Leaderboard} />
                 </Switch>
             </Fragment>
         </Router>

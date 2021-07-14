@@ -16,23 +16,15 @@ import random
 import string
 import requests
 
+SECONDS_IN_DAY = 24 * 60 * 60
+SECONDS_IN_HOUR = 60 * 60
+SECONDS_IN_MINUTE = 60
 
-def authenticate_request(request):
-    if request.user.is_authenticated:
-        return True
-    else:
-        return False
-
-
-def load_portfolio(period, user, me=False):
-    current_time = time.time()
+def determine_portfolio_period(period):
+    current_time = math.floor(time.time())
     interval = None
     start_time = time.localtime()
 
-    profile = Profile.objects.filter(user_id=user.id)
-    profile = profile[0]
-
-    # Part 1 Determining the period
     if period == "day":
         start_time = (start_time[0], start_time[1], start_time[2], 9,
                       00, 00, start_time[6], start_time[7], start_time[8])
@@ -43,6 +35,7 @@ def load_portfolio(period, user, me=False):
         r = requests.get(
             'https://finnhub.io/api/v1/stock/candle?symbol=AAPL&resolution=' + resolution + '&from=' + str(start_time) + '&to=' + str(math.floor(current_time)) + '&token=' + FINNHUB_API_KEY)
         r = r.json()
+
         while True:
             if r['s'] == "no_data":
                 start_time -= 86400
@@ -52,6 +45,7 @@ def load_portfolio(period, user, me=False):
                 r = r.json()
             else:
                 break
+        return start_time, current_time, resolution, interval
 
     else:
         start_time = (start_time[0], start_time[1], start_time[2], 9,
@@ -60,84 +54,85 @@ def load_portfolio(period, user, me=False):
 
         if period == "week":
             start_time -= 604800
-            resolution = "15"
-            interval = 900
+            return start_time, current_time, "15", 900
+
         if period == "month":
             start_time -= 2592000
-            resolution = "60"
-            interval = 3600
+            return start_time, current_time, "60", 3600
+
         if period == "3m":
             start_time -= 7776000
-            resolution = "D"
-            interval = 86400
+            return start_time, current_time, "D", 86400
+
         if period == "y":
             start_time -= 31536000
-            resolution = "D"
-            interval = 86400
+            return start_time, current_time, "D", 86400
+
         if period == "5y":
             start_time -= 157680000
-            resolution = "W"
-            interval = 1209600
+            return start_time, current_time, "M", 1209600
 
-    # Part 2: determines if there have been no transactions
-    if len(profile.transactions) == 1:
-        numbers = []
-        count = 0
-        current_time = time.time()
-        while (start_time + (interval * count) <= current_time):
-            add = {'time': start_time + (interval * count)}
-            add['price'] = 25000
-            numbers.append(add)
-            count += 1
-        return numbers, []
+def no_transactions(profile, period):
+    start_time, current_time, resolution, interval = determine_portfolio_period(period)
+    numbers = []
+    count = 0
+    current_time = time.time()
 
-    current_time = str(math.floor(current_time))
-    start_time = str(start_time)
+    while (start_time + (interval * count) <= current_time):
+        add = {'time': start_time + (interval * count)}
+        add['price'] = 25000
+        numbers.append(add)
+        count += 1
 
-    # Part 3: Generate the lists of prices for each symbol owned
-    temp = {}
-    times = []
+    return numbers, []
+
+def get_symbol_data(symbol, resolution, start, end):
+    r = requests.get(
+        'https://finnhub.io/api/v1/stock/candle?symbol=' + symbol + '&resolution=' + resolution + '&from=' + start + '&to=' + end + '&token=' + FINNHUB_API_KEY)
+
+    return r.json()
+
+def format_symbol_data(data):
+    return [{'time': data['t'][i], 'price': data['c'][i]} for i in range(len(data['c']))]
+
+def get_small_charts(profile):
+    start_time, current_time, resolution, interval = determine_portfolio_period('day')
     small_charts = {}
-    print(start_time)
-    print(current_time)
-    # Generates the list of prices for each symbol
-    for key, value in profile.transactions.items():
-        for t in value:
-            if 'symbol' in t:
-                s = t['symbol']
-                if not s in temp:
-                    r = requests.get(
-                        'https://finnhub.io/api/v1/stock/candle?symbol=' + s + '&resolution=' + resolution + '&from=' + start_time + '&to=' + current_time + '&token=' + FINNHUB_API_KEY)
-                    r = r.json()
-                    temp[s] = r['c']
-                    times.append(r['t'])
-                    if s in profile.holdings:
-                        small_charts[s] = []
-                        for i in range(len(r['t']) - 1):
-                            small_charts[s].append(
-                                {'time': r['t'][i], 'price': r['c'][i]})
-    times = min(times, key=len)
 
-    # transforms each list of symbol prices to uniform length
-    for key, value in temp.items():
-        temp[key] = temp[key][(-1) * len(times):]
+    for symbol, amount in profile.holdings.items():
+        data = get_symbol_data(symbol, '5', str(
+            start_time), str(current_time))
+        small_charts[symbol] = format_symbol_data(data)
+    
+    return small_charts
 
-    # Find the first day of the selected period
-    first_day = time.localtime(times[0])
-    first_day = (first_day[0], first_day[1], first_day[2], 1,
-                 00, 00, first_day[6], first_day[7], first_day[8])
-    first_day = math.floor(time.mktime(first_day))
-    prev_time = times[0]
-    latest_day = 0
-    days = []
-    latest_holdings = {}
-    # Part 4: Get the list of days in ascending order
-    for key, value in profile.transactions.items():
-        days.append(float(key))
-    days.sort()
+def get_user_symbols(profile, period):
+    start_time, current_time, resolution, interval = determine_portfolio_period(period)
+    charts = {}
+    times = []
 
-    # Part 5: Get the account holdings, portfolio amount, latest_day, and latest transaction at the begining day of period
+    for day, transactions in profile.transactions.items():
+        for transaction in transactions:
+            if 'symbol' in transaction:
+                symbol = transaction['symbol']
+                if not symbol in charts:
+                    data = get_symbol_data(symbol, resolution, str(start_time), str(current_time))
+                    charts[symbol] = data['c']
+                    times.append(data['t'])
+    
+    times = max(times, key=len)
+
+    for symbol, data in charts.items():
+        if len(data) < len(times) - 1:
+            data.extend([data[-1] for x in range(len(times) - len(data))])
+
+    return charts, times
+
+def initial_profile(profile, first_day, days):
     latest_amount = 0
+    latest_day = 0
+    latest_holdings = {}
+
     if first_day < days[0]:
         latest_day = profile.transactions[str(
             math.floor(days[0]))]
@@ -159,9 +154,101 @@ def load_portfolio(period, user, me=False):
                 latest_transaction = latest_day[-1]
     if latest_amount == 0:
         latest_amount = 25000
+    
+    return latest_amount, latest_holdings
 
-    goal = []
+def user_current_worth(profile):
+    worth = profile['portfolio_amount']
+    for symbol, quantity in profile['holdings'].items():
+        worth += get_quote(symbol) * quantity
+    
+    return worth
+
+def get_quote(symbol):
+    r = requests.get(
+            'https://finnhub.io/api/v1/quote?symbol=' + symbol + '&token=' + FINNHUB_API_KEY)
+    r = r.json()
+
+    return r['c']
+
+def compute_transactions(latest_day, latest_holdings, times, prev_time, i, latest_amount):
+    for x in latest_day:
+        if float(x['time']) <= float(times[i]) and float(x['time']) > float(prev_time):
+            if x['symbol'] in latest_holdings:
+                if x['bought']:
+                    latest_holdings[x['symbol']
+                                    ] += x['quantity']
+                else:
+                    latest_holdings[x['symbol']
+                                    ] -= x['quantity']
+            else:
+                latest_holdings[x['symbol']] = x['quantity']
+
+            latest_amount = x['portfolio_amount']
+    
+    return latest_holdings, latest_amount
+
+def no_recent_transactions(profile, charts, days):
+    current_holdings = []
+
+    for symbol, prices in charts.items():
+        for price in prices:
+            if symbol in profile.holdings:
+                current_holdings.append(
+                    {'price': price, 'total_quantity': profile.holdings[symbol]})
+
+    return current_holdings, profile.transactions[str(
+        math.floor(days[-1]))][-1]['portfolio_amount']
+
+def get_recent_quotes(profile, portfolio_amount):
+    temp = {"time": time.time(), 'portfolio_amount': portfolio_amount,
+            'securities': []}
+
+    for symbol, value in profile.holdings.items():
+        quote = get_quote(symbol)
+        temp['securities'].append(
+            {'price': quote, 'total_quantity': value})
+    
+    return temp
+
+def format_portfolio_data(goal, recent_found, current_holdings, portfolio_amount):
+    numbers = []
+    count = 0
+
+    for x in goal:
+        if not recent_found:
+            x['securities'] = [current_holdings[count]]
+            x['portfolio_amount'] = portfolio_amount
+        add = {'time': x['time']}
+        price = 0
+        for y in x['securities']:
+            price = price + (y['price'] * y['total_quantity'])
+        price += x['portfolio_amount']
+        add['price'] = price
+        numbers.append(add)
+        count += 1
+    
+    return numbers
+
+def load_portfolio(period, user, me=False):
+    profile = Profile.objects.filter(user_id=user.id)
+    profile = profile[0]
+
+    if len(profile.transactions) == 1:
+        return no_transactions(profile, period)
+
+    charts, times = get_user_symbols(profile, period)
+    first_day = time.localtime(times[0])
+    first_day = (first_day[0], first_day[1], first_day[2], 1,
+                 00, 00, first_day[6], first_day[7], first_day[8])
+    first_day = math.floor(time.mktime(first_day))
+    days = [float(key) for key, value in profile.transactions.items()]
+    days.sort()
+    latest_amount, latest_holdings = initial_profile(profile, first_day, days)
+    prev_time = times[0]
     recent_found = False
+    goal = []
+
     for i in range(len(times)):
         day = time.localtime(times[i])
         day = (day[0], day[1], day[2], 1,
@@ -179,73 +266,27 @@ def load_portfolio(period, user, me=False):
             if str(day) in profile.transactions:
                 recent_found = True
                 latest_day = profile.transactions[str(day)]
-                for x in latest_day:
-                    # if there were transactions during the time period
-                    if float(x['time']) <= float(times[i]) and float(x['time']) > float(prev_time):
-                        if x['symbol'] in latest_holdings:
-                            if x['bought']:
-                                latest_holdings[x['symbol']
-                                                ] += x['quantity']
-                            else:
-                                latest_holdings[x['symbol']
-                                                ] -= x['quantity']
-                        else:
-                            latest_holdings[x['symbol']] = x['quantity']
-                        # adjust portfolio amount to before transactions
-                        transaction = x['price'] * x['quantity']
-                        if x['bought']:
-                            latest_amount = x['portfolio_amount']
-                        else:
-                            latest_amount = x['portfolio_amount']
+                latest_holdings, latest_amount = compute_transactions(
+                    latest_day, latest_holdings, times, prev_time, i, latest_amount)
                 add['portfolio_amount'] = latest_amount
             # if there were not any transactions during the current periods day
             else:
                 add['portfolio_amount'] = latest_amount
-            for key, value in latest_holdings.items():
-                if key in temp:
+            for symbol, quantity in latest_holdings.items():
+                if symbol in charts:
                     add['securities'].append(
-                        {'symbol': key, 'total_quantity': value, 'price': temp[key][i]})
+                        {'symbol': symbol, 'total_quantity': quantity, 'price': charts[symbol][i]})
 
         prev_time = times[i]
         goal.append(add)
 
-    numbers = []
-    current_sec = []
     if not recent_found:
-        for key, values in temp.items():
-            for value in values:
-                if key in profile.holdings:
-                    current_sec.append(
-                        {'price': value, 'total_quantity': profile.holdings[key]})
-    portfolio_amount = profile.transactions[str(
-        math.floor(days[-1]))][-1]['portfolio_amount']
+        latest_holdings, latest_amount = no_recent_transactions(profile, charts, days)
 
-    temp = {"time": time.time(), 'portfolio_amount': portfolio_amount,
-            'securities': []}
     if period == "3m" or period == "y" or period == "5y":
-        for key, value in profile.holdings.items():
-            r = requests.get(
-                'https://finnhub.io/api/v1/quote?symbol=' + key + '&token=' + FINNHUB_API_KEY)
-            r = r.json()
-            temp['securities'].append(
-                {'price': r['c'], 'total_quantity': value})
-        goal.append(temp)
+        goal.append(get_recent_quotes(profile, goal[-1]['portfolio_amount']))
 
-    count = 0
-    for x in goal:
-        if not recent_found:
-            x['securities'] = [current_sec[count]]
-            x['portfolio_amount'] = portfolio_amount
-        add = {'time': x['time']}
-        price = 0
-        for y in x['securities']:
-            price = price + (y['price'] * y['total_quantity'])
-        price += x['portfolio_amount']
-        add['price'] = price
-        numbers.append(add)
-        count += 1
-    return numbers, small_charts
-
+    return format_portfolio_data(goal, recent_found, latest_holdings, latest_amount), get_small_charts(profile)
 
 def load_user(request=None, username=None):
     if request == None:
@@ -274,7 +315,6 @@ def load_user(request=None, username=None):
         response['friends'] = profile.friends
     return response
 
-
 def set_cookie(key):
     age = 365 * 24 * 60 * 60
     expires = datetime.datetime.strftime(
@@ -285,7 +325,6 @@ def set_cookie(key):
         "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires + "; Path=/"
     }
     return headers
-
 
 def transaction(request, bought, profile):
     symbol = request.data["symbol"]
@@ -316,7 +355,6 @@ def transaction(request, bought, profile):
 
     return symbol, quantity, quote, add, start_time
 
-
 def verify_user(verification_code):
     queryset = Profile.objects.filter(
         verification_code=verification_code)
@@ -331,7 +369,6 @@ def verify_user(verification_code):
     else:
         return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
 
-
 def get_user_details(user):
     queryset = Profile.objects.filter(user_id=user.id)
     profile = queryset[0]
@@ -344,7 +381,6 @@ def get_user_details(user):
     }
     return user_info
 
-
 def get_verification_code():
     choices = string.ascii_letters + string.digits
     while True:
@@ -355,7 +391,6 @@ def get_verification_code():
             break
     return verification_code
 
-
 def send_email(message, email):
     sender_email = "omegatradingtest@gmail.com"
     context = ssl.create_default_context()
@@ -364,7 +399,6 @@ def send_email(message, email):
         server.sendmail(
             sender_email, email, message.as_string()
         )
-
 
 def send_password_reset(user):
     verification_code = get_verification_code()
@@ -403,7 +437,6 @@ def send_password_reset(user):
     message.attach(part2)
     send_email(message, email)
     return Response({"Success": "Email Sent"}, status=status.HTTP_200_OK)
-
 
 def send_email_verification(email, username, verification_code):
     message = MIMEMultipart("alternative")
