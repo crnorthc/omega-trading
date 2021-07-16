@@ -40,7 +40,7 @@ function Login(props) {
     }
 
     const loader = (
-        <div className="loaderContainer">
+        <div className="loaderContainer f ai-c jc-c">
             <div class="loader"></div>
         </div>
     )

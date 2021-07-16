@@ -7,6 +7,7 @@ import {
     GAME_LOADING,
     HISTORY_LOADED,
     HISTORY_LOADING,
+    QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME
 } from './types';
@@ -415,6 +416,31 @@ export const loadHistory = () => dispatch => {
                 dispatch({
                     type: HISTORY_LOADED,
                     payload: getDates(res.data.games)
+                })
+            };
+        })
+}
+
+export const getQuote = (quantity) => dispatch => {
+
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Token " + getCookie()
+        }
+    };
+
+    var body = JSON.stringify({ quantity });
+
+    axios.post('/game/quote', body, config)
+        .then(res => {
+            if (res.data.error) {
+                console.log('oops')
+            }
+            else {
+                dispatch({
+                    type: QUOTE_LOADED,
+                    payload: res.data
                 })
             };
         })

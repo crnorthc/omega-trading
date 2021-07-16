@@ -95,16 +95,16 @@ function ChartDisplay(props) {
 
 
     const dropButton = (
-        <div className="dropButtons">
-            <button onClick={(e) => onClick(e)} className="typeButton-drop">
+        <div className="dropButtons b">
+            <button onClick={(e) => onClick(e)} className="typeButton-drop bb f ai-c jc-s">
                 <div className="metric">{metric}</div>
                 <svg className="dropper" fill="none" height="16" role="img" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.50024 6L7.99953 2L11.5002 6H4.50024Z" stroke="#000" fill="#000"></path>
                     <path d="M11.4998 10L8.00047 14L4.49976 10H11.4998Z" stroke="#000" fill="#000"></path>
                 </svg>
             </button>
-            <button style={sharStyle} onClick={(e) => swapMetric("Shares")} id="shares" className="typeButton-drop"><div className="metric">Shares</div></button>
-            <button style={dolStyle} onClick={(e) => swapMetric("Dollars")} className="typeButton-drop-last"><div className="metric">Dollars</div></button>
+            <button style={sharStyle} onClick={(e) => swapMetric("Shares")} id="shares" className="typeButton-drop bb f ai-c jc-s"><div className="metric">Shares</div></button>
+            <button style={dolStyle} onClick={(e) => swapMetric("Dollars")} className="typeButton-drop bb-last f ai-c jc-s"><div className="metric">Dollars</div></button>
         </div>
 
     )
@@ -199,7 +199,7 @@ function ChartDisplay(props) {
     if ((!props.game_loading && !props.game_loaded) || props.game_loading) {
         return (
             <div className="pageContainer">
-                <div className='loaderContainer'>
+                <div className='loaderContainer f ai-c jc-c'>
                     <div className='loader' />
                 </div>
             </div>
@@ -214,7 +214,7 @@ function ChartDisplay(props) {
                         <div>
                             {symbol !== null ? <Graph plain={false} symbol={symbol} value={value} period={period} width={676} /> : <div></div>}
                         </div>
-                        <div className="timeSelector">
+                        <div className="timeSelector f ai-c">
                             <button style={period == "day" ? dayStyle : null} onClick={(e) => changePeriod("day")} className="timePeriod">1D</button>
                             <button style={period == "week" ? dayStyle : null} onClick={(e) => changePeriod("week")} className="timePeriod">1W</button>
                             <button style={period == "month" ? dayStyle : null} onClick={(e) => changePeriod("month")} className="timePeriod">1M</button>
@@ -223,23 +223,23 @@ function ChartDisplay(props) {
                             <button style={period == "5y" ? dayStyle : null} onClick={(e) => changePeriod("5y")} className="timePeriod">5Y</button>
                         </div>
                     </div>
-                    <div className="action-box">
+                    <div className="action-box b">
                         {!props.no_game ?
-                            <div className='gameChoice'>
-                                <button className="mode-choice" style={mode === 'nogame' ? modeStyle : null} onClick={e => setMode('nogame')}>Portfolio</button>
+                            <div className='bb fr'>
+                                <button className="mode-choice br" style={mode === 'nogame' ? modeStyle : null} onClick={e => setMode('nogame')}>Portfolio</button>
                                 <button className="modeChoice" style={mode === 'game' ? modeStyle : null} onClick={e => setMode('game')}>Game</button>
                             </div>
                             : null
                         }
-                        <div className="buySell">
+                        <div className="buySell bb fr ai-c jc-c">
                             <button className="buy" style={type === 'buy' ? typeStyle : null} onClick={e => setType('buy')}>Buy {props.symbol}</button>
                             <button className="sell" style={type === 'sell' ? typeStyle : null} onClick={e => setType('sell')}>Sell {props.symbol}</button>
                         </div>
                         <div className="values">
-                            <div className="investIn">
+                            <div className="investIn f ai-c jc-s">
                                 <div className="type">Invest In</div>
                                 <div className="buttons">
-                                    <button onClick={(e) => onClick(e)} className="typeButton">
+                                    <button onClick={(e) => onClick(e)} className="typeButton b f ai-c jc-s">
                                         <div className="metric">{metric}</div>
                                         <svg className="dropper" fill="none" height="16" role="img" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
                                             <path d="M4.50024 6L7.99953 2L11.5002 6H4.50024Z" stroke="#000" fill="#000"></path>
@@ -250,37 +250,37 @@ function ChartDisplay(props) {
                                 </div>
 
                             </div>
-                            <div className="Amount">
+                            <div className="bb f ai-c jc-s">
                                 <div className="type">Amount</div>
                                 {metric === "Dollars" ?
-                                    <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput"
+                                    <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput b"
                                         placeholder="$0.00"
                                         type="number" min=".01" /> :
-                                    <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput"
+                                    <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput b"
                                         placeholder="0"
                                         type="number" min="1" />
                                 }
                             </div>
-                            <div className="Quantity">
+                            <div className="Quantity f ai-c jc-s">
                                 {metric === "Dollars" ? <div className="type">Est. Quantity</div> : <div className="type">Est. Cost</div>}
                                 {metric === "Dollars" ? <div className="quantity">{quantity.toFixed(3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div> : <div className="quantity">${quantity.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>}
                             </div>
                         </div>
-                        <div className="reviewOrder">
-                            <button onClick={(e) => submitOrder(false)} className="reviewButton">Review Order</button>
+                        <div className="reviewOrder bb">
+                            <button onClick={(e) => submitOrder(false)} className="reviewButton b">Review Order</button>
                         </div>
-                        <div className="Message">
+                        <div className="Message f ai-c">
                             {props.user !== null ? type === "buy" ?
-                                <div className="message">
+                                <div className="message fr ai-c jc-s">
                                     ${props.user.portfolio_amount.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} buying power available
                                 </div>
                                 : metric === 'Dollars' ?
-                                    <div className="message">
+                                    <div className="message fr ai-c jc-s">
                                         <div className="amountAvailable">${(props.user.holdings[props.symbol] * props.current_value).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} Available</div>
                                         <button className="sellAll" onClick={(e) => submitOrder(true)}>Sell All</button>
                                     </div>
                                     :
-                                    <div className="message">
+                                    <div className="message fr ai-c jc-s">
                                         <div className="amountAvailable">{props.user.holdings[props.symbol].toFixed(6).toString()} Shares Available</div>
                                         <button className="sellAll" onClick={(e) => submitOrder(true)}>Sell All</button>
                                     </div>

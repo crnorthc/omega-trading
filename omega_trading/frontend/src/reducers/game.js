@@ -7,6 +7,7 @@ import {
     GAME_LOADING,
     HISTORY_LOADED,
     HISTORY_LOADING,
+    QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME
 } from "../actions/types";
@@ -22,7 +23,8 @@ const initialState = {
     history: null,
     history_loading: false,
     history_loaded: false,
-    game: null
+    game: null,
+    etherQuote: null
 }
 
 export default function (state = initialState, action) {
@@ -98,6 +100,11 @@ export default function (state = initialState, action) {
                 history_loading: false,
                 no_history: true,
                 history_loaded: true
+            }
+        case QUOTE_LOADED:
+            return {
+                ...state,
+                etherQuote: action.payload
             }
         default:
             return state;

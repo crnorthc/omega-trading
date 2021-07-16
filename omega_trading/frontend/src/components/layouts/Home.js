@@ -33,10 +33,10 @@ function Home(props) {
         var small_charts = []
         for (const property in props.small_charts) {
             var temp = (
-                <Link to={'/chart?symbol=' + property} className='stock'>
+                <Link to={'/chart?symbol=' + property} className='stock f ai-c jc-s'>
                     <div className='left-stock'>
                         <div className='stock-symbol'>{property}</div>
-                        <div className='stock-quantity'>{props.user.holdings[property].toFixed(2)} Shares</div>
+                        <div className='stock-quantity f'>{props.user.holdings[property].toFixed(2)} Shares</div>
                     </div>
                     <div className="small-chart">
                         <Graph plain={true} value={null} numbers={props.small_charts[property]} period={period} width={64} height={30} />
@@ -63,7 +63,7 @@ function Home(props) {
 
     const noCharts = (type) => {
         return (
-            <div className="noCharts">
+            <div className="noCharts f ai-c jc-c">
                 You do not have {type} to display
             </div>
         )
@@ -73,10 +73,10 @@ function Home(props) {
         var charts = []
         for (const friend in props.friends_charts) {
             var temp = (
-                <Link to={'/portfolio?username=' + friend} className='friend'>
-                    <div className='left-friend'>
+                <Link to={'/portfolio?username=' + friend} className='friend f ai-c jc-s'>
+                    <div className='left-friend fc ai-c jc-c'>
                         <img className="userPic" src={profilePic} width={30} />
-                        <div className='stock-symbol'>{friend}</div>
+                        <div className='stock-symbol bt'>{friend}</div>
                     </div>
                     <div className="small-chart">
                         <Graph plain={true} value={null} numbers={props.friends_charts[friend]} period={'day'} width={64} height={30} />
@@ -101,7 +101,7 @@ function Home(props) {
             <div>
                 {props.portfolio !== null ? <Graph value={null} numbers={props.portfolio} period={period} width={676} /> : <div></div>}
             </div>
-            <div className="timeSelector">
+            <div className="timeSelector f ai-c">
                 <button style={period == "day" ? dayStyle : null} onClick={(e) => changePeriod("day")} className="timePeriod">1D</button>
                 <button style={period == "week" ? dayStyle : null} onClick={(e) => changePeriod("week")} className="timePeriod">1W</button>
                 <button style={period == "month" ? dayStyle : null} onClick={(e) => changePeriod("month")} className="timePeriod">1M</button>
@@ -113,8 +113,8 @@ function Home(props) {
     )
 
     const actionbox = (
-        <div className="action-box">
-            <div className="buySell">
+        <div className="action-box b">
+            <div className="buySell bb fr ai-c jc-c">
                 <button className="buy" style={type === 'stocks' ? dayStyle : null} onClick={e => setType('stocks')}>Stocks</button>
                 <button className="sell" style={type === 'friends' ? dayStyle : null} onClick={e => setType('friends')}>Friends</button>
             </div>

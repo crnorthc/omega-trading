@@ -26,12 +26,12 @@ function CreateGame(props) {
 
     const join_game = (
         <div className="rules">
-            <div className="subHeader">
+            <div className="subHeader bb f jc-c">
                 <h4 className="rules-title">Room Code</h4>
             </div>
-            <div className='enter-code'>
+            <div className='enter-code fc ai-c jc-c'>
                 <input className="codeInput" onChange={e => setCode(e.target.value)} placeholder="Enter Code" type="text" />
-                <button onClick={(e) => props.joinGame(props.user.username, true, false, code)} className='code-button'>Join</button>
+                <button onClick={(e) => props.joinGame(props.user.username, true, false, code)} className='code-button b ai-c'>Join</button>
             </div>
         </div>
     )
@@ -147,19 +147,19 @@ function CreateGame(props) {
 
     return (
         <div className='pageContainer'>
-            <div className="startup">
-                <div className='game-selection fr ai-c'>
-                    <button style={type == 'create' ? style : null} onClick={(e) => setType('create')} className='create-game ai-c'>Create a Game</button>
-                    <button style={type == 'join' ? style : null} onClick={(e) => setType('join')} className='join-game ai-c'>Join a Game</button>
+            <div className="startup b">
+                <div className='bb fr ai-c'>
+                    <button style={type == 'create' ? style : null} onClick={(e) => setType('create')} className='create-game st br ai-c'>Create a Game</button>
+                    <button style={type == 'join' ? style : null} onClick={(e) => setType('join')} className='join-game st ai-c'>Join a Game</button>
                 </div>
                 {type == 'create' ? <Rules edit={false} /> : join_game}
             </div>
-            <div className='game-history'>
-                <div className='history-title fr ai-c jc-c'>History</div>
+            <div className='game-history b'>
+                <div className='history-title st bb fr ai-c jc-c'>History</div>
                 <div className='history-headers fr'>
-                    <div className='header fr ai-c jc-c'><h4 className='history-header'>Start Time</h4></div>
-                    <div className='header'><h4 className='history-header'>Rules</h4></div>
-                    <div className='header'><h4 className='history-header'>Results</h4></div>
+                    <div className='header fr ai-c jc-c'><h4 className='history-header bb'>Start Time</h4></div>
+                    <div className='header fr ai-c jc-c'><h4 className='history-header bb'>Rules</h4></div>
+                    <div className='header fr ai-c jc-c'><h4 className='history-header bb'>Results</h4></div>
                 </div>
                 {props.no_history ?
                     <div className='no-history'>

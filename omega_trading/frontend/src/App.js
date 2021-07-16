@@ -19,6 +19,7 @@ import {
     BrowserRouter as Router
 } from "react-router-dom";
 import './custom.scss';
+import './variables.scss'
 
 function App(props) {
     return (

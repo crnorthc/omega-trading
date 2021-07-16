@@ -7,6 +7,7 @@ import {
     HIDE_RESULTS,
     UPDATE_USER,
     FRIENDS_LOADED,
+    HISTORY_SAVED,
     LOADING,
     LEADERBOARD_LOADED
 } from './types';

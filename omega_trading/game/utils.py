@@ -15,6 +15,7 @@ SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
 SECONDS_IN_MINUTE = 60
 
+
 def load_user(request=None, username=None):
     if request == None:
         queryList = User.objects.filter(username=username)
@@ -37,6 +38,7 @@ def load_user(request=None, username=None):
 
     return response
 
+
 def get_game(room_code):
     game = Tournament.objects.filter(room_code=room_code)
 
@@ -45,6 +47,7 @@ def get_game(room_code):
         return game
 
     return Response({"Error": "No Room Found"}, status=status.HTTP_404_NOT_FOUND)
+
 
 def uninvite(username, room_code):
     user = User.objects.filter(username=username)
@@ -63,15 +66,17 @@ def uninvite(username, room_code):
 
     return get_game_info(game)
 
+
 def remove_player(request):
     username = request.data['username']
     room_code = request.data['room_code']
     game = get_game(room_code)
-    
+
     del game.players[username]
     game.save()
 
     return Response({'game': get_game_info(game), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+
 
 def get_room_code():
     choices = string.ascii_uppercase + string.digits
@@ -88,6 +93,7 @@ def get_room_code():
 
     return room_code
 
+
 def get_game_info(game):
     user = User.objects.filter(username=game.host.username)
     user = user[0]
@@ -95,8 +101,9 @@ def get_game_info(game):
     me = {}
     charts = {}
     holdings = {}
+    contract = {}
 
-    for player, value in game.players.items():    
+    for player, value in game.players.items():
         players[player] = {
             'username': value['username'],
             'first_name': value['first_name'],
@@ -114,6 +121,9 @@ def get_game_info(game):
                 if 'holdings' in value:
                     holdings = value['holdings']
 
+    if len(game.contract) != 0:
+        contract = game.contract
+
     return {
         'host': {
             'username': user.username,
@@ -129,16 +139,21 @@ def get_game_info(game):
         'invites': game.invites,
         'active': game.start_time != "",
         'charts': charts,
-        'holdings': holdings
+        'holdings': holdings,
+        'contract': contract
     }
 
+
 def get_symbol_data(symbol, start_time, end_time):
-    r = requests.get('https://finnhub.io/api/v1/stock/candle?symbol=' + symbol + '&resolution=5&from=' + start_time + '&to=' + end_time + '&token=' + FINNHUB_API_KEY)
-    
+    r = requests.get('https://finnhub.io/api/v1/stock/candle?symbol=' + symbol +
+                     '&resolution=5&from=' + start_time + '&to=' + end_time + '&token=' + FINNHUB_API_KEY)
+
     return r.json()
 
-def format_data_for_graph(data):    
+
+def format_data_for_graph(data):
     return [{'time': data['t'][i], 'price': data['c'][i]} for i in range(len(data['c']))]
+
 
 def load_charts(player, game):
     current_time = math.floor(time.time())
@@ -157,8 +172,9 @@ def load_charts(player, game):
             if not symbol in charts and symbol in player['holdings']:
                 data = get_symbol_data(symbol, start_time, current_time)
                 charts[symbol] = format_data_for_graph(data)
-                    
+
     return charts
+
 
 def no_transactions_portfolio(game, start_time, end_time):
     numbers = [{'time': start_time, 'price': game.start_amount}]
@@ -182,6 +198,7 @@ def no_transactions_portfolio(game, start_time, end_time):
 
     return numbers, game.start_amount
 
+
 def get_player_charts(player, start_time, current_time):
     symbol_charts = {}
     times = []
@@ -202,6 +219,7 @@ def get_player_charts(player, start_time, current_time):
 
     return times, symbol_charts
 
+
 def load_portfolio(player, game):
     current_time = math.floor(time.time())
     start_time = int(game.start_time)
@@ -210,10 +228,13 @@ def load_portfolio(player, game):
     if current_time > end_time:
         current_time = end_time
 
-    if len(player['transactions']) == 1: return no_transactions_portfolio(game, start_time, end_time)
-    elif current_time - player['transactions'][1]['time'] < 300: return no_transactions_portfolio(game, start_time, end_time)
+    if len(player['transactions']) == 1:
+        return no_transactions_portfolio(game, start_time, end_time)
+    elif current_time - player['transactions'][1]['time'] < 300:
+        return no_transactions_portfolio(game, start_time, end_time)
 
-    times, symbol_charts = get_player_charts(player, str(math.floor(start_time)), str(current_time))
+    times, symbol_charts = get_player_charts(
+        player, str(math.floor(start_time)), str(current_time))
     latest_transaction = 0
     latest_holdings = {}
     latest_amount = game.start_amount
@@ -245,11 +266,13 @@ def load_portfolio(player, game):
 
     return goal, worth
 
+
 def player_in_game(username):
     game = Tournament.objects.filter(
         players__has_key=username).filter(active=True)
 
     return game.exists()
+
 
 def transaction(request, bought, player):
     SYMBOL = request.data["symbol"]
@@ -273,12 +296,14 @@ def transaction(request, bought, player):
 
     return SYMBOL, quantity, QUOTE, add
 
+
 def color_taken(game, color):
     for player, value in game.players.items():
         if value['color'] == color:
             return True
 
     return False
+
 
 def get_color(game):
     colors = ['black', 'blue', 'red', 'orange', 'green', 'purple', 'hotpink']
@@ -288,6 +313,7 @@ def get_color(game):
         return get_color(game)
 
     return color
+
 
 def get_history(games):
     history = []
@@ -303,6 +329,7 @@ def get_history(games):
         })
 
     return history
+
 
 def game_over(game):
     game.room_code = ''

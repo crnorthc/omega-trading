@@ -349,7 +349,7 @@ function Graph(props) {
         <div>
             {
                 props.securityLoading ?
-                    <div className="loaderContainer" style={
+                    <div className="loaderContainer f ai-c jc-c" style={
                         {
                             "height": "306px",
                             "width": width,

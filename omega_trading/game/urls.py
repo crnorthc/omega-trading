@@ -11,5 +11,6 @@ urlpatterns = [
     path('sell', Sell.as_view()),
     path('color', SetColor.as_view()),
     path('history', GameHistory.as_view()),
-    path('edit', EditGame.as_view())
+    path('edit', EditGame.as_view()),
+    path('quote', EtherQuote.as_view())
 ]

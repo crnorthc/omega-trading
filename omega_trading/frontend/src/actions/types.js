@@ -32,4 +32,4 @@ export const HISTORY_LOADED = 'HISTORY_LOADED';
 export const NO_HISTORY = 'NO_HISTORY';
 export const LOADING = 'LOADING';
 export const LEADERBOARD_LOADED = 'LEADERBOARD_LOADED';
-
+export const QUOTE_LOADED = 'QUOTE_LOADED';

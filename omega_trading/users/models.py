@@ -12,3 +12,4 @@ class Profile(models.Model):
     friends = models.JSONField(default=dict)
     invites = models.JSONField(default=dict)
     latest_path = models.CharField(max_length=25, default='/')
+    address = models.CharField(max_length=40, default='')

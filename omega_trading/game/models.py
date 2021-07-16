@@ -14,3 +14,4 @@ class Tournament(models.Model):
     positions = models.IntegerField(default=0)
     active = models.BooleanField(default=True)
     duration = models.JSONField(default=dict)
+    contract = models.JSONField(default=dict)

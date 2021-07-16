@@ -77,7 +77,7 @@ function MyNavbar(props) {
     <Fragment>
       <div bg="light" variant="dark" className="NavBar">
         <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark" to="/">Omega Trading</Link></div>
-        <form className="symbolSearch">
+        <form className="symbolSearch b">
           <div className="search-nav">
             <img className="searchIcon" src='../../../static/search.png' />
             <input type="text"
@@ -93,14 +93,14 @@ function MyNavbar(props) {
           </div>
         </form>
         {props.isAuthenticated ?
-          <div className="accountButtons">
+          <div className="accountButtons fr ai-c">
             <Link to='/leaderboard' className="accountLink">Leaderboard</Link>
             <Link to='/lobby' className="accountLink">Lobby</Link>
             <Link to='/account' className="accountLink">Account</Link>
-            <button onClick={(e) => props.logout()} className="logout">Logout</button>
+            <button onClick={(e) => props.logout()} className="logout b">Logout</button>
           </div>
           :
-          <div className="navLoginSignup">
+          <div className="navLoginSignup fr ai-c jc-c">
             <Link to="/login" className="navLogin">Login</Link>
             <Link to="/sign-up" className="navSignup">Signup</Link>
           </div>

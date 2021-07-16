@@ -178,10 +178,10 @@ function Game(props) {
         var small_charts = []
         for (const property in props.game.charts) {
             var temp = (
-                <Link to={'/chart?symbol=' + property} className='stock'>
+                <Link to={'/chart?symbol=' + property} className='stock  f ai-c jc-s'>
                     <div className='left-stock'>
                         <div className='stock-symbol'>{property}</div>
-                        <div className='stock-quantity'>{props.game.holdings[property].toFixed(2)} Shares</div>
+                        <div className='stock-quantity f'>{props.game.holdings[property].toFixed(2)} Shares</div>
                     </div>
                     <div className="small-chart">
                         <Graph plain={true} value={null} numbers={props.game.charts[property]} period={'day'} width={64} height={30} />
@@ -208,7 +208,7 @@ function Game(props) {
         numbers.sort((a, b) => parseFloat(b.amount) - parseFloat(a.amount))
         for (const number in numbers) {
             numbers[number] = (
-                <div className='friend'>
+                <div className='friend fr ai-c jc-s'>
                     <div style={{ 'color': props.game.players[numbers[number].username].color }} className="leaderboard">{parseInt(number) + 1}. {numbers[number].username}</div>
                     <div className="leaderboard">${numbers[number].amount.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
                 </div>
@@ -218,14 +218,14 @@ function Game(props) {
     }
 
     const actionbox = (
-        <div className="action-box">
-            <div className="buySell">
+        <div className="action-box b">
+            <div className="buySell bb fr ai-c jc-c">
                 <button className="buy" style={type === 'board' ? selectedStyle : null} onClick={e => setType('board')}>Leaderboard</button>
                 <button className="sell" style={type === 'stocks' ? selectedStyle : null} onClick={e => setType('stocks')}>Stocks</button>
             </div>
             {type === 'stocks' ?
                 Object.keys(charts).length !== 0 ? charts :
-                    <div className="noCharts">
+                    <div className="noCharts f ai-c jc-c">
                         You do not have stocks to display
                     </div>
                 :
@@ -255,7 +255,7 @@ function Game(props) {
             <div className='Graph'>
                 <h1 className="symbol-title">Game: {props.game.room_code}</h1>
                 {metrics == null ?
-                    <div className="loaderContainer" style={
+                    <div className="loaderContainer f ai-c jc-c" style={
                         {
                             "height": "306px",
                             "width": '676px',
@@ -295,7 +295,7 @@ function Game(props) {
                         </div>
                     </div>
                 }
-                <div className="timeSelector">
+                <div className="timeSelector f ai-c">
                     {player_selectors()}
                 </div>
             </div>

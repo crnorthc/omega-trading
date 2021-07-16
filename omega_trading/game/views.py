@@ -15,6 +15,7 @@ import json
 
 Profile = apps.get_model('users', 'Profile')
 
+
 class CreateGame(APIView):
 
     def post(self, request, format=None):
@@ -159,7 +160,7 @@ class JoinGame(APIView):
 
 class StartGame(APIView):
     def post(self, request, format=None):
-        game = Tournament.objects.filter(host_id=request.user.id)
+        game = Tournament.objects.filter(host_id=request.user.id, active=True)
         game = game[0]
         start_time = math.floor(time.time())
         end_time = start_time
@@ -186,7 +187,7 @@ class StartGame(APIView):
             value['amount'] = game.start_amount
 
         game.save()
-        
+
         return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
@@ -250,7 +251,7 @@ class Sell(APIView):
 
         player['transactions'].append(add)
         game.save()
-        
+
         return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
@@ -265,7 +266,7 @@ class SetColor(APIView):
 
         game.players[request.user.username]['color'] = color
         game.save()
-        
+
         return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
@@ -281,3 +282,32 @@ class GameHistory(APIView):
                 return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
 
         return Response({"games": get_history(games)}, status=status.HTTP_200_OK)
+
+
+class MakeBet(APIView):
+
+    def post(self, request, format=None):
+        pass
+
+
+class CreateContract(APIView):
+
+    def post(self, request, format=None):
+        pass
+
+
+class EtherQuote(APIView):
+
+    def post(self, request, format=None):
+        r = requests.get(
+            'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?CMC_PRO_API_KEY=' + CRYPTO_KEY + '&symbol=ETH')
+
+        r = r.json()
+        time = r['status']['timestamp'][11:16]
+
+        if int(time[0:2]) - 4 > 12:
+            time = ' ' + str(int(time[0:2]) - 16) + time[2:] + " PM"
+        else:
+            time = ' ' + str(int(time[0:2]) - 4) + time[2:] + ' AM'
+
+        return Response({"quote": r['data']['ETH']['quote']['USD']['price'], 'time': time}, status=status.HTTP_200_OK)

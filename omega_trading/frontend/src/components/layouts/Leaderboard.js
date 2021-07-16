@@ -59,7 +59,7 @@ function Leaderboard(props) {
     if (props.loading || props.leaderboard == null) {
         return (
             <div className="pageContainer">
-                <div className='loaderContainer'>
+                <div className='loaderContainer f ai-c jc-c'>
                     <div className='loader' />
                 </div>
             </div>
@@ -68,11 +68,11 @@ function Leaderboard(props) {
     else {
         return (
             <div className="pageContainer">
-                <div className='leaderboard-title'>Leaderboard</div>
-                <div className='Leaderboard'>
-                    <div className='leaderboard-buttons'>
-                        <button style={type == 'overall' ? style : null} onClick={(e) => setType('overall')} className='leaderboard-button'>Overall</button>
-                        <button style={type == 'friends' ? style : null} onClick={(e) => setType('friends')} className='leaderboard-button'>Friends</button>
+                <div className='title'>Leaderboard</div>
+                <div className='Leaderboard b'>
+                    <div className='bb fr'>
+                        <button style={type == 'overall' ? style : null} onClick={(e) => setType('overall')} className='leaderboard-button br st'>Overall</button>
+                        <button style={type == 'friends' ? style : null} onClick={(e) => setType('friends')} className='leaderboard-button st'>Friends</button>
                     </div>
                     <div className='rankings'>
                         {getRankings()}

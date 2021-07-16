@@ -47,7 +47,7 @@ function Lobby(props) {
     if ((!props.game_loading && !props.game_loaded) || props.game_loading) {
         return (
             <div className="pageContainer">
-                <div className='loaderContainer'>
+                <div className='loaderContainer f ai-c jc-c'>
                     <div className='loader' />
                 </div>
             </div>

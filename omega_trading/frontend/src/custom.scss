@@ -10,13 +10,13 @@ $warning: #d29732;
 $danger: #f44336;
 
 button {
-  background: none;
-  color: inherit;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
 }
 
 h2,
@@ -25,834 +25,667 @@ h3,
 .h3,
 h4,
 .h4 {
-  margin-bottom: 0px !important;
+    margin-bottom: 0px !important;
 }
 
 a {
-  text-decoration: none !important;
-  color: #000 !important;
+    text-decoration: none !important;
+    color: #000 !important;
 }
 
 body {
-  background-color: #fff;
+    background-color: #fff;
 }
 
 .pageContainer {
-  width: 1070px;
-  margin: auto;
-  padding-left: 30px;
-  padding-right: 30px;
-  padding-bottom: 72px;
-}
-
-/******* Variables *******/
-.ai-c {
-  align-items: center;
-}
-
-.jc-s {
-  justify-content: space-between;
-}
-
-.jc-c {
-  justify-content: center;
-}
-
-.fr {
-  display: flex;
-  flex-direction: row;
-}
-
-.fc {
-  display: flex;
-  flex-direction: column;
+    width: 1070px;
+    margin: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 72px;
 }
 
 /******* Leaderboard *******/
 
-.leaderboard-title {
-  font-size: 32px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 48px;
-}
-
 .Leaderboard {
-  margin: 0 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
-}
-
-.leaderboard-buttons {
-  display: flex;
-  flex-direction: row;
-  border-bottom: #000 1px solid;
+    margin: 0 12px;
 }
 
 .leaderboard-button {
-  width: 493px;
-  height: 60px;
-  text-align: center;
-  font-size: 26px;
-  font-weight: 600;
+    width: 493px;
+    height: 60px;
+    text-align: center;
 }
 
 .rank {
-  margin: 24px 96px;
-  font-size: 22px;
-  font-weight: 550;
+    margin: 24px 96px;
+    font-size: 22px;
+    font-weight: 550;
 }
 
 /******* History *******/
 .game-history {
-  margin: 72px 12px 0px 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
+    margin: 72px 12px 0px 12px;
 }
 
 .history-title {
-  border-bottom: #000 1px solid;
-  height: 60px;
-  font-size: 28px;
-  font-weight: 700;
+    height: 60px;
 }
 
 .no-history {
-  padding: 24px 0px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: 600;
-  color: rgb(114, 114, 114);
+    padding: 24px 0px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: rgb(114, 114, 114);
 }
 
 .history-game {
-  font-size: 16px;
-  font-weight: 550;
-  padding: 12px 0px;
+    font-size: 16px;
+    font-weight: 550;
+    padding: 12px 0px;
 }
 
 .history-headers {
-  padding-top: 24px;
-  margin-bottom: 12px;
-  font-size: 24px;
-  font-weight: 600;
+    padding-top: 24px;
+    margin-bottom: 12px;
+    font-size: 24px;
+    font-weight: 600;
 }
 
 .header {
-  width: 328px;
+    width: 328px;
 }
 
 .history-header {
-  padding: 0px 24px 12px 24px;
-  border-bottom: #000 1px solid;
+    padding: 0px 24px 12px 24px;
 }
 
 .history-date {
-  width: 328px;
+    width: 328px;
 }
 
 .history-rules {
-  width: 328px;
+    width: 328px;
 }
 
 .history-rules-cont {
-  width: 200px;
+    width: 200px;
 }
 
 .history-results {
-  width: 328px;
+    width: 328px;
 }
 
 .history-bet {
-  padding-left: 6px;
+    padding-left: 6px;
 }
 
 .history-player {
-  width: 200px;
+    width: 200px;
 }
 
 .arrow {
-  padding: 0 6px;
-  font-size: 24px;
+    padding: 0 6px;
+    font-size: 24px;
 }
 
 /******* Game *******/
 
 // NOT FOUND
 .gameContainer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .leaderboard {
-  font-size: 16px;
-  font-weight: 700;
+    font-size: 16px;
+    font-weight: 700;
 }
 
 /******* CreateGame *******/
 .startup {
-  margin: 0 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
-}
-
-.game-selection {
-  border-bottom: #000 1px solid;
-}
-
-.create-game {
-  border-right: #000 1px solid;
+    margin: 0px 24px;
 }
 
 .join-game,
 .create-game {
-  height: 60px;
-  width: 492px;
-  font-size: 28px;
-  font-weight: 700;
-  text-align: center;
+    height: 60px;
+    width: 492px;
+    text-align: center;
 }
 
 .creategameParams {
-  width: 732px;
-  margin: 48px 78px 46px 78px;
+    width: 732px;
+    margin: 48px 78px 46px 78px;
 }
 
 .enter-code {
-  width: 732px;
-  margin: 48px 72px 0px 72px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
+    width: 732px;
+    margin: 48px 72px 0px 72px;
+    font-size: 24px;
 }
 
 .codeInput {
-  width: 272px;
-  margin-bottom: 48px;
-  height: 48px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: #424242;
-  text-align: center;
+    width: 272px;
+    margin-bottom: 48px;
+    height: 48px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #424242;
+    text-align: center;
 }
 
 .amountInput-game {
-  width: 151.58px;
-  height: 36px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(66, 66, 66);
-  text-align: right;
+    width: 151.58px;
+    height: 36px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(66, 66, 66);
+    text-align: right;
 }
 
 .code-button {
-  width: 136px;
-  height: 48px;
-  text-align: center;
-  align-items: center;
-  border: #000 1px solid;
-  border-radius: 5px;
-  font-weight: 600;
+    width: 136px;
+    height: 48px;
+    text-align: center;
+    font-weight: 600;
 }
 
 .code-button:hover {
-  background-color: rgb(202, 202, 202);
+    background-color: rgb(202, 202, 202);
 }
 
 .rules {
-  padding: 12px 48px 24px 48px;
+    padding: 12px 48px 24px 48px;
 }
 
 .rules-title {
-  padding-bottom: 12px;
-  padding-right: 24px;
-  padding-left: 24px;
-  border-bottom: #000 1px solid;
+    padding-bottom: 12px;
+    padding-right: 24px;
+    padding-left: 24px;
 }
 
+// NOT FOUND
 .game-params {
-  width: 732px;
-  margin: 36px 72px 48px 72px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    width: 732px;
+    margin: 36px 72px 48px 72px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 .params {
-  height: 214px;
-  width: 366px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.durationInputs {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+    height: 214px;
+    width: 366px;
 }
 
 .min-input {
-  height: 34px;
-  text-align: center;
-  border-radius: 5px;
-  border: #424242 1px solid;
+    height: 34px;
+    text-align: center;
+    border-radius: 5px;
+    border: #424242 1px solid;
 }
 
 .duration {
-  font-size: 16px;
-  font-weight: 550;
-}
-
-.game-durations {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
+    font-size: 16px;
+    font-weight: 550;
 }
 
 .day-duration,
 .hour-duration,
 .min-duration {
-  padding: 0px 6px;
+    padding: 0px 6px;
 }
 
 .duration-input {
-  text-align: center;
-  height: 34px;
-  width: 36px;
-  border-radius: 5px;
-  border: #424242 1px solid;
-}
-
-.start-amount,
-.bet,
-.positions,
-.durations {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
+    text-align: center;
+    height: 34px;
+    width: 36px;
+    border-radius: 5px;
+    border: #424242 1px solid;
 }
 
 .rule {
-  font-size: 20px;
-  font-weight: 550;
-  padding-bottom: 3px;
-}
-
-.enter-params {
-  display: flex;
-  justify-content: center;
+    font-size: 20px;
+    font-weight: 550;
+    padding-bottom: 3px;
 }
 
 .to-invites {
-  padding: 6px 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
+    padding: 6px 12px;
+    border: #000 1px solid;
+    border-radius: 5px;
 }
 
 .to-invites:hover {
-  background-color: rgb(202, 202, 202);
+    background-color: rgb(202, 202, 202);
 }
 
 /******* Pregame *******/
 
+// NOT FOUND
 .pregame-subHeader {
-  padding-top: 24px;
-  display: flex;
-  justify-content: center;
-}
-
-.pregame-header {
-  padding: 12px 24px;
-  border-bottom: #000 1px solid;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+    padding-top: 24px;
+    display: flex;
+    justify-content: center;
 }
 
 .pregame-title {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
+    padding: 12px 24px;
+}
+
+.pregame-header {
+    padding: 12px 24px;
+    border-bottom: #000 1px solid;
 }
 
 .host,
 .room-code {
-  color: rgb(77, 77, 77);
-  padding-left: 12px;
+    color: rgb(77, 77, 77);
+    padding-left: 12px;
 }
 
 .pregame-rules {
-  padding-bottom: 24px;
+    padding-bottom: 24px;
 }
 
 .pregameParams {
-  width: 732px;
-  margin: 48px 120px 46px 120px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    width: 732px;
 }
 
 .duration-inputs {
-  height: 36px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
+    height: 36px;
 }
 
 .pregame-amount,
 .pregame-position,
 .pregame-bet-amount {
-  height: 36px;
+    height: 36px;
 }
 
 .pregame-start-amount,
 .pregame-bet,
 .pregame-position {
-  width: 136px;
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  align-items: center;
-  font-size: 18px;
-  font-weight: 550;
+    width: 136px;
+    font-size: 18px;
+    font-weight: 550;
 }
 
 .pregame-rule {
-  font-size: 20px;
-  font-weight: 550;
-  width: 136px;
-  padding-bottom: 3px;
-  margin-bottom: 9px;
-  text-align: center;
-  border-bottom: rgb(65, 65, 65) 1px solid;
+    font-size: 20px;
+    font-weight: 550;
+    width: 136px;
+    padding-bottom: 3px;
+    margin-bottom: 9px;
+    text-align: center;
 }
 
 .pregame-positions,
 .pregame-start-amount {
-  margin-bottom: 24px;
+    margin-bottom: 24px;
 }
 
 .pregame-duration {
-  font-size: 16px;
-  padding-left: 2px;
+    font-size: 16px;
+    padding-left: 2px;
 }
 
 .day-duration-game,
 .hour-duration-game,
 .min-duration-game {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  padding: 0px 3px;
-  font-size: 18px;
-  font-weight: 550;
+    padding: 0px 3px;
+    font-size: 18px;
+    font-weight: 550;
 }
 
 .edit-rules {
-  text-align: center;
-}
-
-.players {
-  border-top: #000 1px solid;
+    text-align: center;
 }
 
 .enter-params-pregame {
-  margin: 0px 72px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row;
+    margin: 12px 72px 0px 72px;
 }
 
 .startgame-section {
-  height: 72px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    height: 72px;
 }
 
 .work {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 12px;
+    padding-bottom: 12px;
 }
 
 .noAction {
-  font-size: 18px;
-  font-weight: 600;
-  color: #727272;
+    font-size: 18px;
+    font-weight: 600;
+    color: #727272;
 }
 
 .editButtonHidden {
-  width: 114px;
-  height: 36px;
-  border: #727272 1px solid;
-  border-radius: 5px;
-  background-color: #dfdfdf;
-  color: #727272;
-  cursor: default !important;
+    width: 114px;
+    height: 36px;
+    border: #727272 1px solid;
+    border-radius: 5px;
+    background-color: #dfdfdf;
+    color: #727272;
+    cursor: default !important;
+}
+
+.startup-pregame {
+    width: 711px;
+    margin: 0px 24px 0px 0px;
+}
+
+.contract-input {
+    padding: 19.5px 12px 19.5px 12px;
+}
+
+.amountInput-contract {
+    width: 100px;
+    text-align: right;
+}
+
+.action-box-contract {
+    width: 275px;
+    height: 407px;
+    background-color: #fff;
+    margin-right: 0px;
+    float: right;
+}
+
+.contract-btn {
+    margin-top: 169px;
 }
 
 /******* Account *******/
 
 .accountHeader {
-  width: 680px;
-  height: 72px;
-  margin: 60px 165px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    width: 680px;
+    height: 72px;
+    margin: 60px 165px;
 }
 
 .account-left {
-  width: 291px;
-  height: 72px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    width: 291px;
+    height: 72px;
 }
 
 .profilePic-cont {
-  position: relative;
-  height: 70px;
-  width: 70px;
+    position: relative;
+    height: 70px;
+    width: 70px;
 }
 
 .profilePic {
-  position: absolute;
+    position: absolute;
 }
 
 .addPhoto {
-  position: absolute;
-  background-color: #fff;
-  border-radius: 50%;
-  bottom: 0px;
-  left: 50px;
+    position: absolute;
+    background-color: #fff;
+    border-radius: 50%;
+    bottom: 0px;
+    left: 50px;
 }
 
 .names {
-  margin-left: 25px;
+    margin-left: 25px;
 }
 
 .fullName {
-  font-size: 24px;
-  font-weight: 700;
+    font-size: 24px;
+    font-weight: 700;
 }
 
 .userName {
-  font-size: 16px;
-  font-weight: 600;
+    font-size: 16px;
+    font-weight: 600;
 }
 
 .editProfile {
-  height: 72px;
-  width: 114px;
-  display: flex;
-  align-items: center;
+    height: 72px;
+    width: 114px;
 }
 
 .editButton {
-  width: 114px;
-  height: 36px;
-  border: #000 1px solid;
-  border-radius: 5px;
-  background-color: #fff;
+    width: 114px;
+    height: 36px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    background-color: #fff;
 }
 
 .editButton:hover {
-  background-color: rgb(202, 202, 202);
+    background-color: rgb(202, 202, 202);
 }
 
 .friends {
-  margin: 0 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
+    margin: 0 12px;
 }
 
 .friendsHeader {
-  padding: 12px 24px;
-  border-bottom: #000 1px solid;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+    padding: 12px 24px;
 }
 
 .search-friends {
-  padding: 6px 0px;
-  border: #000 1px solid;
-}
-
-.suggested {
-  border-bottom: #000 1px solid;
+    padding: 6px 0px;
 }
 
 .otherUser {
-  width: 680px;
-  margin: 0 152px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+    width: 680px;
+    margin: 0 152px;
+}
+
+.otherUser-pregame {
+    width: 680px;
 }
 
 .user-left {
-  width: 291px;
-  height: 72px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    width: 291px;
+    height: 72px;
 }
 
+// NOT FOUND
 .colorChoices {
-  width: 200px;
-  height: 72px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+    width: 200px;
+    height: 72px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .colorChoice {
-  width: 15px;
-  height: 15px;
-  border-radius: 3px;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
 }
 
 .myChoice {
-  width: 20px;
-  height: 20px;
-  border-radius: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
 }
 
 .sender {
-  padding-left: 24px;
-  font-size: 18px;
-  font-weight: 700;
+    padding-left: 24px;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .game-user-left {
-  height: 72px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    height: 72px;
 }
 
 .game-invite {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgb(100, 100, 100);
-  padding-left: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(100, 100, 100);
+    padding-left: 12px;
 }
 
 .userNames {
-  padding-left: 24px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+    padding-left: 24px;
 }
 
 .fullName-user {
-  font-size: 18px;
-  font-weight: 700;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 .userName-user {
-  font-size: 14px;
-  font-weight: 600;
-  color: rgb(100, 100, 100);
-  padding-left: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    color: rgb(100, 100, 100);
+    padding-left: 12px;
 }
 
 .friendsInput {
-  width: 300px;
-  border: none;
-  outline: none;
+    width: 300px;
+    border: none;
+    outline: none;
 }
 
 .subHeader {
-  padding-top: 12px;
-  display: flex;
-  justify-content: center;
+    padding-top: 12px;
 }
 
 .friendsSection {
-  padding-bottom: 12px;
-  padding-right: 24px;
-  padding-left: 24px;
-  border-bottom: #000 1px solid;
-}
-
-.friendsList {
-  display: flex;
-  flex-direction: column;
-}
-
-.invitesList {
-  display: flex;
-  flex-direction: column;
-  border-bottom: #000 1px solid;
+    padding-bottom: 12px;
+    padding-right: 24px;
+    padding-left: 24px;
 }
 
 .accept,
 .decline {
-  padding: 7px 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
+    padding: 7px 12px;
 }
 
 .accept:hover,
 .decline:hover {
-  background-color: rgb(235, 235, 235);
+    background-color: rgb(235, 235, 235);
 }
 
 .accept {
-  margin-right: 12px;
+    margin-right: 12px;
 }
 
 .noList {
-  padding: 36px 24px;
-  font-size: 18px;
-  font-weight: 600;
-  color: rgb(114, 114, 114);
+    padding: 36px 24px;
+    font-size: 18px;
+    font-weight: 600;
+    color: rgb(114, 114, 114);
 }
 
 /******* Home  *******/
 
+// NOT FOUND
 .stocks {
-  border-bottom: rgb(66, 66, 66) 1px solid;
-  height: 52px;
-  display: flex;
-  flex-direction: row;
-  justify-content: left;
-  align-items: center;
+    border-bottom: rgb(66, 66, 66) 1px solid;
+    height: 52px;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
 }
 
 .stockTitle {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 20px;
-  padding-left: 25px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    padding-left: 25px;
 }
 
 .stock {
-  height: 60px;
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 24px;
+    height: 60px;
+    padding: 0 24px;
 }
 
 .friend {
-  height: 60px;
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 24px;
+    height: 60px;
+    padding: 0 24px;
 }
 
 .left-stock {
-  margin-right: 12px;
+    margin-right: 12px;
 }
 
 .left-friend {
-  width: 40px;
-  margin-right: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    width: 40px;
+    margin-right: 12px;
 }
 
 .stock-symbol {
-  padding-bottom: 2px;
-  font-size: 13px;
-  font-weight: 700;
+    padding-bottom: 2px;
 }
 
 .stock-quantity {
-  display: flex;
-  font-size: 13px;
-  font-weight: 400;
+    font-size: 14px;
+    font-weight: 400;
 }
 
 .small-chart {
-  transform: scaleY(-1);
+    transform: scaleY(-1);
 }
 
 .small {
-  stroke-width: 0.5px !important;
+    stroke-width: 0.5px !important;
 }
 
 .stock-price {
-  margin: 0 0 0 12px;
-  text-align: right;
-  font-size: 13px;
+    margin: 0 0 0 12px;
+    text-align: right;
+    font-size: 14px;
 }
 
 /******* Chart *******/
 
 .Graph {
-  width: 676px;
-  height: 367px;
-  margin-right: 0px;
-  display: inline-block;
-  vertical-align: top;
+    width: 676px;
+    height: 367px;
+    margin-right: 0px;
+    display: inline-block;
+    vertical-align: top;
 }
 
 .timeSelector {
-  width: 700px;
-  height: 33px;
-  padding-right: 460px;
-  display: flex;
-  align-items: center;
-  border-bottom: rgb(66, 66, 66) 1px solid;
+    width: 700px;
+    height: 33px;
+    padding-right: 460px;
+    border-bottom: rgb(66, 66, 66) 1px solid;
 }
 
 .timePeriod {
-  margin-right: 24px;
-  font-size: 13px;
-  font-weight: 700;
-  padding-bottom: 12px;
+    margin-right: 24px;
+    padding-bottom: 12px;
 }
 
 .timePeriod:hover {
-  color: rgb(175, 175, 175);
+    color: rgb(175, 175, 175);
 }
 
 .line {
-  stroke: rgb(66, 66, 66);
+    stroke: rgb(66, 66, 66);
 }
 
 .chartTime {
-  left: -50%;
-  position: relative;
+    left: -50%;
+    position: relative;
 }
 
 .graphCont {
-  stroke-width: 2px;
+    stroke-width: 2px;
 }
 
 .hiddenPath {
-  stroke: rgb(150, 150, 150);
+    stroke: rgb(150, 150, 150);
 }
 
 .selectedPath {
-  stroke: #000 !important;
+    stroke: #000 !important;
 }
 
 /******* ActionBox *******/
@@ -860,387 +693,306 @@ body {
 /* Chrome, Safari, Edge, Opera */
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 /* Firefox */
 input[type="number"] {
-  -moz-appearance: textfield;
+    -moz-appearance: textfield;
 }
 
 .action-box {
-  width: 275px;
-  height: 400px;
-  background-color: #fff;
-  margin-right: 0px;
-  float: right;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(66, 66, 66);
+    width: 275px;
+    height: 400px;
+    background-color: #fff;
+    margin-right: 0px;
+    float: right;
 }
 
 .noCharts {
-  height: 315px;
-  width: 275px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.gameChoice {
-  display: flex;
-  flex-direction: row;
-  border-bottom: rgb(66, 66, 66) 1px solid;
-}
-
-.mode-choice {
-  border-right: rgb(66, 66, 66) 1px solid;
+    height: 315px;
+    width: 275px;
 }
 
 .modeChoice,
 .mode-choice {
-  width: 137px;
-  height: 33px;
-  font-size: 18px;
-  font-weight: 550;
+    width: 137px;
+    height: 33px;
+    font-size: 18px;
+    font-weight: 550;
 }
 
 .buySell {
-  border-bottom: rgb(66, 66, 66) 1px solid;
-  height: 52px;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+    height: 52px;
 }
 
 .buy,
 .sell {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 20px;
-  margin: 0 25px;
-  padding: 14px 0;
+    line-height: 20px;
+    margin: 0 25px;
+    padding: 14px 0;
 }
 
 .buy:hover,
 .sell:hover {
-  cursor: pointer;
-  color: rgb(177, 177, 177);
+    cursor: pointer;
+    color: rgb(177, 177, 177);
 }
 
 .values {
-  width: 273px;
-  height: 157px;
-  padding-left: 24px;
-  padding-right: 24px;
-  padding-top: 6px;
+    width: 273px;
+    height: 157px;
+    padding-left: 24px;
+    padding-right: 24px;
+    padding-top: 6px;
 }
 
 .investIn,
 .Amount,
 .Quantity {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 6px;
-  padding-bottom: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
 .Quantity {
-  padding-top: 12px;
-  font-weight: 700;
-  text-overflow: ellipsis;
+    padding-top: 12px;
+    font-weight: 700;
+    text-overflow: ellipsis;
 }
 
 .type {
-  text-overflow: ellipsis;
-}
-
-.Amount {
-  border-bottom: rgb(66, 66, 66) 1px solid;
+    text-overflow: ellipsis;
 }
 
 .typeButton {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 136px;
-  height: 36px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(66, 66, 66);
+    width: 136px;
+    height: 36px;
 }
 
 .dropButtons {
-  width: 136px;
-  height: 110px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(66, 66, 66);
-  position: absolute;
-  overflow: hidden;
-  background-color: #fff;
+    width: 136px;
+    height: 110px;
+    position: absolute;
+    overflow: hidden;
+    background-color: #fff;
 }
 
 .buttons {
-  display: flex;
-  justify-content: space-between;
-  width: 136px;
-  height: 36px;
+    display: flex;
+    justify-content: space-between;
+    width: 136px;
+    height: 36px;
 }
 
 .typeButton-drop {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 136px;
-  height: 36px;
-  border-bottom: rgb(66, 66, 66) 1px solid;
+    width: 136px;
+    height: 36px;
 }
 
 .typeButton-drop-last {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 136px;
-  height: 36px;
+    width: 136px;
+    height: 36px;
 }
 
 #shares:hover,
 .typeButton-drop-last:hover {
-  background-color: rgb(235, 235, 235) !important;
+    background-color: rgb(235, 235, 235) !important;
 }
 
 .amountInput {
-  width: 136px;
-  height: 36px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(66, 66, 66);
-  text-align: right;
+    width: 136px;
+    height: 36px;
+    text-align: right;
 }
 
 .metric {
-  padding-left: 12px;
+    padding-left: 12px;
 }
 
 .dropper {
-  display: flex;
-  padding-right: 4px;
+    display: flex;
+    padding-right: 4px;
 }
 
 .type,
 .metric {
-  display: inline-block;
+    display: inline-block;
 }
 
 .reviewOrder {
-  width: 275px;
-  height: 108px;
-  padding-top: 24px;
-  border-bottom: rgb(66, 66, 66) 1px solid;
+    width: 275px;
+    height: 108px;
+    padding-top: 24px;
 }
 
 .reviewButton {
-  width: 225px;
-  height: 48px;
-  border-radius: 5px;
-  border-style: solid;
-  border-width: 1px;
-  border-color: rgb(66, 66, 66);
-  margin-left: 25px;
+    width: 225px;
+    height: 48px;
+    margin-left: 25px;
 }
 
 .reviewButton:hover {
-  background-color: rgb(235, 235, 235);
+    background-color: rgb(235, 235, 235);
 }
 
 .Message {
-  width: 275px;
-  height: 48px;
-  padding: 0 15px;
-  display: flex;
-  align-items: center;
+    width: 275px;
+    height: 48px;
+    padding: 0 15px;
 }
 
 .message {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  width: 245px;
-  font-size: 13px;
+    width: 245px;
+    font-size: 14px;
 }
 
 /******* NavBar *******/
 
 .symbolSearch {
-  display: inline;
-  margin-left: 50px;
-  border-style: solid;
-  border-width: 1px 1px 1px 1px;
-  border-color: rgb(122, 122, 122);
+    display: inline;
+    margin-left: 50px;
 }
 
 .searchIcon {
-  width: 25px;
-  height: 25px;
-  padding-right: 5px;
-  padding-left: 2px;
-  padding-bottom: 2px;
-  border-width: 1px;
-  border-color: #000;
+    width: 25px;
+    height: 25px;
+    padding-right: 5px;
+    padding-left: 2px;
+    padding-bottom: 2px;
 }
 
 .searchInput {
-  border: none;
-  outline: none;
-  width: 300px;
+    border: none;
+    outline: none;
+    width: 300px;
 }
 
 .dropdown-nav {
-  position: fixed;
-  background-color: #fff;
-  width: 325px;
-  border-style: solid;
-  border-width: 0px 1px 1px 1px;
-  border-color: rgb(122, 122, 122);
+    position: fixed;
+    background-color: #fff;
+    width: 325px;
+    border-style: solid;
+    border-width: 0px 1px 1px 1px;
+    border-color: rgb(122, 122, 122);
 }
 
 .symbol-link {
-  display: block;
-  text-decoration: none;
-  cursor: pointer;
-  padding-left: 20px;
-  padding-top: 10px;
+    display: block;
+    text-decoration: none;
+    cursor: pointer;
+    padding-left: 20px;
+    padding-top: 10px;
 }
 
 .symbol-link:hover,
 .logout:hover {
-  background-color: rgb(218, 218, 218);
+    background-color: rgb(218, 218, 218);
 }
 
 .company-symbol {
-  display: inline;
-  padding-right: 10px;
-  color: #000;
-  font-size: 16px;
-  font-weight: 700;
+    display: inline;
+    padding-right: 10px;
+    color: #000;
+    font-size: 16px;
+    font-weight: 700;
 }
 
 .company {
-  display: inline;
-  color: rgb(58, 58, 58);
-  font-size: 12px;
+    display: inline;
+    color: rgb(58, 58, 58);
+    font-size: 12px;
 }
 
 .NavBar {
-  position: relative;
-  width: 1070px;
-  display: flex;
-  margin: auto;
-  align-items: center;
-  background-color: #fff;
-  margin-bottom: 30px;
-  padding-top: 1rem;
-  padding-bottom: 0.5rem;
-  padding-left: 30px;
-  padding-right: 30px;
+    position: relative;
+    width: 1070px;
+    display: flex;
+    margin: auto;
+    align-items: center;
+    background-color: #fff;
+    margin-bottom: 30px;
+    padding-top: 1rem;
+    padding-bottom: 0.5rem;
+    padding-left: 30px;
+    padding-right: 30px;
 }
 
 .nav-brand {
-  padding-top: 0.3125rem;
-  padding-bottom: 0.3125rem;
-  margin-right: 1rem;
-  font-size: 1.25rem;
-  text-decoration: none;
-  white-space: nowrap;
+    padding-top: 0.3125rem;
+    padding-bottom: 0.3125rem;
+    margin-right: 1rem;
+    font-size: 1.25rem;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 #home-link {
-  left: 30px;
+    left: 30px;
 }
 
 .loaderContainer {
-  height: 10em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    height: 10em;
 }
 
 .navLoginSignup {
-  height: 40px;
-  border: #000 1px solid;
-  border-radius: 5px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  margin-left: 342px;
+    height: 40px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    margin-left: 342px;
 }
 
 .accountButtons {
-  height: 40px;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  margin-left: 67px;
+    height: 40px;
+    margin-left: 67px;
 }
 
 .accountLink {
-  margin-right: 48px;
-  padding: 7px 0px;
+    margin-right: 48px;
+    padding: 7px 0px;
 }
 
 .accountLink:hover {
-  border-bottom: rgb(66, 66, 66) 1px solid;
+    border-bottom: rgb(66, 66, 66) 1px solid;
 }
 
 .logout {
-  padding: 7px 12px;
-  border: #000 1px solid;
-  border-radius: 5px;
+    padding: 7px 12px;
 }
 
 .navLogin,
 .navSignup {
-  padding: 0 12px;
+    padding: 0 12px;
 }
 
 /******* Loader *******/
 .loader {
-  border: 16px solid #f3f3f3;
-  border-radius: 50%;
-  border-top: 16px solid #000;
-  width: 120px;
-  height: 120px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
-  animation: spin 2s linear infinite;
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #000;
+    width: 120px;
+    height: 120px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
 }
 
 /* Safari */
 @-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-  }
+    0% {
+        -webkit-transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 // Must be at bottom

@@ -31,8 +31,8 @@ function Account(props) {
     if (props.user !== null) {
         return (
             <div className="pageContainer">
-                <div className="accountHeader">
-                    <div className="account-left">
+                <div className="accountHeader f ai-c jc-s">
+                    <div className="account-left fr ai-c">
                         <div className="profilePic-cont">
                             <img className="profilePic" src={profilePic} width={70} />
                             <button>
@@ -47,11 +47,11 @@ function Account(props) {
                             <div className="userName">@{props.user.username}</div>
                         </div>
                     </div>
-                    <div className="editProfile">
+                    <div className="editProfile f ai-c">
                         <button className="editButton">Edit Profile</button>
                     </div>
                 </div>
-                <div className='friends'>
+                <div className='friends b'>
                     <Friends friendsOnly={false} />
                 </div>
             </div>
