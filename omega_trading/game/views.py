@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.apps import apps
 from .utils import *
+from .bets import *
 import time
 import math
 import requests
@@ -143,6 +144,9 @@ class JoinGame(APIView):
         profile = Profile.objects.filter(user_id=request.user.id)
         profile = profile[0]
         game = get_game(room_code)
+
+        if 'address' in game.contract:
+            game.contract['players'][username] = False
 
         if request.data['accepted'] and not player_in_game(request.user.username):
             game.players[username] = {
@@ -287,13 +291,60 @@ class GameHistory(APIView):
 class MakeBet(APIView):
 
     def post(self, request, format=None):
-        pass
+        address = get_address(request)
+        game = get_game(request.data['room_code'])
+
+        if not address:
+            return Response({'Error': 'Invalid Address'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            game.players[request.user.username]['address'] = address
+
+        key = request.data['key']
+        contract_address = game.contract['address']
+        abi = game.contract['abi']
+        value = game.contract['bet']
+
+        submit_bet(contract_address, abi, address, key, value)
+
+        game.contract['players'][request.user.username] = True
+
+        game.save()
+
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class CreateContract(APIView):
 
     def post(self, request, format=None):
-        pass
+        key = request.data['key']
+        value = request.data['value']
+        address = get_address(request)
+        game = Tournament.objects.filter(host_id=request.user.id, active=True)
+        game = game[0]
+
+        if not address:
+            return Response({'Error': 'Invalid Address'}, status=status.HTTP_403_FORBIDDEN)
+        else:
+            game.players[request.user.username]['address'] = address
+
+        abi, contract_address = create_contract(address, key, value)
+        players = {}
+
+        for username, data in game.players.items():
+            if username == request.user.username:
+                players[username] = True
+            else:
+                players[username] = False
+
+        game.contract = {
+            'address': contract_address,
+            'abi': abi,
+            'bet': request.data['bet'],
+            'players': players
+        }
+        game.save()
+
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class EtherQuote(APIView):
@@ -308,6 +359,15 @@ class EtherQuote(APIView):
         if int(time[0:2]) - 4 > 12:
             time = ' ' + str(int(time[0:2]) - 16) + time[2:] + " PM"
         else:
-            time = ' ' + str(int(time[0:2]) - 4) + time[2:] + ' AM'
+            if int(time[0:2]) >= 0 and int(time[0:2]) <= 4:
+                time = ' ' + str(8 + int(time[0:2])) + time[2:] + ' PM'
+            else:
+                time = ' ' + str((int(time[0:2]) - 4)) + time[2:] + ' AM'
 
-        return Response({"quote": r['data']['ETH']['quote']['USD']['price'], 'time': time}, status=status.HTTP_200_OK)
+        return Response({"etherQuote": {'quote': r['data']['ETH']['quote']['USD']['price'], 'time': time}}, status=status.HTTP_200_OK)
+
+
+class GasQuote(APIView):
+
+    def post(self, request, format=None):
+        return Response({"gasQuote": gas_quote()}, status=status.HTTP_200_OK)

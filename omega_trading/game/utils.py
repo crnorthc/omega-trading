@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.apps import apps
 from .TopSecret import *
+from .bets import *
 from rest_framework.response import Response
 from rest_framework import status
 from .models import Tournament
@@ -111,6 +112,9 @@ def get_game_info(game):
             'color': value['color']
         }
 
+        if 'address' in value:
+            players[player]['address'] = value['address']
+
         if game.start_time != "":
             players[player]['numbers'], players[player]['amount'] = load_portfolio(
                 value, game)
@@ -121,8 +125,11 @@ def get_game_info(game):
                 if 'holdings' in value:
                     holdings = value['holdings']
 
-    if len(game.contract) != 0:
-        contract = game.contract
+    if 'abi' in game.contract:
+        contract = {
+            'bet': game.contract['bet'],
+            'players': game.contract['players']
+        }
 
     return {
         'host': {
@@ -331,10 +338,24 @@ def get_history(games):
     return history
 
 
+def find_winner(players, addresses, contract):
+
+    winner = {'player': None, 'worth': 0}
+
+    for player, worth in players.items():
+        if worth > winner['worth']:
+            winner['player'] = player
+            winner['worth'] = worth
+
+    pay_winner(contract['address'], contract['abi'],
+               addresses[winner['player']])
+
+
 def game_over(game):
     game.room_code = ''
     game.invites = {}
     game.active = False
+    addresses = {}
 
     for player, value in game.players.items():
         x, worth = load_portfolio(value, game)
@@ -346,6 +367,29 @@ def game_over(game):
         }
         temp['worth'] = worth
         game.players[player] = temp
+        addresses[player] = value['address']
+
+    if 'address' in game.contract:
+        find_winner(game.players, addresses, game.contract)
 
     game.save()
     return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
+
+
+def get_address(request):
+    profile = Profile.objects.filter(user_id=request.user.id)
+    profile = profile[0]
+
+    if request.data['save']:
+        profile.address = request.data['address']
+        profile.save()
+
+    if 'address' in request.data:
+        addy = str(request.data['address'])
+    else:
+        addy = profile.address
+
+    if not check_address(addy):
+        return False
+    else:
+        return checkedsummed(addy)

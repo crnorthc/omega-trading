@@ -400,6 +400,41 @@ body {
     margin-top: 169px;
 }
 
+.contract-btn-complete {
+    margin-top: 37px;
+}
+
+/******* Crypto *******/
+
+.crypto-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.342);
+}
+
+.crypto-page {
+    height: 375px;
+    width: 625px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.crypto-title {
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.crypto-input {
+    width: 500px;
+    height: 48px;
+    font-size: 18px;
+    text-align: left;
+}
+
 /******* Account *******/
 
 .accountHeader {

@@ -2,130 +2,160 @@
 //-------- FLEX OPTIONS ----------
 //--------------------------------
 .ai-c {
-  align-items: center;
+    align-items: center;
 }
 
 .ai-b {
-  align-items: baseline;
+    align-items: baseline;
 }
 
 .jc-s {
-  justify-content: space-between;
+    justify-content: space-between;
 }
 
 .f {
-  display: flex;
+    display: flex;
 }
 
 .jc-c {
-  justify-content: center;
+    justify-content: center;
 }
 
 .fr {
-  display: flex;
-  flex-direction: row;
+    display: flex;
+    flex-direction: row;
 }
 
 .fc {
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 }
 //--------------------------------
 //-------- BORDER OPTIONS --------
 //--------------------------------
 .b {
-  border: #000 1px solid;
-  border-radius: 5px;
+    border: #000 1px solid;
+    border-radius: 5px;
 }
 
 .bb {
-  border-bottom: #000 1px solid;
+    border-bottom: #000 1px solid;
 }
 
 .br {
-  border-right: #000 1px solid;
+    border-right: #000 1px solid;
 }
 
 .bt {
-  border-top: #000 1px solid;
+    border-top: #000 1px solid;
 }
 //--------------------------------
 //--------- FONT OPTIONS ---------
 //--------------------------------
 .title {
-  font-size: 32px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 48px;
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 48px;
 }
 
 // Section Title
 .st {
-  font-size: 28px;
-  font-weight: 700;
+    font-size: 28px;
+    font-weight: 700;
 }
 
 // Bold Text
 .bld {
-  font-weight: 600;
+    font-weight: 600;
 }
 
 .f14 {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 .f16 {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 // Tiny Text
 .tt {
-  font-size: 10px;
+    font-size: 10px;
 }
 
 //Small Text
 .smt {
-  font-size: 12px;
+    font-size: 12px;
 }
 
 // Light Text
 .lt {
-  color: rgb(114, 114, 114);
+    color: rgb(114, 114, 114);
 }
 
 // Medium Text
 .mt {
-  font-size: 16px;
+    font-size: 16px;
 }
 
 // Medium Bold Text
 .mbldt {
-  font-size: 18px;
-  font-weight: 700;
+    font-size: 18px;
+    font-weight: 700;
 }
 
 // Over Flow
 .of {
-  text-overflow: ellipsis;
+    text-overflow: ellipsis;
 }
 
 //--------------------------------
 //------- SPACING OPTIONS --------
 //--------------------------------
 .h63 {
-  height: 63px;
+    height: 63px;
+}
+
+// Small Margin Top
+.smmt {
+    margin-top: 12px;
+}
+
+// Medium Margin Top
+.mmt {
+    margin-top: 24px;
+}
+
+// Medium Padding Bottom
+.mpb {
+    padding-bottom: 24px;
 }
 
 // Small Margin R/L
 .smx {
-  margin: 0px 12px;
+    margin-right: 12px;
+    margin-left: 12px;
 }
 
+// Medium Margin R/L
+.mmx {
+    margin-right: 24px;
+    margin-left: 24px;
+}
+
+// Medium Margin T/B
 .mmy {
-  margin: 24px 0;
+    margin-top: 24px;
+    margin-bottom: 24px;
+}
+
+// Medium Padding T/B
+.mpy {
+    padding-top: 24px;
+    padding-bottom: 24px;
 }
 
 // Tiny Margin Left
 .tml {
-  margin-left: 6px;
+    margin-left: 6px;
 }
