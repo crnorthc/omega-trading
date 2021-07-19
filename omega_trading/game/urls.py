@@ -14,6 +14,7 @@ urlpatterns = [
     path('edit', EditGame.as_view()),
     path('quote-ether', EtherQuote.as_view()),
     path('quote-gas', GasQuote.as_view()),
-    path('create-contract', CreateContract.as_view()),
+    path('define-contract', DefineContract.as_view()),
+    path('start-bet', StartBets.as_view()),
     path('make-bet', MakeBet.as_view())
 ]

@@ -387,7 +387,7 @@ export const setColor = (color, room_code) => (dispatch) => {
     });
 };
 
-export const startGame = () => (dispatch) => {
+export const startGame = (start) => (dispatch) => {
     const config = {
         headers: {
             "Content-Type": "application/json",
@@ -396,16 +396,30 @@ export const startGame = () => (dispatch) => {
     };
 
     var body = JSON.stringify({});
-    axios.post("/game/start", body, config).then((res) => {
-        if (res.data.Error) {
-            console.log("oops");
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: getData(res.data.game),
-            });
-        }
-    });
+
+    if (start) {
+        axios.post("/game/start", body, config).then((res) => {
+            if (res.data.Error) {
+                console.log("oops");
+            } else {
+                dispatch({
+                    type: GAME_LOADED,
+                    payload: getData(res.data.game),
+                });
+            }
+        });
+    } else {
+        axios.post("/game/start-bet", body, config).then((res) => {
+            if (res.data.Error) {
+                console.log("oops");
+            } else {
+                dispatch({
+                    type: GAME_LOADED,
+                    payload: getData(res.data.game),
+                });
+            }
+        });
+    }
 };
 
 export const loadHistory = () => (dispatch) => {
@@ -480,28 +494,6 @@ export const getGasQuote = () => (dispatch) => {
     });
 };
 
-export const createContract = (value, address, key, save, bet) => (dispatch) => {
-    const config = {
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: "Token " + getCookie(),
-        },
-    };
-
-    var body = JSON.stringify({ value, address, key, save, bet });
-
-    axios.post("/game/create-contract", body, config).then((res) => {
-        if (res.data.error) {
-            console.log("oops");
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            });
-        }
-    });
-};
-
 export const makeBet = (address, key, save, room_code) => (dispatch) => {
     const config = {
         headers: {
@@ -513,6 +505,28 @@ export const makeBet = (address, key, save, room_code) => (dispatch) => {
     var body = JSON.stringify({ address, key, save, room_code });
 
     axios.post("/game/make-bet", body, config).then((res) => {
+        if (res.data.error) {
+            console.log("oops");
+        } else {
+            dispatch({
+                type: GAME_LOADED,
+                payload: res.data.game,
+            });
+        }
+    });
+};
+
+export const defineContract = (address, bet) => (dispatch) => {
+    const config = {
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: "Token " + getCookie(),
+        },
+    };
+
+    var body = JSON.stringify({ address, bet });
+
+    axios.post("/game/define-contract", body, config).then((res) => {
         if (res.data.error) {
             console.log("oops");
         } else {

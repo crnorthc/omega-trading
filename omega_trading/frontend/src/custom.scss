@@ -422,6 +422,25 @@ body {
     border-radius: 5px;
 }
 
+.confirmation {
+    width: 300px;
+}
+
+.info {
+    height: 18px;
+    width: 18px;
+    border-radius: 50px;
+    background-color: #868686;
+    color: white;
+    text-align: center;
+}
+
+.helper-info {
+    margin-top: -24px;
+    margin-bottom: -18px;
+    text-align: center;
+}
+
 .crypto-title {
     font-size: 32px;
     font-weight: 700;
@@ -433,6 +452,12 @@ body {
     height: 48px;
     font-size: 18px;
     text-align: left;
+}
+
+/******* Bets *******/
+
+.bets {
+    width: 680px;
 }
 
 /******* Account *******/

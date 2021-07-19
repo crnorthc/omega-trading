@@ -78,6 +78,10 @@
     font-size: 16px;
 }
 
+.f32 {
+    font-size: 32px;
+}
+
 // Tiny Text
 .tt {
     font-size: 10px;
@@ -131,6 +135,11 @@
     padding-bottom: 24px;
 }
 
+// Medium Padding Top
+.mpt {
+    padding-top: 24px;
+}
+
 // Small Margin R/L
 .smx {
     margin-right: 12px;
@@ -143,6 +152,12 @@
     margin-left: 24px;
 }
 
+// Small Margin T/B
+.smy {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
 // Medium Margin T/B
 .mmy {
     margin-top: 24px;
@@ -153,6 +168,11 @@
 .mpy {
     padding-top: 24px;
     padding-bottom: 24px;
+}
+
+// Tiny Padding
+.tp {
+    padding: 3px 3px;
 }
 
 // Tiny Margin Left

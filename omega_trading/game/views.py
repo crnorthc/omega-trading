@@ -291,57 +291,29 @@ class GameHistory(APIView):
 class MakeBet(APIView):
 
     def post(self, request, format=None):
-        address = get_address(request)
         game = get_game(request.data['room_code'])
-
-        if not address:
-            return Response({'Error': 'Invalid Address'}, status=status.HTTP_403_FORBIDDEN)
-        else:
-            game.players[request.user.username]['address'] = address
-
-        key = request.data['key']
-        contract_address = game.contract['address']
-        abi = game.contract['abi']
-        value = game.contract['bet']
-
-        submit_bet(contract_address, abi, address, key, value)
-
-        game.contract['players'][request.user.username] = True
-
-        game.save()
-
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
-
-
-class CreateContract(APIView):
-
-    def post(self, request, format=None):
-        key = request.data['key']
-        value = request.data['value']
         address = get_address(request)
-        game = Tournament.objects.filter(host_id=request.user.id, active=True)
-        game = game[0]
 
         if not address:
             return Response({'Error': 'Invalid Address'}, status=status.HTTP_403_FORBIDDEN)
+
+        key = request.data['key']
+        bet_amount = game.contract['bet']
+        fee = game.contract['fee']
+
+        if not check_balance(address, bet_amount, fee):
+            return Response({'Error': 'Not Enough Funds'}, status=status.HTTP_403_FORBIDDEN)
         else:
-            game.players[request.user.username]['address'] = address
+            game.contract['players'][request.user.username] = {
+                'address': address,
+                'key': key,
+                'payed': True,
+                'ready': False
+            }
 
-        abi, contract_address = create_contract(address, key, value)
-        players = {}
+        if ready_to_start():
+            game.contract['bets_complete'] = True
 
-        for username, data in game.players.items():
-            if username == request.user.username:
-                players[username] = True
-            else:
-                players[username] = False
-
-        game.contract = {
-            'address': contract_address,
-            'abi': abi,
-            'bet': request.data['bet'],
-            'players': players
-        }
         game.save()
 
         return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
@@ -370,4 +342,77 @@ class EtherQuote(APIView):
 class GasQuote(APIView):
 
     def post(self, request, format=None):
-        return Response({"gasQuote": gas_quote()}, status=status.HTTP_200_OK)
+        fee, abi, bytecode = contract_fee_estimate()
+        return Response({"gasQuote": fee}, status=status.HTTP_200_OK)
+
+
+class SubmitContract(APIView):
+
+    def post(self, request, format=None):
+        game = Tournament.objects.filter(host_id=request.user.id, active=True)
+        game = game[0]
+        bet_amount = game.contract['bet']
+        fee = game.contract['fee']
+        players = {}
+
+        for player, value in game.contract['players'].items():
+            address = value['address']
+
+            if not check_balance(address, bet_amount, fee):
+                return Response({'Error': player + ' does not have enough funds'}, status=status.HTTP_403_FORBIDDEN)
+
+            players[player] = {
+                'address': address,
+                'key': value['key'],
+                'payed': False
+            }
+
+        place_bets(game.contract, players, bet_amount, fee)
+
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+
+
+class DefineContract(APIView):
+
+    def post(self, request, format=None):
+        bet_amount = request.data['bet']
+        game = Tournament.objects.filter(host_id=request.user.id, active=True)
+        game = game[0]
+        address = get_address(request, game)
+
+        fee, abi, bytecode = contract_fee_estimate()
+
+        if not check_balance(address, bet_amount, fee):
+            return Response({'Error': 'Not Enough Funds'}, status=status.HTTP_403_FORBIDDEN)
+
+        game.contract = {
+            'bytecode': bytecode,
+            'abi': abi,
+            'bet': request.data['bet'],
+            'fee': fee,
+            'bets_complete': False,
+            'ready_to_bet': False,
+            'players': {
+                request.user.username: {
+                    'address': address,
+                    'key': None
+                }
+            }
+        }
+
+        game.save()
+
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+
+
+class StartBets(APIView):
+
+    def post(self, request, format=None):
+        game = Tournament.objects.filter(host_id=request.user.id)
+        game = game[0]
+
+        game.contract['ready_to_bet'] = True
+
+        game.save()
+
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)

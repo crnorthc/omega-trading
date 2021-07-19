@@ -128,6 +128,8 @@ def get_game_info(game):
     if 'abi' in game.contract:
         contract = {
             'bet': game.contract['bet'],
+            'fee': game.contract['fee'],
+            'ready_to_bet': game.contract['ready_to_bet'],
             'players': game.contract['players']
         }
 
@@ -376,20 +378,33 @@ def game_over(game):
     return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
 
 
-def get_address(request):
+def get_address(request, game):
     profile = Profile.objects.filter(user_id=request.user.id)
     profile = profile[0]
 
-    if request.data['save']:
-        profile.address = request.data['address']
-        profile.save()
+    if 'save' in request.data:
+        if request.data['save']:
+            profile.address = request.data['address']
+            profile.save()
 
     if 'address' in request.data:
         addy = str(request.data['address'])
     else:
-        addy = profile.address
+        if request.user.username in game.contract['players']:
+            addy = game.contract['players'][request.user.username]['address']
+        else:
+            addy = profile.address
 
     if not check_address(addy):
         return False
     else:
         return checkedsummed(addy)
+
+
+def ready_to_start(game):
+
+    for player, value in game.contract['players'].items():
+        if not value['payed']:
+            return False
+
+    return True

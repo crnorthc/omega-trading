@@ -1,25 +1,22 @@
-import React, { useEffect } from 'react';
-import { Redirect } from 'react-router-dom';
-import { startGame, loadGame, loadHistory } from '../../actions/game';
-import CreateGame from './CreateGame';
-import Pregame from './Pregame';
-import Game from './Game';
+import React, { useEffect } from "react";
+import { Redirect } from "react-router-dom";
+import { startGame, loadGame, loadHistory } from "../../actions/game";
+import CreateGame from "./CreateGame";
+import Pregame from "./Pregame";
+import Betting from "./Betting";
+import Game from "./Game";
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-
-
 function Lobby(props) {
-
     if (props.isAuthenticated) {
         if (props.user === null) {
-            props.loadUser()
+            props.loadUser();
         }
-    }
-    else {
-        return <Redirect to='/login' />
+    } else {
+        return <Redirect to="/login" />;
     }
 
     Lobby.propTypes = {
@@ -33,42 +30,41 @@ function Lobby(props) {
         history_loading: PropTypes.bool,
         history: PropTypes.object,
         game: PropTypes.object,
-    }
+    };
 
     useEffect(() => {
         if (!props.game_loaded && !props.game_loading) {
-            props.loadGame()
+            props.loadGame();
         }
         if (!props.history_loaded && !props.history_loading && props.game_loaded) {
-            props.loadHistory()
+            props.loadHistory();
         }
-    })
+    });
 
     if ((!props.game_loading && !props.game_loaded) || props.game_loading) {
         return (
             <div className="pageContainer">
-                <div className='loaderContainer f ai-c jc-c'>
-                    <div className='loader' />
+                <div className="loaderContainer f ai-c jc-c">
+                    <div className="loader" />
                 </div>
             </div>
-        )
-    }
-    else {
+        );
+    } else {
         if (props.no_game) {
-            return <CreateGame />
-        }
-        else {
+            return <CreateGame />;
+        } else {
             if (props.game.active) {
-                return <Game />
+                return <Game />;
+            } else {
+                if (props.game.contract.ready_to_bet) {
+                    return <Betting />;
+                } else {
+                    return <Pregame />;
+                }
             }
-            else {
-                return <Pregame />
-            }
-
         }
     }
 }
-
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
@@ -77,7 +73,7 @@ const mapStateToProps = (state) => ({
     history_loaded: state.game.history_loaded,
     history_loading: state.game.history_loading,
     no_game: state.game.no_game,
-    game: state.game.game
+    game: state.game.game,
 });
 
 export default connect(mapStateToProps, { startGame, loadGame, loadHistory })(Lobby);
