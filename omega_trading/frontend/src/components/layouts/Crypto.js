@@ -22,8 +22,12 @@ function Crypto(props) {
         user: PropTypes.object,
     };
 
-    if (Object.keys(props.game.contract).length !== 0) {
+    if (Object.keys(props.game.contract).length !== 0 && props.create) {
         if (props.user.username in props.game.contract.players) {
+            window.location.reload();
+        }
+    } else {
+        if (props.game.contract.players[props.user.username].payed) {
             window.location.reload();
         }
     }
@@ -40,7 +44,7 @@ function Crypto(props) {
         if (props.create) {
             props.defineContract(address, props.bet);
         } else {
-            props.makeBet(address, key, false, props.game.room_code);
+            props.makeBet(address, key, props.game.room_code);
         }
     };
 

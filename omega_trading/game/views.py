@@ -395,7 +395,9 @@ class DefineContract(APIView):
             'players': {
                 request.user.username: {
                     'address': address,
-                    'key': None
+                    'key': None,
+                    'payed': False,
+                    'ready': False
                 }
             }
         }
@@ -408,10 +410,19 @@ class DefineContract(APIView):
 class StartBets(APIView):
 
     def post(self, request, format=None):
-        game = Tournament.objects.filter(host_id=request.user.id)
+        game = Tournament.objects.filter(host_id=request.user.id, active=True)
         game = game[0]
 
         game.contract['ready_to_bet'] = True
+
+        for player, value in game.players.items():
+            if not player in game.contract['players']:
+                game.contract['players'][player] = {
+                    'address': None,
+                    'key': None,
+                    'payed': False,
+                    'ready': False
+                }
 
         game.save()
 

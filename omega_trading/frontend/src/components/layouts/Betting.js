@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Redirect } from "react-router-dom";
-import Friends from "./Friends";
+import profilePic from "../../static/profilePic.png";
+import Crypto from "./Crypto";
 
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import profilePic from "../../static/profilePic.png";
 import { loadUser, saveHistory } from "../../actions/user.js";
 
 function Betting(props) {
-    const [username, setUsername] = useState(null);
+    const [crypto, setCrypto] = useState(false);
 
     if (!props.isAuthenticated) {
         return <Redirect to="/login"></Redirect>;
@@ -25,20 +25,43 @@ function Betting(props) {
 
     const getPlayers = () => {
         var players = [];
+        const contract = props.game.contract;
 
-        for (const player in props.game.contract.players) {
+        for (const player in contract.players) {
             players.push(
-                <div className="smx mmy fr ai-c jc-s">
-                    <div className="f16 bld">{player}</div>
-                    {props.game.contract.players[player] ? (
-                        <button className="editButtonHidden">Complete</button>
-                    ) : player == props.user.username ? (
-                        <button onClick={(e) => props.getGasQuote()} className="editButton">
-                            Make Bet
-                        </button>
-                    ) : (
-                        <button className="editButtonHidden">Pending</button>
-                    )}
+                <div className="mmx mmy fr ai-c jc-s">
+                    <div className="user-left fr ai-c">
+                        <div className="userPic-cont">
+                            <img className="userPic" src={profilePic} width={40} />
+                        </div>
+                        <div className="mml fr ai-c">
+                            <div className="f18 bld">{player}</div>
+                        </div>
+                        {props.user.username == props.game.host.username && props.user.username != player ? (
+                            <button className="editButton sml">Remove</button>
+                        ) : null}
+                    </div>
+                    <div className="fr jc-s">
+                        {contract.players[player].payed ? (
+                            contract.players[player].ready ? (
+                                player == props.user.username ? (
+                                    <button className="editButton">Not Ready</button>
+                                ) : (
+                                    <button className="editButtonHidden">Ready</button>
+                                )
+                            ) : player == props.user.username ? (
+                                <button className="editButton">Ready Up</button>
+                            ) : (
+                                <button className="editButtonHidden">Bet Made</button>
+                            )
+                        ) : player == props.user.username ? (
+                            <button onClick={(e) => setCrypto(true)} className="editButton">
+                                Place Bet
+                            </button>
+                        ) : (
+                            <button className="editButtonHidden">Pending</button>
+                        )}
+                    </div>
                 </div>
             );
         }
@@ -46,109 +69,10 @@ function Betting(props) {
         return players;
     };
 
-    const players = (
-        <div className="action-box-contract b">
-            <div className="contract-header h63 bb fc ai-c jc-c">
-                <h4 className="f jc-c">Smart Contract</h4>
-            </div>
-            <div className="smx fc jc-s">{getPlayers()}</div>
-        </div>
-    );
-
-    const confirmed = (isHost) => {
-        var total_quantity = 0;
-        var current_quantity = quantity;
-        var gas = 350000;
-
-        if (isHost) {
-            total_quantity = quantity + 350000 * props.gasQuote;
-        } else {
-            current_quantity = props.game.contract.bet / 1000000000;
-            gas = 30000;
-            total_quantity = current_quantity + 30000 * props.gasQuote;
-        }
-
-        if (totalQuantity == null) {
-            setTotalQuantity(total_quantity);
-        }
-
-        return (
-            <div className="action-box-contract b">
-                <div className="contract-header h63 bb fc ai-c jc-c">
-                    <h4 className="f jc-c">Smart Contract</h4>
-                    <div className="etherQuote fr ai-b jc-s">
-                        <div className="smt">Gas Price:</div>
-                        <div className="tml smt">
-                            {props.gasQuote
-                                .toFixed(2)
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        </div>
-                        <div className="smt bld tml">Gwei</div>
-                    </div>
-                </div>
-                <div className="mmy mmx fr ai-c jc-s">
-                    <div className="f16 bld">Bet</div>
-                    <div className="fr ai-c jc-s">
-                        <div className="fr">
-                            <div className="f14">{current_quantity.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                            <div className="f14 bld tml">Gwei</div>
-                        </div>
-                    </div>
-                </div>
-                <div className="mmy mmx fr ai-c jc-s">
-                    <div className="f16 bld">Gas Fee</div>
-                    <div className="fr ai-c jc-s">
-                        <div className="fr">
-                            <div className="f14">{(gas * props.gasQuote).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                            <div className="f14 bld tml">Gwei</div>
-                        </div>
-                    </div>
-                </div>
-                <div className="mpb mmt mmx bb fr ai-c jc-s">
-                    <div className="f16 bld">Total</div>
-                    <div className="fr ai-c jc-s">
-                        <div className="fr">
-                            <div className="f14">{(gas * props.gasQuote + current_quantity).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                            <div className="f14 bld tml">Gwei</div>
-                        </div>
-                    </div>
-                </div>
-                <div className="fr ai-c jc-s mmt mmx mt">
-                    <div className="fr">
-                        <div className="of">{(total_quantity / 1000000000).toFixed(4)}</div>
-                        <div className="bld tml">ETH</div>
-                    </div>
-                    <div className="fr">
-                        <div className="of">${quote(total_quantity / 1000000000, false)}</div>
-                        <div className="bld tml">USD</div>
-                    </div>
-                </div>
-                <div className="etherQuote smmt fr ai-c jc-c">
-                    <div className="smt">ETH:</div>
-                    <div className="tml smt">
-                        $
-                        {props.etherQuote["quote"]
-                            .toFixed(2)
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                    </div>
-                    <div className="tt lt tml">as of{props.etherQuote["time"]}</div>
-                </div>
-                <div className="contract-btn-complete f jc-c">
-                    {isHost ? (
-                        <button onClick={(e) => setCrypto(true)} class="editButton">
-                            Submit
-                        </button>
-                    ) : null}
-                </div>
-            </div>
-        );
-    };
-
     return (
-        <div className="pageContainer">
-            <div className="bets b fc"></div>
+        <div className="pageContainer fr jc-c">
+            <div className="bets b fc">{getPlayers()}</div>
+            {crypto ? <Crypto value={props.game.contract.fee} bet={props.game.contract.bet} create={false} /> : null}
         </div>
     );
 }

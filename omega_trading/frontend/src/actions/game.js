@@ -415,7 +415,7 @@ export const startGame = (start) => (dispatch) => {
             } else {
                 dispatch({
                     type: GAME_LOADED,
-                    payload: getData(res.data.game),
+                    payload: res.data.game,
                 });
             }
         });
@@ -494,7 +494,7 @@ export const getGasQuote = () => (dispatch) => {
     });
 };
 
-export const makeBet = (address, key, save, room_code) => (dispatch) => {
+export const makeBet = (address, key, room_code) => (dispatch) => {
     const config = {
         headers: {
             "Content-Type": "application/json",
@@ -502,7 +502,7 @@ export const makeBet = (address, key, save, room_code) => (dispatch) => {
         },
     };
 
-    var body = JSON.stringify({ address, key, save, room_code });
+    var body = JSON.stringify({ address, key, room_code });
 
     axios.post("/game/make-bet", body, config).then((res) => {
         if (res.data.error) {
