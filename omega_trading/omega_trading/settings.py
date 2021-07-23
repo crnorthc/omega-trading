@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
-from .secrets import Secret_Key
+#from .secrets import Secret_Key
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = Secret_Key
+SECRET_KEY = "kjhvdcqwbcdbqwbcwhbdcldwbs" #Secret_Key
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -96,9 +96,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Omega_trading',
         'USER': 'postgres',
-        'PASSWORD': 'Jacen359$$$',
+        'PASSWORD': '1223',
         'HOST': 'localhost',
-        'PORT': '5433',
+        'PORT': '5432',
     }
 }
 
