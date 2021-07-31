@@ -65,18 +65,20 @@ def uninvite(username, room_code):
     game.save()
     profile.save()
 
-    return get_game_info(game)
+    return get_game_info(game, user)
 
 
 def remove_player(request):
     username = request.data['username']
+    user = User.objects.filter(username=username)
+    user = user[0]
     room_code = request.data['room_code']
     game = get_game(room_code)
 
     del game.players[username]
     game.save()
 
-    return Response({'game': get_game_info(game), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+    return Response({'game': get_game_info(game, user), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
 
 
 def get_room_code():
@@ -95,14 +97,10 @@ def get_room_code():
     return room_code
 
 
-def get_game_info(game):
-    user = User.objects.filter(username=game.host.username)
-    user = user[0]
+def get_players_info(game, user):
     players = {}
-    me = {}
     charts = {}
     holdings = {}
-    contract = {}
 
     for player, value in game.players.items():
         players[player] = {
@@ -116,28 +114,48 @@ def get_game_info(game):
             players[player]['address'] = value['address']
 
         if game.start_time != "":
-            players[player]['numbers'], players[player]['amount'] = load_portfolio(
+            players[player]['path'], players[player]['periods'], players[player]['worth'] = load_portfolio(
                 value, game)
             players[player]['cash'] = value['amount']
 
-            if value['username'] == user.username:
-                charts = load_charts(value, game)
+            if player == user.username:
                 if 'holdings' in value:
+                    charts = load_charts(value, game)
                     holdings = value['holdings']
+
+    return players, charts, holdings
+
+
+def get_contract_info(game):
+    contract = {}
 
     if 'abi' in game.contract:
         contract = {
             'bet': game.contract['bet'],
             'fee': game.contract['fee'],
+            'bets_complete': game.contract['bets_complete'],
             'ready_to_bet': game.contract['ready_to_bet'],
-            'players': game.contract['players']
+            'players': game.contract['players'],
+            'ready_to_start': game.contract['ready_to_start']
         }
+
+    return contract
+
+
+def get_game_info(game, user):
+    host = User.objects.filter(username=game.host.username)
+    host = host[0]
+    me = {}
+    charts = {}
+    holdings = {}
+    contract = get_contract_info(game)
+    players, charts, holdings = get_players_info(game, user)
 
     return {
         'host': {
-            'username': user.username,
-            'first_name': user.first_name,
-            'last_name': user.last_name
+            'username': host.username,
+            'first_name': host.first_name,
+            'last_name': host.last_name
         },
         'start_amount': game.start_amount,
         'bet': game.bet,
@@ -205,7 +223,9 @@ def no_transactions_portfolio(game, start_time, end_time):
             else:
                 break
 
-    return numbers, game.start_amount
+    string_path, periods = format_data_for_svg(numbers)
+
+    return string_path, periods, game.start_amount
 
 
 def get_player_charts(player, start_time, current_time):
@@ -229,6 +249,75 @@ def get_player_charts(player, start_time, current_time):
     return times, symbol_charts
 
 
+def getMinMax(numbers):
+    Min = numbers[0]['price']
+    Max = 0
+
+    for number in numbers:
+        if number['price'] == None:
+            break
+
+        if number['price'] > Max:
+            Max = number['price']
+
+        if number['price'] < Min:
+            Min = number['price']
+
+    return Min, Max
+
+
+def format_data_for_svg(numbers):
+    WIDTH = 676
+    HEIGHT = 250
+    HALF_HEIGHT = HEIGHT / 2
+    DISTANCE = WIDTH / (len(numbers) - 1)
+    MIN, MAX = getMinMax(numbers)
+    START_AMOUNT = numbers[0]['price']
+
+    def getY(price):
+        if price == None:
+            return None
+
+        if price == START_AMOUNT:
+            return HALF_HEIGHT
+
+        if price > START_AMOUNT:
+            return HALF_HEIGHT - (((price - START_AMOUNT) / (MAX - START_AMOUNT)) * 100)
+
+        if price < START_AMOUNT:
+            return HALF_HEIGHT + (((START_AMOUNT - price) / (START_AMOUNT - MIN)) * 100)
+
+    x = 0
+    y = 125
+
+    path_string = 'M {x} {y}'.format(x=str(x), y=str(y))
+
+    coor = [{'x': x, 'y': y}]
+
+    for i in range(1, len(numbers)):
+        x = i * DISTANCE
+        y = getY(numbers[i]['price'])
+
+        coor.append({'x': x, 'y': y})
+
+        if numbers[i]['price'] != None:
+            path_string = path_string + ' L {x} {y}'.format(x=str(x), y=str(y))
+
+    periods = []
+    count = 0
+
+    for i in range(len(coor)):
+        while coor[i]['x'] >= count:
+            periods.append(
+                {'time': numbers[i]['time'], 'price': numbers[i]
+                 ['price'], 'x': coor[i]['x'], 'y': coor[i]['y']}
+            )
+
+            count += 1
+
+    return path_string, periods
+
+
 def load_portfolio(player, game):
     current_time = math.floor(time.time())
     start_time = int(game.start_time)
@@ -244,7 +333,6 @@ def load_portfolio(player, game):
 
     times, symbol_charts = get_player_charts(
         player, str(math.floor(start_time)), str(current_time))
-    latest_transaction = 0
     latest_holdings = {}
     latest_amount = game.start_amount
     goal = []
@@ -252,7 +340,7 @@ def load_portfolio(player, game):
     standard_time = start_time
     worth = game.start_amount
 
-    goal.append({'time': start_time, 'price': worth})
+    goal.append({'time': start_time - 300, 'price': worth})
 
     for i in range(int((end_time - start_time) / 300)):
         if i >= (len(times)):
@@ -273,7 +361,9 @@ def load_portfolio(player, game):
             goal.append(add)
         standard_time += 300
 
-    return goal, worth
+    path_string, periods = format_data_for_svg(goal)
+
+    return path_string, periods, worth
 
 
 def player_in_game(username):
@@ -360,7 +450,7 @@ def game_over(game):
     addresses = {}
 
     for player, value in game.players.items():
-        x, worth = load_portfolio(value, game)
+        x, y, worth = load_portfolio(value, game)
         temp = {
             'username': value['username'],
             'first_name': value['first_name'],
@@ -401,10 +491,19 @@ def get_address(request, game):
         return checkedsummed(addy)
 
 
-def ready_to_start(game):
+def all_bets_made(game):
 
     for player, value in game.contract['players'].items():
         if not value['payed']:
+            return False
+
+    return True
+
+
+def ready_to_start(contract):
+    for player, value in contract['players'].items():
+        if not value['ready']:
+            print(value['ready'])
             return False
 
     return True

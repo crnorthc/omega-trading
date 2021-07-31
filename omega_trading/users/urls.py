@@ -19,5 +19,7 @@ urlpatterns = [
     path('invite', SendInvite.as_view()),
     path('accept', AcceptInvite.as_view()),
     path('history', SaveHistory.as_view()),
-    path('leaderboard', Leaderboard.as_view())
+    path('leaderboard', Leaderboard.as_view()),
+    path('friends-portfolio', FriendsPortfolio.as_view()),
+    path('friend-portfolio', FriendPortfolio.as_view())
 ]

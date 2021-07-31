@@ -45,7 +45,7 @@ class CreateGame(APIView):
 
         game.save()
 
-        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class LoadGame(APIView):
@@ -67,7 +67,7 @@ class LoadGame(APIView):
             if int(game.end_time) <= current_time:
                 return game_over(game)
 
-        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class EditGame(APIView):
@@ -91,7 +91,7 @@ class EditGame(APIView):
 
         game.save()
 
-        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class SendInvite(APIView):
@@ -111,7 +111,7 @@ class SendInvite(APIView):
         game = get_game(room_code)
 
         if username in game.invites:
-            return Response({'Error': get_game_info(game)}, status=status.HTTP_200_OK)
+            return Response({'Error': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
         game.invites[username] = {
             'sender': request.user.username,
@@ -122,12 +122,12 @@ class SendInvite(APIView):
 
         profile.invites[room_code] = {
             'sender': request.user.username,
-            'game': get_game_info(game),
+            'game': get_game_info(game, request.user),
             'sent': False
         }
         profile.save()
 
-        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class JoinGame(APIView):
@@ -159,7 +159,7 @@ class JoinGame(APIView):
         else:
             return Response({"Error", "Player already in Game"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        return Response({'game': get_game_info(game), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
 
 
 class StartGame(APIView):
@@ -192,7 +192,7 @@ class StartGame(APIView):
 
         game.save()
 
-        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class Buy(APIView):
@@ -226,7 +226,7 @@ class Buy(APIView):
         player['transactions'].append(add)
         game.save()
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class Sell(APIView):
@@ -256,7 +256,7 @@ class Sell(APIView):
         player['transactions'].append(add)
         game.save()
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class SetColor(APIView):
@@ -271,7 +271,7 @@ class SetColor(APIView):
         game.players[request.user.username]['color'] = color
         game.save()
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class GameHistory(APIView):
@@ -292,7 +292,7 @@ class MakeBet(APIView):
 
     def post(self, request, format=None):
         game = get_game(request.data['room_code'])
-        address = get_address(request)
+        address = get_address(request, game)
 
         if not address:
             return Response({'Error': 'Invalid Address'}, status=status.HTTP_403_FORBIDDEN)
@@ -311,12 +311,11 @@ class MakeBet(APIView):
                 'ready': False
             }
 
-        if ready_to_start():
-            game.contract['bets_complete'] = True
+        game.contract['bets_complete'] = all_bets_made(game)
 
         game.save()
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class EtherQuote(APIView):
@@ -369,7 +368,7 @@ class SubmitContract(APIView):
 
         place_bets(game.contract, players, bet_amount, fee)
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class DefineContract(APIView):
@@ -392,6 +391,7 @@ class DefineContract(APIView):
             'fee': fee,
             'bets_complete': False,
             'ready_to_bet': False,
+            'ready_to_start': False,
             'players': {
                 request.user.username: {
                     'address': address,
@@ -404,7 +404,7 @@ class DefineContract(APIView):
 
         game.save()
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class StartBets(APIView):
@@ -426,4 +426,20 @@ class StartBets(APIView):
 
         game.save()
 
-        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+
+
+class ReadyUp(APIView):
+
+    def post(self, request, format=None):
+        room_code = request.data['room_code']
+
+        game = get_game(room_code)
+
+        game.contract['players'][request.user.username]['ready'] = not game.contract['players'][request.user.username]['ready']
+
+        game.contract['ready_to_start'] = ready_to_start(game.contract)
+
+        game.save()
+
+        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)

@@ -18,7 +18,7 @@ class SearchSymbols(APIView):
     def post(self, request, format=None):
         search = request.data["search"]
         r = requests.get('https://finnhub.io/api/v1/search?q=' +
-                         search + '&token='+FINNHUB_API_KEY)
+                         search + '&token='+FINNHUB_API_KEY[0])
         r = r.json()
 
         values = []
@@ -50,7 +50,7 @@ class LoadSecurity(APIView):
         if period == "day":
             day = time.ctime()[:3]
             start_time = time.localtime()
-            start_time = (start_time[0], start_time[1], start_time[2], 9,
+            start_time = (start_time[0], start_time[1], start_time[2], 8,
                           00, 00, start_time[6], start_time[7], start_time[8])
             start_time = math.floor(time.mktime(start_time))
             resolution = "5"

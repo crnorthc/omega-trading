@@ -7,26 +7,26 @@ import {
     SECURITY_LOADING
 } from './types'
 
-import axios from 'axios';
+import axios from 'axios'
 
 function saveHistory() {
-    const value = `; ${document.cookie}`;
+    const value = `; ${document.cookie}`
     if (value.includes('OmegaToken')) {
-        const parts = value.split(`; ${'OmegaToken'}=`);
-        var cookie = '';
+        const parts = value.split(`; ${'OmegaToken'}=`)
+        var cookie = ''
         if (parts.length === 2) {
             cookie = parts.pop().split(';').shift()
-        };
+        }
         const config = {
             headers: {
-                "Content-Type": "application/json",
-                "Authorization": "Token " + cookie
+                'Content-Type': 'application/json',
+                'Authorization': 'Token ' + cookie
             }
-        };
+        }
 
         var path = window.location.pathname + window.location.search
 
-        const body = JSON.stringify({ path });
+        const body = JSON.stringify({ path })
 
         axios.post('/users/history', body, config)
             .then(res => {
@@ -42,23 +42,23 @@ export const searchSymbols = (search) => dispatch => {
     dispatch({ type: LIST_LOADING })
     const config = {
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         }
-    };
+    }
 
-    const body = JSON.stringify({ search });
-    if (search !== "") {
+    const body = JSON.stringify({ search })
+    if (search !== '') {
         axios.post('/securities/search', body, config)
             .then(res => {
                 if (res.data.Error) {
-                    console.log("ooops")
+                    console.log('ooops')
                 }
                 else {
                     dispatch({
                         type: SEARCH_MADE,
                         payload: res.data
                     })
-                };
+                }
             })
     }
     else {
@@ -73,9 +73,9 @@ export const loadSecurity = (symbol, period) => dispatch => {
 
     const config = {
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         }
-    };
+    }
 
     dispatch({
         type: SECURITY_LOADING
@@ -85,11 +85,11 @@ export const loadSecurity = (symbol, period) => dispatch => {
         type: NO_SEARCH
     })
 
-    const body = JSON.stringify({ symbol, period });
+    const body = JSON.stringify({ symbol, period })
     axios.post('/securities/load', body, config)
         .then(res => {
             if (res.data.Error) {
-                console.log("ooops")
+                console.log('ooops')
             }
             else {
                 var returnData = []
@@ -107,7 +107,7 @@ export const loadSecurity = (symbol, period) => dispatch => {
                     type: SECURITY_LOADED,
                     payload: { data: returnData, symbol: symbol }
                 })
-            };
+            }
         })
 }
 
@@ -115,15 +115,15 @@ export const updateSymbol = (symbol) => dispatch => {
 
     const config = {
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         }
-    };
+    }
 
-    const body = JSON.stringify({ symbol });
+    const body = JSON.stringify({ symbol })
     axios.post('/securities/update', body, config)
         .then(res => {
             if (res.data.Error) {
-                console.log("ooops")
+                console.log('ooops')
             }
             else {
                 var time = res.data.t
@@ -138,6 +138,6 @@ export const updateSymbol = (symbol) => dispatch => {
                     type: SECURITY_UPDATED,
                     payload: returnData
                 })
-            };
+            }
         })
 }

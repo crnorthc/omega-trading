@@ -1,19 +1,19 @@
-import React, { useState } from "react";
-import { startGame, getEtherQuote, defineContract } from "../../actions/game";
-import Crypto from "./Crypto";
-import Friends from "./Friends";
-import Rules from "./Rules";
+import React, { useState } from 'react'
+import { startGame, getEtherQuote, defineContract } from '../../actions/game'
+import Crypto from './Crypto'
+import Friends from './Friends'
+import Rules from './Rules'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 function Pregame(props) {
-    const [message, setMessage] = useState("Start Game");
-    const [quantity, setQuantity] = useState(null);
-    const [totalQuantity, setTotalQuantity] = useState(null);
-    const [crypto, setCrypto] = useState(false);
-    const [drop, setDrop] = useState(false);
+    const [message, setMessage] = useState('Start Game')
+    const [quantity, setQuantity] = useState(null)
+    const [totalQuantity, setTotalQuantity] = useState(null)
+    const [crypto, setCrypto] = useState(false)
+    const [drop, setDrop] = useState(false)
 
     Pregame.propTypes = {
         startGame: PropTypes.func.isRequired,
@@ -23,39 +23,39 @@ function Pregame(props) {
         user: PropTypes.object,
         etherQuote: PropTypes.number,
         gasQuote: PropTypes.number,
-    };
+    }
 
     if (props.etherQuote == null) {
-        props.getEtherQuote();
+        props.getEtherQuote()
     }
 
     const determineDrop = () => {
         if (drop) {
-            setDrop(false);
+            setDrop(false)
         } else {
-            setDrop(true);
+            setDrop(true)
         }
-    };
+    }
 
     const quote = (amount, ether) => {
         if (ether) {
-            return (amount * props.etherQuote["quote"])
+            return (amount * props.etherQuote['quote'])
                 .toFixed(2)
                 .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
         } else {
-            return (amount * props.etherQuote["quote"])
+            return (amount * props.etherQuote['quote'])
                 .toFixed(2)
                 .toString()
-                .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
         }
-    };
+    }
 
     const setQuan = (e) => {
         if (e.length >= 6) {
-            setQuantity(Number(e));
+            setQuantity(Number(e))
         }
-    };
+    }
 
     const actionbox = (isHost) => {
         const hostView = (
@@ -75,23 +75,23 @@ function Pregame(props) {
                 </div>
                 <div className="fr ai-c jc-s mmy smx mt">
                     <div className="fr">
-                        <div className="of">{quantity == null ? "0" : (quantity / 1000000000).toFixed(4)}</div>
+                        <div className="of">{quantity == null ? '0' : (quantity / 1000000000).toFixed(4)}</div>
                         <div className="bld tml">ETH</div>
                     </div>
                     <div className="fr">
-                        <div className="of">${quantity == null ? "0.00" : quote(quantity / 10 ** 9, true)}</div>
+                        <div className="of">${quantity == null ? '0.00' : quote(quantity / 10 ** 9, true)}</div>
                         <div className="bld tml">USD</div>
                     </div>
                 </div>
                 <div className="contract-btn f jc-c">
-                    <button onClick={(e) => setCrypto(true)} class="editButton">
+                    <button onClick={(e) => setCrypto(true)} className="editButton">
                         Confirm
                     </button>
                 </div>
             </div>
-        );
+        )
 
-        const playerView = <div className="smx f ai-c jc-c f16 lt">Ask the host to create an E-Bet</div>;
+        const playerView = <div className="smx f ai-c jc-c f16 lt">Ask the host to create an E-Bet</div>
 
         const betMade = () => {
             return (
@@ -99,7 +99,7 @@ function Pregame(props) {
                     <div className="contract-input fr ai-c jc-s">
                         <div className="f16 bld">Bet</div>
                         <div className="fr f14 ai-c jc-s">
-                            <div>{(props.game.contract.bet / 10 ** 9).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                            <div>{(props.game.contract.bet / 10 ** 9).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                             <div className="bld tml">Gwei</div>
                         </div>
                     </div>
@@ -115,7 +115,7 @@ function Pregame(props) {
                                 {(props.game.contract.fee / 10 ** 9 / Object.keys(props.game.players).length)
                                     .toFixed(0)
                                     .toString()
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             </div>
                             <div className="f14 bld tml">Gwei</div>
                         </div>
@@ -126,7 +126,7 @@ function Pregame(props) {
                             <div className="f16">
                                 {((props.game.contract.bet + props.game.contract.fee / Object.keys(props.game.players).length) / 1000000000)
                                     .toString()
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             </div>
                             <div className="f14 bld tml">Gwei</div>
                         </div>
@@ -143,8 +143,8 @@ function Pregame(props) {
                     </div>
                     {drop ? <div className="helper-info smt lt">Cost of transactions split between players</div> : null}
                 </div>
-            );
-        };
+            )
+        }
 
         return (
             <div className="action-box-contract b">
@@ -155,19 +155,19 @@ function Pregame(props) {
                             <div className="smt">ETH:</div>
                             <div className="tml smt">
                                 $
-                                {props.etherQuote["quote"]
+                                {props.etherQuote['quote']
                                     .toFixed(2)
                                     .toString()
-                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                    .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             </div>
-                            <div className="tt lt tml">as of{props.etherQuote["time"]}</div>
+                            <div className="tt lt tml">as of{props.etherQuote['time']}</div>
                         </div>
                     )}
                 </div>
                 {Object.keys(props.game.contract).length > 0 ? betMade() : isHost ? hostView : playerView}
             </div>
-        );
-    };
+        )
+    }
 
     return (
         <div className="pageContainer">
@@ -189,14 +189,14 @@ function Pregame(props) {
                     <div
                         className="loaderContainer f ai-c jc-c"
                         style={{
-                            height: "306px",
-                            width: "676px",
-                            display: "flex",
-                            "align-items": "center",
-                            "justify-content": "center",
+                            height: '306px',
+                            width: '676px',
+                            display: 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'center',
                         }}
                     >
-                        <div class="loader"></div>
+                        <div className="loader"></div>
                     </div>
                 ) : (
                     actionbox(props.game.host.username == props.user.username)
@@ -230,7 +230,7 @@ function Pregame(props) {
             </div>
             {crypto ? <Crypto value={totalQuantity * 1000000000} bet={quantity * 1000000000} create={true} /> : null}
         </div>
-    );
+    )
 }
 
 const mapStateToProps = (state) => ({
@@ -238,10 +238,10 @@ const mapStateToProps = (state) => ({
     user: state.user.user,
     etherQuote: state.game.etherQuote,
     gasQuote: state.game.gasQuote,
-});
+})
 
 export default connect(mapStateToProps, {
     startGame,
     getEtherQuote,
     defineContract,
-})(Pregame);
+})(Pregame)

@@ -1,7 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { loadSecurity, updateSymbol } from '../../actions/securities.js';
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+/* eslint-disable react/prop-types */
+import React, { useEffect, useState } from 'react'
+import { loadSecurity, updateSymbol } from '../../actions/securities.js'
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 function Graph(props) {
     const [numbers, setNumbers] = useState(null)
@@ -20,7 +21,7 @@ function Graph(props) {
     const [price, setPrice] = useState(0)
     const [dividers, setDividers] = useState()
     const [coordinates, setCooridinates] = useState()
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
     Graph.propTypes = {
         loadSecurity: PropTypes.func.isRequired,
@@ -29,11 +30,6 @@ function Graph(props) {
         securityLoading: PropTypes.bool,
         securityLoaded: PropTypes.bool,
         current_value: PropTypes.number
-    }
-
-    if (numbers !== null && min === null) {
-        setMin(numbers[0].price)
-        setPrice(numbers[numbers.length - 1].price)
     }
 
     // Determines whether security needs to be loaded
@@ -46,11 +42,6 @@ function Graph(props) {
         }
     }, [props.period, props.numbers, props.symbol])
 
-    useEffect(() => {
-        if (props.numbers !== undefined) {
-            setNumbers(props.numbers)
-        }
-    })
 
     useEffect(() => {
         if (props.symbol in props.securities) {
@@ -94,7 +85,7 @@ function Graph(props) {
             return height - 25
         }
         else {
-            return height - (((price - min) / (max - min)) * (height - 50) + 25);
+            return height - (((price - min) / (max - min)) * (height - 50) + 25)
         }
     }
 
@@ -112,7 +103,7 @@ function Graph(props) {
             var min = numbers[0].price
             var max = 0
             for (var i = 0; i < numbers.length; i++) {
-                var price = numbers[i].price;
+                var price = numbers[i].price
                 if (price > max) {
                     max = price
                 }
@@ -126,39 +117,41 @@ function Graph(props) {
             var temp = []
             var tempDividers = []
             var tempCoor = {}
+            var x
+            var y
 
             // Day
-            if (props.period === "day") {
+            if (props.period === 'day') {
                 tempDividers = [{ min: null, max: null }, { min: null, max: null }, { min: null, max: null }]
-                var pre = ""
-                var tempGraph = ""
-                var post = ""
+                var pre = ''
+                var tempGraph = ''
+                var post = ''
                 for (let i = 0; i < numbers.length; i++) {
-                    var y = getY(numbers[i].price)
-                    var x = i * points
+                    y = getY(numbers[i].price)
+                    x = i * points
                     tempCoor[Math.round(x).toString()] = { x: x, y: y }
                     if (numbers[i].time.hours === 9 && numbers[i].time.minutes < 30) {
-                        if (pre === "") {
+                        if (pre === '') {
                             tempDividers[0].min = x
                             tempDividers[0].max = x
-                            pre = "M" + x.toString() + "," + y.toString()
+                            pre = 'M' + x.toString() + ',' + y.toString()
                         }
                         else {
                             tempDividers[0].max = x
-                            pre = pre + ",L" + x.toString() + "," + y.toString()
+                            pre = pre + ',L' + x.toString() + ',' + y.toString()
                         }
                         continue
                     }
                     if (numbers[i].time.hours > 16) {
-                        if (post === "") {
+                        if (post === '') {
                             tempDividers[2].min = x
                             tempDividers[2].max = x
-                            tempGraph = tempGraph + ",L" + x.toString() + "," + y.toString()
-                            post = "M" + x.toString() + "," + y.toString()
+                            tempGraph = tempGraph + ',L' + x.toString() + ',' + y.toString()
+                            post = 'M' + x.toString() + ',' + y.toString()
                         }
                         else {
                             tempDividers[2].max = x
-                            post = post + ",L" + x.toString() + "," + y.toString()
+                            post = post + ',L' + x.toString() + ',' + y.toString()
                         }
                         continue
                     }
@@ -166,24 +159,24 @@ function Graph(props) {
                         if (numbers[i].time.minutes === 30) {
                             tempDividers[1].min = x
                             tempDividers[1].max = x
-                            pre = pre + ",L" + x.toString() + "," + y.toString()
-                            tempGraph = "M" + x.toString() + "," + y.toString()
+                            pre = pre + ',L' + x.toString() + ',' + y.toString()
+                            tempGraph = 'M' + x.toString() + ',' + y.toString()
                             continue
                         }
                     }
                     tempDividers[1].max = x
-                    tempGraph = tempGraph + ",L" + x.toString() + "," + y.toString()
+                    tempGraph = tempGraph + ',L' + x.toString() + ',' + y.toString()
                 }
 
 
-                if (pre !== "") {
+                if (pre !== '') {
                     temp.push(pre)
                 }
                 else {
                     tempDividers = tempDividers.slice(1)
                 }
                 temp.push(tempGraph)
-                if (post !== "") {
+                if (post !== '') {
                     temp.push(post)
                 }
                 else {
@@ -191,46 +184,46 @@ function Graph(props) {
                 }
             }
 
-            var y = getY(numbers[0].price)
-            var x = 0
+            y = getY(numbers[0].price)
+            x = 0
 
             var current_day = numbers[0].time.day
-            var tempDimension = "M" + x.toString() + "," + y.toString()
+            var tempDimension = 'M' + x.toString() + ',' + y.toString()
             var tempDivider = { min: x, max: x }
 
             // Week
-            if (props.period === "week") {
+            if (props.period === 'week') {
                 for (let i = 1; i < numbers.length; i++) {
                     y = getY(numbers[i].price)
                     x = i * points
                     tempCoor[Math.round(x).toString()] = { x: x, y: y }
                     if (numbers[i].time.day !== current_day) {
                         current_day = numbers[i].time.day
-                        tempDimension = tempDimension + ",L" + x.toString() + "," + y.toString()
+                        tempDimension = tempDimension + ',L' + x.toString() + ',' + y.toString()
                         temp.push(tempDimension)
                         tempDividers.push(tempDivider)
                         tempDivider = tempDivider = { min: x, max: x }
-                        tempDimension = "M" + x.toString() + "," + y.toString()
+                        tempDimension = 'M' + x.toString() + ',' + y.toString()
                     }
                     else {
                         y = getY(numbers[i].price)
                         x = i * points
                         tempDivider.max = x
-                        tempDimension = tempDimension + ",L" + x.toString() + "," + y.toString()
+                        tempDimension = tempDimension + ',L' + x.toString() + ',' + y.toString()
                     }
                 }
-                tempDimension = tempDimension + ",L" + x.toString() + "," + y.toString()
+                tempDimension = tempDimension + ',L' + x.toString() + ',' + y.toString()
                 temp.push(tempDimension)
                 tempDividers.push(tempDivider)
             }
             else {
-                if (props.period !== "day") {
+                if (props.period !== 'day') {
                     for (let i = 1; i < numbers.length; i++) {
                         y = getY(numbers[i].price)
                         x = i * points
                         tempCoor[Math.round(x).toString()] = { x: x, y: y }
                         tempDivider.max = x
-                        tempDimension = tempDimension + ",L" + x.toString() + "," + y.toString()
+                        tempDimension = tempDimension + ',L' + x.toString() + ',' + y.toString()
                     }
                     temp.push(tempDimension)
                     tempDividers.push(tempDivider)
@@ -315,22 +308,22 @@ function Graph(props) {
         if (time) {
             var stringTime = time.minutes
             if (stringTime === 0) {
-                stringTime = stringTime + "0"
+                stringTime = stringTime + '0'
             }
             if (stringTime === 5) {
-                stringTime = "0" + stringTime
+                stringTime = '0' + stringTime
             }
-            stringTime = ":" + stringTime
+            stringTime = ':' + stringTime
             if (time.hours > 12) {
-                stringTime = (time.hours - 12) + stringTime + " PM"
+                stringTime = (time.hours - 12) + stringTime + ' PM'
             }
             else {
-                stringTime = time.hours + stringTime + " AM"
+                stringTime = time.hours + stringTime + ' AM'
             }
-            if (props.period !== "day") {
-                stringTime = months[time.month] + " " + time.day + ", " + stringTime
-                if (props.period !== "week" && props.period !== "month") {
-                    stringTime = months[time.month] + " " + time.day + ", " + time.year
+            if (props.period !== 'day') {
+                stringTime = months[time.month] + ' ' + time.day + ', ' + stringTime
+                if (props.period !== 'week' && props.period !== 'month') {
+                    stringTime = months[time.month] + ' ' + time.day + ', ' + time.year
                 }
             }
             return stringTime
@@ -351,14 +344,14 @@ function Graph(props) {
                 props.securityLoading ?
                     <div className="loaderContainer f ai-c jc-c" style={
                         {
-                            "height": "306px",
-                            "width": width,
-                            "display": "flex",
-                            "align-items": "center",
-                            "justify-content": "center"
+                            'height': '306px',
+                            'width': width,
+                            'display': 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'center'
                         }
                     }>
-                        <div class="loader"></div>
+                        <div className="loader"></div>
                     </div>
                     :
                     <div className="graphCont"
@@ -368,14 +361,14 @@ function Graph(props) {
                             }
                         }
                         onMouseMove={(e) => followGraphPoint(e)}
-                        onMouseEnter={(e) => addGraphPoint()}
-                        onMouseLeave={(e) => removeGraphPoint()}
+                        onMouseEnter={() => addGraphPoint()}
+                        onMouseLeave={() => removeGraphPoint()}
                     >
                         <h1>${price.toFixed(2)}</h1>
                         <div style={
                             {
-                                left: timeShift + "px",
-                                position: "absolute"
+                                left: timeShift + 'px',
+                                position: 'absolute'
                             }
                         }>
                             <div className="chartTime">{timeString()}</div>
@@ -386,7 +379,7 @@ function Graph(props) {
                             </g>
                             {graph !== null ? graph : <div></div>}
                             {showLine ?
-                                <g transform={"translate(" + line + "," + dotHeight + ")"}>
+                                <g transform={'translate(' + line + ',' + dotHeight + ')'}>
                                     <circle cx="0" cy="0" r="5" />
                                 </g> : <div></div>}
                         </svg>
@@ -409,6 +402,6 @@ const mapStateToProps = (state) => ({
     current_value: state.securities.current_value,
     securityLoaded: state.securities.securityLoaded,
     securityLoading: state.securities.securityLoading
-});
+})
 
-export default connect(mapStateToProps, { loadSecurity, updateSymbol })(Graph);
+export default connect(mapStateToProps, { loadSecurity, updateSymbol })(Graph)

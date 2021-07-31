@@ -1,49 +1,66 @@
-import React, { useState, useEffect } from 'react';
-import { Redirect, Link } from 'react-router-dom';
+/* eslint-disable react/prop-types */
+import React, { useState, useEffect } from 'react'
+import { Redirect, Link } from 'react-router-dom'
 import profilePic from '../../static/profilePic.png'
+import NewGraph from './NewGraph.js'
+import Loader from './Loader'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { loadPortfolio, loadUser } from '../../actions/user.js';
-import Graph from './Graph.js';
-
-
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { loadUser } from '../../actions/user.js'
+import { loadPortfolio, friendsPortfolios } from '../../actions/portfolio.js'
 
 function Home(props) {
-
-    const [period, setPeriod] = useState("day");
-    const [charts, setCharts] = useState(null);
-    const [type, setType] = useState('stocks');
+    const [period, setPeriod] = useState('day')
+    const [charts, setCharts] = useState(null)
+    const [type, setType] = useState('stocks')
+    const periodMap = {
+        'day': 'day',
+        'week': 'week',
+        'month': 'month',
+        '3m': 'threeMonth',
+        'y': 'year',
+        '5y': 'fiveYear'
+    }
 
     Home.propTypes = {
         loadPortfolio: PropTypes.func.isRequired,
+        friendsPortfolios: PropTypes.func.isRequired,
         portfolio: PropTypes.object,
-        small_charts: PropTypes.object,
         friends_charts: PropTypes.object,
         user: PropTypes.object,
-        isAuthenticated: PropTypes.bool
+        isAuthenticated: PropTypes.bool,
+        loading: PropTypes.bool,
     }
 
     const changePeriod = (period) => {
         setPeriod(period)
     }
 
-    if (charts === null && props.small_charts !== null && props.user !== null) {
+    const smallChart = (path) => {
+        return (
+            <svg width={64} height={30}>
+                <g className="line">
+                    <path d={path} fill="none"/>
+                </g>
+            </svg>
+        )
+    }
+
+    if (charts === null && props.portfolio.charts !== null && props.user !== null) {
         var small_charts = []
-        for (const property in props.small_charts) {
+        for (const symbol in props.portfolio.charts) {
             var temp = (
-                <Link to={'/chart?symbol=' + property} className='stock f ai-c jc-s'>
+                <Link to={'/chart?symbol=' + symbol} className='stock f ai-c jc-s'>
                     <div className='left-stock'>
-                        <div className='stock-symbol'>{property}</div>
-                        <div className='stock-quantity f'>{props.user.holdings[property].toFixed(2)} Shares</div>
+                        <div className='stock-symbol'>{symbol}</div>
+                        <div className='stock-quantity f'>{props.user.holdings[symbol].toFixed(2)} Shares</div>
                     </div>
-                    <div className="small-chart">
-                        <Graph plain={true} value={null} numbers={props.small_charts[property]} period={period} width={64} height={30} />
+                    <div className='small-chart'>
+                        {smallChart(props.portfolio.charts[symbol].path)}
                     </div>
-                    <div className="stock-price">
-                        ${props.small_charts[property][props.small_charts[property].length - 1].price.toFixed(2)}
-                    </div>
+                    <div className='stock-price'>${props.portfolio.charts[symbol].last_price.toFixed(2)}</div>
                 </Link>
             )
             small_charts.push(temp)
@@ -51,39 +68,35 @@ function Home(props) {
         setCharts(small_charts)
     }
 
-    if (props.friends_charts === null && props.user !== null) {
+    if (props.portfolio.friends === null && type == 'friends' && !props.portfolio.friends_loading) {
         if (Object.keys(props.user.friends).length > 0) {
-            props.loadPortfolio('day', true, false)
+            props.friendsPortfolios()
         }
     }
 
     useEffect(() => {
-        props.loadPortfolio(period, false, false)
+        if (props.portfolio[periodMap[period]] == null) {
+            props.loadPortfolio(period)
+        }
     }, [period])
 
     const noCharts = (type) => {
-        return (
-            <div className="noCharts f ai-c jc-c">
-                You do not have {type} to display
-            </div>
-        )
+        return <div className='noCharts f ai-c jc-c'>You do not have {type} to display</div>
     }
 
     const friendsCharts = () => {
         var charts = []
-        for (const friend in props.friends_charts) {
+        for (const friend in props.portfolio.friends) {
             var temp = (
                 <Link to={'/portfolio?username=' + friend} className='friend f ai-c jc-s'>
                     <div className='left-friend fc ai-c jc-c'>
-                        <img className="userPic" src={profilePic} width={30} />
-                        <div className='stock-symbol bt'>{friend}</div>
+                        <img className='userPic' src={profilePic} width={30} />
+                        <div className='stock-symbol'>{friend}</div>
                     </div>
-                    <div className="small-chart">
-                        <Graph plain={true} value={null} numbers={props.friends_charts[friend]} period={'day'} width={64} height={30} />
+                    <div className='small-chart'>
+                        {smallChart(props.portfolio.friends[friend].path)}
                     </div>
-                    <div className="stock-price">
-                        ${props.friends_charts[friend][props.friends_charts[friend].length - 1].price.toFixed(2)}
-                    </div>
+                    <div className='stock-price'>${props.portfolio.friends[friend].last_price.toFixed(2)}</div>
                 </Link>
             )
             charts.push(temp)
@@ -92,37 +105,36 @@ function Home(props) {
     }
 
     const dayStyle = {
-        "border-bottom": "rgb(66, 66, 66) 2px solid"
+        'border-bottom': 'rgb(66, 66, 66) 2px solid',
     }
 
-    const graph = (
-        <div className="Graph">
-            <h1 className="symbol-title">{props.symbol}</h1>
-            <div>
-                {props.portfolio !== null ? <Graph value={null} numbers={props.portfolio} period={period} width={676} /> : <div></div>}
+    const graph = () => { 
+        return(
+            <div className='Graph'>
+                {<NewGraph period={periodMap[period]} />}
+                <div className='timeSelector f ai-c'>
+                    <button style={period == 'day' ? dayStyle : null} onClick={() => changePeriod('day')} className='timePeriod'>1D</button>
+                    <button style={period == 'week' ? dayStyle : null} onClick={() => changePeriod('week')} className='timePeriod'>1W</button>
+                    <button style={period == 'month' ? dayStyle : null} onClick={() => changePeriod('month')} className='timePeriod'>1M</button>
+                    <button style={period == '3m' ? dayStyle : null} onClick={() => changePeriod('3m')} className='timePeriod'>3M</button>
+                    <button style={period == 'y' ? dayStyle : null} onClick={() => changePeriod('y')} className='timePeriod'>1Y</button>
+                    <button style={period == '5y' ? dayStyle : null} onClick={() => changePeriod('5y')} className='timePeriod'>5Y</button>
+                </div>
             </div>
-            <div className="timeSelector f ai-c">
-                <button style={period == "day" ? dayStyle : null} onClick={(e) => changePeriod("day")} className="timePeriod">1D</button>
-                <button style={period == "week" ? dayStyle : null} onClick={(e) => changePeriod("week")} className="timePeriod">1W</button>
-                <button style={period == "month" ? dayStyle : null} onClick={(e) => changePeriod("month")} className="timePeriod">1M</button>
-                <button style={period == "3m" ? dayStyle : null} onClick={(e) => changePeriod("3m")} className="timePeriod">3M</button>
-                <button style={period == "y" ? dayStyle : null} onClick={(e) => changePeriod("y")} className="timePeriod">1Y</button>
-                <button style={period == "5y" ? dayStyle : null} onClick={(e) => changePeriod("5y")} className="timePeriod">5Y</button>
-            </div>
-        </div>
-    )
+        )
+    }
 
     const actionbox = (
-        <div className="action-box b">
-            <div className="buySell bb fr ai-c jc-c">
-                <button className="buy" style={type === 'stocks' ? dayStyle : null} onClick={e => setType('stocks')}>Stocks</button>
-                <button className="sell" style={type === 'friends' ? dayStyle : null} onClick={e => setType('friends')}>Friends</button>
+        <div className='action-box b'>
+            <div className='buySell bb fr ai-c jc-c'>
+                <button className='buy' style={type === 'stocks' ? dayStyle : null} onClick={() => setType('stocks')}>
+                    Stocks
+                </button>
+                <button className='sell' style={type === 'friends' ? dayStyle : null} onClick={() => setType('friends')}>
+                    Friends
+                </button>
             </div>
-            {type === 'stocks' ?
-                charts !== null ? charts : noCharts("stocks")
-                :
-                props.friends_charts !== null ? friendsCharts() : noCharts("friends")
-            }
+            {type === 'stocks' ? (charts !== null ? charts : noCharts('stocks')) : props.friends_charts !== null ? friendsCharts() : noCharts('friends')}
         </div>
     )
 
@@ -130,24 +142,29 @@ function Home(props) {
         return <Redirect to='/login' />
     }
 
-    return (
-        <div className="pageContainer">
-            <h1>Portfolio</h1>
-            <div>
-                {props.portfolio !== null ? graph : <div></div>}
-                {actionbox}
+    if (props.portfolio[periodMap[period]] == null) {
+        return <Loader page={true}/>
+    }
+    else {
+        return (
+            <div className='pageContainer'>
+                <h1>Portfolio</h1>
+                <div>
+                    {graph()}
+                    {actionbox}
+                </div>
             </div>
-        </div>
-    )
+        )
+    }    
 }
 
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
-    portfolio: state.user.portfolio,
-    small_charts: state.user.small_charts,
+    portfolio: state.portfolio,
     friends_charts: state.user.friends_charts,
-    user: state.user.user
-});
+    user: state.user.user,
+    loading: state.user.loading
+})
 
-export default connect(mapStateToProps, { loadPortfolio, loadUser })(Home);
+export default connect(mapStateToProps, { loadPortfolio, loadUser, friendsPortfolios })(Home)
