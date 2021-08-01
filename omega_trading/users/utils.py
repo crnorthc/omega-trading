@@ -8,6 +8,7 @@ from .models import *
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django.db.models import Q
+from django.apps import apps
 import ssl
 import smtplib
 import datetime
@@ -21,6 +22,8 @@ from datetime import datetime, timedelta
 SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
 SECONDS_IN_MINUTE = 60
+
+Tournament = apps.get_model('game', 'Tournament')
 
 def determine_portfolio_period(period):
     current_time = math.floor(time.time())
@@ -114,12 +117,21 @@ def load_user_invites(id):
         invites[user.username] = {'time': value['time'], 'first_name': user.first_name, 'last_name': user.last_name, 'sent': True}
 
     for _, value in enumerate(invites_receieved):
-        profile = Profile.objects.filter(id=value['receiver_id'])
+        profile = Profile.objects.filter(id=value['sender_id'])
         profile = profile[0]
         user = User.objects.filter(id=profile.user_id)
         user = user[0]
-        
-        invites[user.username] = {'time': value['time'], 'first_name': user.first_name, 'last_name': user.last_name, 'sent': False}
+
+        if value['game_id'] != None:
+            game = Tournament.objects.filter(id=value['game_id'])
+            game = game[0]
+            game_info = {
+                'start_amount': game.start_amount,
+                'bet': game.bet
+            }
+            invites[game.room_code] = {'sender': user.username, 'game': game_info, 'sent': False}
+        else:
+            invites[user.username] = {'time': value['time'], 'first_name': user.first_name, 'last_name': user.last_name, 'sent': False}
 
     return invites
 

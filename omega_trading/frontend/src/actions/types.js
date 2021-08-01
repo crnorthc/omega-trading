@@ -33,7 +33,10 @@ export const LOADING = 'LOADING'
 export const LEADERBOARD_LOADED = 'LEADERBOARD_LOADED'
 export const QUOTE_LOADED = 'QUOTE_LOADED'
 
-// Portfolio
+// SECURITIES
+export const NEW_SECURITY = 'NEW_SECURITY'
+
+// PORTFOLIO
 export const PORTFOLIO_LOADING = 'PORTFOLIO_LOADING'
 export const DAY_LOADED = 'DAY_LOADED'
 export const WEEK_LOADED = 'WEEK_LOADED'

@@ -35,6 +35,5 @@ class Friends(models.Model):
 class Invites(models.Model):
     sender = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='sender')
     receiver = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='recipient')
-    room_code = models.CharField(max_length=8)
+    game = models.ForeignKey('game.Tournament', on_delete=models.CASCADE, blank=True, null=True)
     time = models.DecimalField(max_digits=15, decimal_places=5)
-

@@ -383,7 +383,7 @@ class SendInvite(APIView):
         current_time = round(time.time(), 5)
         profile = Profile.objects.filter(user_id=user.id)
         profile = profile[0]
-        invite = Invites.objects.filter(room_code='', receiver_id=profile.id, sender_id=sender.id)
+        invite = Invites.objects.filter(receiver_id=profile.id, sender_id=sender.id)
 
         if unsend:
             invite = invite[0]
@@ -392,7 +392,7 @@ class SendInvite(APIView):
             if invite.exists():
                 return Response({"Success": "Invite Already Sent"}, status=status.HTTP_200_OK)
             else:
-                invite = Invites(room_code='', receiver=profile, sender=sender.id, time=current_time)
+                invite = Invites(receiver=profile, sender=sender.id, time=current_time)
 
         invite.save()
 

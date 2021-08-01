@@ -114,7 +114,7 @@ function Portfolio(props) {
             <div className="Graph">
                 <h1 className="symbol-title">{props.symbol}</h1>
                 <div>
-                    {<NewGraph period={periodMap[period]} />}
+                    {<NewGraph data={props.portfolio[periodMap[period]]}/>}
                 </div>
                 <div className="timeSelector f ai-c">
                     <button style={period == 'day' ? dayStyle : null} onClick={() => changePeriod('day')} className="timePeriod">1D</button>

@@ -111,7 +111,7 @@ function Home(props) {
     const graph = () => { 
         return(
             <div className='Graph'>
-                {<NewGraph period={periodMap[period]} />}
+                {<NewGraph data={props.portfolio[periodMap[period]]}/>}
                 <div className='timeSelector f ai-c'>
                     <button style={period == 'day' ? dayStyle : null} onClick={() => changePeriod('day')} className='timePeriod'>1D</button>
                     <button style={period == 'week' ? dayStyle : null} onClick={() => changePeriod('week')} className='timePeriod'>1W</button>

@@ -2,7 +2,7 @@ from django.shortcuts import redirect
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
-from .models import Tournament
+from .models import *
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.apps import apps
@@ -20,30 +20,25 @@ Profile = apps.get_model('users', 'Profile')
 class CreateGame(APIView):
 
     def post(self, request, format=None):
-        user = request.user
         amount = request.data['amount']
         bet = request.data['bet']
         room_code = get_room_code()
-        duration = {
-            'days': request.data['days'],
-            'hours': request.data['hours'],
-            'mins': request.data['mins']
-        }
+
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+
+        duration = Duration(days=request.data['days'], hours=request.data['hours'], minutes=request.data['mins'])
 
         game = Tournament(
-            host=user, start_amount=amount, bet=bet, room_code=room_code, duration=duration)
-
-        game.players[request.user.username] = {
-            'first_name': request.user.first_name,
-            'last_name': request.user.last_name,
-            'username': request.user.username,
-            'color': 'black'
-        }
+            start_amount=amount, bet=bet, room_code=room_code, duration=duration)
 
         if 'positions' in request.data:
             game.positions = request.data['positions']
 
+        host = Player(profile=profile, tournament=game, is_host=True, color='black')
+
         game.save()
+        host.save()
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -51,16 +46,11 @@ class CreateGame(APIView):
 class LoadGame(APIView):
 
     def post(self, request, format=None):
-        user_id = request.user.id
-        game = Tournament.objects.filter(host_id=user_id).filter(active=True)
+        game = get_game(request.user)
 
         if not game.exists():
-            game = Tournament.objects.filter(
-                players__has_key=request.user.username).filter(active=True)
-            if not game.exists():
-                return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
 
-        game = game[0]
         current_time = time.time()
 
         if game.end_time != '':
@@ -75,16 +65,17 @@ class EditGame(APIView):
     def post(self, request, format=None):
         amount = request.data['amount']
         bet = request.data['bet']
-        duration = {
-            'days': request.data['days'],
-            'hours': request.data['hours'],
-            'mins': request.data['mins']
-        }
+        game = get_game(request.user)
+        duration = Duration.objects.filter(id=game.duration_id)
 
-        game = get_game(request.data['code'])
+        duration['days'] = request.data['days'],
+        duration['hours'] = request.data['hours'],
+        duration['mins'] = request.data['mins']
+
+        duration.save()
+
         game.start_amount = amount
         game.bet = bet
-        game.duration = duration
 
         if 'positions' in request.data:
             game.positions = request.data['positions']
@@ -104,28 +95,23 @@ class SendInvite(APIView):
             return Response({'game': uninvite(username, room_code)},
                             status=status.HTTP_200_OK)
 
-        user = User.objects.filter(username=username)
-        user = user[0]
-        profile = Profile.objects.filter(user_id=user.id)
-        profile = profile[0]
+        receiever_user = User.objects.filter(username=username)
+        receiever_user = receiever_user[0]
+        receiever_profile = Profile.objects.filter(user_id=receiever_user.id)
+        receiever_profile = receiever_profile[0]
+        sender_profile = Profile.objects.filter(user_id=request.user.id)
+        sender_profile = sender_profile[0]
         game = get_game(room_code)
+        invites = get_invites(game)
 
-        if username in game.invites:
+        if username in invites:
             return Response({'Error': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
-        game.invites[username] = {
-            'sender': request.user.username,
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        }
-        game.save()
+        current_time = round(time.time(), 5)
 
-        profile.invites[room_code] = {
-            'sender': request.user.username,
-            'game': get_game_info(game, request.user),
-            'sent': False
-        }
-        profile.save()
+        invite = Invites(time=current_time, game_id=game.id, sender_id=sender_profile.id, receiver_id=receiever_profile.id)
+
+        invite.save()
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -145,17 +131,9 @@ class JoinGame(APIView):
         profile = profile[0]
         game = get_game(room_code)
 
-        if 'address' in game.contract:
-            game.contract['players'][username] = False
-
         if request.data['accepted'] and not player_in_game(request.user.username):
-            game.players[username] = {
-                'first_name': request.user.first_name,
-                'last_name': request.user.last_name,
-                'username': request.user.username,
-                'color': get_color(game)
-            }
-            game.save()
+            player = Player(profile=profile, tournament=game, color=get_color(game))
+            player.save()
         else:
             return Response({"Error", "Player already in Game"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -164,17 +142,17 @@ class JoinGame(APIView):
 
 class StartGame(APIView):
     def post(self, request, format=None):
-        game = Tournament.objects.filter(host_id=request.user.id, active=True)
-        game = game[0]
+        game = get_game(request.user)
         start_time = math.floor(time.time())
         end_time = start_time
+        duration = get_duration(game)
 
-        if game.duration['days'] != None:
-            end_time += (game.duration['days'] * SECONDS_IN_DAY)
-        if game.duration['hours'] != None:
-            end_time += (game.duration['hours'] * SECONDS_IN_HOUR)
-        if game.duration['mins'] != None:
-            end_time += (game.duration['mins'] * SECONDS_IN_MINUTE)
+        if duration['days'] != None:
+            end_time += (duration['days'] * SECONDS_IN_DAY)
+        if duration['hours'] != None:
+            end_time += (duration['hours'] * SECONDS_IN_HOUR)
+        if duration['mins'] != None:
+            end_time += (duration['mins'] * SECONDS_IN_MINUTE)
 
         game.start_time = start_time
         game.end_time = end_time
@@ -184,11 +162,7 @@ class StartGame(APIView):
                        00, 00, current_day[6], current_day[7], current_day[8])
         current_day = math.floor(time.mktime(current_day)) - SECONDS_IN_DAY
 
-        for player, value in game.players.items():
-            value['transactions'] = [
-                {'time': time.time() - SECONDS_IN_DAY, 'securities': [], "cash": game.start_amount}]
-            value['holdings'] = {}
-            value['amount'] = game.start_amount
+        initial_transactions(game)
 
         game.save()
 
@@ -199,32 +173,31 @@ class Buy(APIView):
 
     def post(self, request, format=None):
         game = get_game(request.data['room_code'])
-        player = game.players[request.user.username]
+        player = get_player(request.user)
 
-        symbol, quantity, quote, add = transaction(
+        symbol, quantity, quote, trans = transaction(
             request, True, player)
 
-        if (quote['c'] * quantity) > player['amount']:
+        if (quote['c'] * quantity) > player.cash:
             return Response({"Error": "Not Enough Funds"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         if request.data['dollars']:
-            player['amount'] = player['amount'] - \
-                request.data['quantity']
+            player.cash = round(player.cash - request.data['quantity'], 4)
         else:
-            player['amount'] = player['amount'] - \
-                (quote['c'] * quantity)
+            player.cash = round(player.cash - (quote['c'] * quantity), 4)
 
-        holdings = player['holdings']
+        holdings = Holdings.objects.filter(player_id=player.id, symbol=symbol)
 
-        if symbol in holdings:
-            holdings[symbol] = holdings[symbol] + quantity
+        if holdings.exists():
+            holdings = holdings[0]
+            holdings.quantity = holdings.quantity + quantity
         else:
-            holdings[symbol] = quantity
+            holdings = Holdings(symbol=symbol, quantity=quantity, player=player)
 
-        player['holdings'] = holdings
-        add['total_quantity'] = holdings[symbol]
-        player['transactions'].append(add)
-        game.save()
+        trans.total_quantity = holdings.quantity
+
+        trans.save()
+        player.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -233,28 +206,30 @@ class Sell(APIView):
 
     def post(self, request, format=None):
         game = get_game(request.data['room_code'])
-        player = game.players[request.user.username]
-        symbol, quantity, quote, add = transaction(
+        player = get_player(request.user)
+
+        symbol, quantity, quote, trans = transaction(
             request, False, player)
 
-        if quantity > player['holdings'][symbol]:
+        holdings = Holdings.objects.filter(player_id=player.id, symbol=symbol)
+
+        if quantity > holdings.quantity:
             return Response({"Error": "Not Enough Shares"}, status=status.HTTP_406_NOT_ACCEPTABLE)
 
         if request.data['dollars']:
-            player['amount'] = player['amount'] + \
-                request.data['quantity']
+            player.cash = round(player.cash + request.data['quantity'], 4)
         else:
-            player['amount'] = player['amount'] + \
-                (quote['c'] * quantity)
+            player.cash = round(player.cash + (quote['c'] * quantity), 4)
 
-        player['holdings'][symbol] = player['holdings'][symbol] - quantity
-        add['total_quantity'] = player['holdings'][symbol]
+        holdings.quantity = holdings.quantity - quantity
 
-        if player['holdings'][symbol] - quantity == 0:
-            del player['holdings'][symbol]
+        trans.total_quantity = holdings.quantity
 
-        player['transactions'].append(add)
-        game.save()
+        if holdings.quantity == 0:
+            holdings.delete()
+
+        trans.save()
+        player.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -268,22 +243,22 @@ class SetColor(APIView):
         if color_taken(game, color):
             return Response({"Error": "Color Taken"}, status=status.HTTP_400_BAD_REQUEST)
 
-        game.players[request.user.username]['color'] = color
-        game.save()
+        player = get_player(request.user)
+        player.color = color
+        player.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class GameHistory(APIView):
     def post(self, request, format=None):
-        user_id = request.user.id
-        games = Tournament.objects.filter(host_id=user_id).filter(active=False)
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+
+        games = PlayerHistory.objects.filter(profile_id=profile.id)
 
         if not games.exists():
-            games = Tournament.objects.filter(
-                players__has_key=request.user.username).filter(active=False)
-            if not games.exists():
-                return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
 
         return Response({"games": get_history(games)}, status=status.HTTP_200_OK)
 
@@ -304,16 +279,17 @@ class MakeBet(APIView):
         if not check_balance(address, bet_amount, fee):
             return Response({'Error': 'Not Enough Funds'}, status=status.HTTP_403_FORBIDDEN)
         else:
-            game.contract['players'][request.user.username] = {
-                'address': address,
-                'key': key,
-                'payed': True,
-                'ready': False
-            }
+            player = get_player(request.user)
+            player.address = address
+            player.key = key
+            player.payed = True
 
-        game.contract['bets_complete'] = all_bets_made(game)
+        if all_bets_made(game):
+            contract = get_contract(game)
+            contract.bets_complete = True
+            contract.save()
 
-        game.save()
+        player.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -348,25 +324,29 @@ class GasQuote(APIView):
 class SubmitContract(APIView):
 
     def post(self, request, format=None):
-        game = Tournament.objects.filter(host_id=request.user.id, active=True)
-        game = game[0]
-        bet_amount = game.contract['bet']
-        fee = game.contract['fee']
-        players = {}
+        game = get_game(request.user)
+        contract = get_contract(game)
+        bet_amount = contract.bet
+        fee = contract.fee
+        players_info = contract_players(game)
 
-        for player, value in game.contract['players'].items():
-            address = value['address']
+        for username, player in players_info.items():
+            address = player['address']
 
             if not check_balance(address, bet_amount, fee):
                 return Response({'Error': player + ' does not have enough funds'}, status=status.HTTP_403_FORBIDDEN)
 
-            players[player] = {
-                'address': address,
-                'key': value['key'],
-                'payed': False
-            }
+            user = User.objects.filter(username=username)
+            user = user[0]
+            player = get_player(user)
 
-        place_bets(game.contract, players, bet_amount, fee)
+            player.address = address,
+            player.key = player['key']
+            player.payed = False
+            
+            player.save()
+
+        place_bets(contract.contract, contract_players(game), bet_amount, fee)
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -384,25 +364,19 @@ class DefineContract(APIView):
         if not check_balance(address, bet_amount, fee):
             return Response({'Error': 'Not Enough Funds'}, status=status.HTTP_403_FORBIDDEN)
 
-        game.contract = {
+        contract_data = {
             'bytecode': bytecode,
-            'abi': abi,
-            'bet': request.data['bet'],
-            'fee': fee,
-            'bets_complete': False,
-            'ready_to_bet': False,
-            'ready_to_start': False,
-            'players': {
-                request.user.username: {
-                    'address': address,
-                    'key': None,
-                    'payed': False,
-                    'ready': False
-                }
-            }
+            'abi': abi
         }
 
-        game.save()
+        contract = Contract(contract=contract_data, bet=request.data['bet'], fee=fee)
+
+        player = get_player(request.user)
+
+        player.address = address
+
+        contract.save()
+        player.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -413,18 +387,11 @@ class StartBets(APIView):
         game = Tournament.objects.filter(host_id=request.user.id, active=True)
         game = game[0]
 
-        game.contract['ready_to_bet'] = True
+        contract = get_contract(game)
 
-        for player, value in game.players.items():
-            if not player in game.contract['players']:
-                game.contract['players'][player] = {
-                    'address': None,
-                    'key': None,
-                    'payed': False,
-                    'ready': False
-                }
+        contract.ready_to_bet = True
 
-        game.save()
+        contract.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -436,10 +403,13 @@ class ReadyUp(APIView):
 
         game = get_game(room_code)
 
-        game.contract['players'][request.user.username]['ready'] = not game.contract['players'][request.user.username]['ready']
+        player = get_player(request.user)
+        player.ready = not player.ready
+        player.save()
 
-        game.contract['ready_to_start'] = ready_to_start(game.contract)
-
-        game.save()
+        if ready_to_start(game):
+            contract = get_contract(game)
+            contract.ready_to_start = True
+            contract.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)

@@ -102,7 +102,7 @@ function getDates(games) {
     return temp
 }
 
-export const createGame = (amount, bet, positions, days, hours, mins, code) => (dispatch) => {
+export const createGame = (amount, bet, positions, days, hours, mins) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })
@@ -121,41 +121,22 @@ export const createGame = (amount, bet, positions, days, hours, mins, code) => (
     hours = parseInt(hours)
     mins = parseInt(mins)
     if (positions == '') {
-        if (code !== '') {
-            body = JSON.stringify({ amount, bet, days, hours, mins, code })
-        } else {
-            body = JSON.stringify({ amount, bet, days, hours, mins })
-        }
+        body = JSON.stringify({ amount, bet, days, hours, mins })
     } else {
         positions = parseInt(positions)
-        if (code !== '') {
-            body = JSON.stringify({
-                amount,
-                bet,
-                positions,
-                days,
-                hours,
-                mins,
-                code,
-            })
-        } else {
-            body = JSON.stringify({
-                amount,
-                bet,
-                positions,
-                days,
-                hours,
-                mins,
-            })
-        }
+        body = JSON.stringify({
+            amount,
+            bet,
+            positions,
+            days,
+            hours,
+            mins,
+        })
     }
 
     axios.post('/game/create', body, config).then((res) => {
         if (res.data.Error) {
-            dispatch({
-                type: ACTION_FAILED,
-                payload: res.data,
-            })
+            console.log('oops')
         } else {
             dispatch({
                 type: GAME_CREATED,
@@ -165,7 +146,7 @@ export const createGame = (amount, bet, positions, days, hours, mins, code) => (
     })
 }
 
-export const editGame = (amount, bet, positions, days, hours, mins, code) => (dispatch) => {
+export const editGame = (amount, bet, positions, days, hours, mins) => (dispatch) => {
     dispatch({
         type: GAME_LOADING,
     })
@@ -184,18 +165,10 @@ export const editGame = (amount, bet, positions, days, hours, mins, code) => (di
     hours = parseInt(hours)
     mins = parseInt(mins)
     if (positions == '') {
-        body = JSON.stringify({ amount, bet, days, hours, mins, code })
+        body = JSON.stringify({ amount, bet, days, hours, mins})
     } else {
         positions = parseInt(positions)
-        body = JSON.stringify({
-            amount,
-            bet,
-            positions,
-            days,
-            hours,
-            mins,
-            code,
-        })
+        body = JSON.stringify({amount, bet, positions, days, hours, mins})
     }
 
     axios.post('/game/edit', body, config).then((res) => {

@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { createGame, loadGame, joinGame } from '../../actions/game';
+import React, { useState, useEffect } from 'react'
+import { createGame, editGame, joinGame } from '../../actions/game'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 
 
 function Rules(props) {
 
-    const [amount, setAmount] = useState('');
-    const [positions, setPositions] = useState('');
-    const [bet, setBet] = useState('');
-    const [days, setDays] = useState('');
-    const [hours, setHours] = useState('');
-    const [mins, setMins] = useState('');
-    const [code, setCode] = useState('');
-    const [edit, setEdit] = useState(false);
+    const [amount, setAmount] = useState('')
+    const [positions, setPositions] = useState('')
+    const [bet, setBet] = useState('')
+    const [days, setDays] = useState('')
+    const [hours, setHours] = useState('')
+    const [mins, setMins] = useState('')
+    const [code, setCode] = useState('')
+    const [edit, setEdit] = useState(false)
 
     Rules.propTypes = {
         createGame: PropTypes.func.isRequired,
         joinGame: PropTypes.func.isRequired,
+        editGame: PropTypes.func.isRequired,
         user: PropTypes.object,
         game: PropTypes.object
     }
@@ -55,8 +56,8 @@ function Rules(props) {
     const minutes = [0, 15, 30, 45]
 
     const noPositions = {
-        "color": "rgb(175, 175, 175)",
-        "border-color": "rgb(175, 175, 175)"
+        'color': 'rgb(175, 175, 175)',
+        'border-color': 'rgb(175, 175, 175)'
     }
 
     const create_game = () => {
@@ -68,11 +69,29 @@ function Rules(props) {
                 if (days <= 0) {
                     if (hours <= 0) {
                         if (mins <= 0) {
-                            alert("Invalid Duration")
+                            alert('Invalid Duration')
                         }
                     }
                 }
-                props.createGame(amount, bet, positions, days, hours, mins, code)
+                props.createGame(amount, bet, positions, days, hours, mins)
+            }
+        }
+    }
+
+    const edit_game = () => {
+        if (edit && props.edit) {
+            setEdit(false)
+        }
+        if (amount !== '') {
+            if (bet !== '') {
+                if (days <= 0) {
+                    if (hours <= 0) {
+                        if (mins <= 0) {
+                            alert('Invalid Duration')
+                        }
+                    }
+                }
+                props.editGame(amount, bet, positions, days, hours, mins)
             }
         }
     }
@@ -87,31 +106,31 @@ function Rules(props) {
                     <div className='params fc ai-c jc-s'>
                         <div className='fc ai-c jc-c'>
                             <div className='rule'>Start Amount</div>
-                            <input className="amountInput-game" onChange={(e) => setAmount(e.target.value)} placeholder={props.edit ? '$' + props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "$0.00"} type="number" min="5000" />
+                            <input className="amountInput-game" onChange={(e) => setAmount(e.target.value)} placeholder={props.edit ? '$' + props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '$0.00'} type="number" min="5000" />
                         </div>
                         <div className='fc ai-c jc-c'>
                             <div className='rule'>Bet</div>
-                            <input className="amountInput-game" onChange={(e) => setBet(e.target.value)} placeholder={props.edit ? '$' + props.game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "$0.00"} type="number" min="5000" />
+                            <input className="amountInput-game" onChange={(e) => setBet(e.target.value)} placeholder={props.edit ? '$' + props.game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '$0.00'} type="number" min="5000" />
                         </div>
                     </div>
                     <div className='params fc ai-c jc-s'>
                         <div className='fc ai-c jc-c'>
-                            <div style={positions == "" ? noPositions : null} className='rule'>Max Positions</div>
-                            <input style={positions == "" ? noPositions : null} className="amountInput-game" onChange={(e) => setPositions(e.target.value)} placeholder={props.edit ? props.game.positions.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "Unlimited"} type="number" min="5000" />
+                            <div style={positions == '' ? noPositions : null} className='rule'>Max Positions</div>
+                            <input style={positions == '' ? noPositions : null} className="amountInput-game" onChange={(e) => setPositions(e.target.value)} placeholder={props.edit ? props.game.positions.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',') : 'Unlimited'} type="number" min="5000" />
                         </div>
                         <div className='fc ai-c jc-c'>
                             <div className='rule'>Duration</div>
                             <div className='fr ai-c jc-c'>
                                 <div className='day-duration'>
-                                    <input onChange={(e) => setDays(e.target.value)} className='duration-input' placeholder={props.edit ? props.game.duration.days : "0"} type='number' />
+                                    <input onChange={(e) => setDays(e.target.value)} className='duration-input' placeholder={props.edit ? props.game.duration.days : '0'} type='number' />
                                     <div className='duration'>Days</div>
                                 </div>
                                 <div className='hour-duration'>
-                                    <input onChange={(e) => setHours(e.target.value)} className='duration-input' placeholder={props.edit ? props.game.duration.hours : "0"} type='number' />
+                                    <input onChange={(e) => setHours(e.target.value)} className='duration-input' placeholder={props.edit ? props.game.duration.hours : '0'} type='number' />
                                     <div className='duration'>Hours</div>
                                 </div>
                                 <div className='min-duration'>
-                                    <select className='min-input' placeholder={props.edit ? props.game.duration.mins : "0"} onChange={(e) => setMins(e.target.value)}>
+                                    <select className='min-input' placeholder={props.edit ? props.game.duration.mins : '0'} onChange={(e) => setMins(e.target.value)}>
                                         {
                                             minutes.map(min => {
                                                 return <option className='min-option' value={min}>{min}</option>
@@ -126,7 +145,7 @@ function Rules(props) {
                 </div>
                 <div className='enter-params-pregame fr ai-c jc-s'>
                     <button onClick={(e) => setEdit(false)} className='editButton'>Cancel</button>
-                    <button onClick={(e) => create_game()} className='editButton'>Save Changes</button>
+                    <button onClick={(e) => edit_game()} className='editButton'>Save Changes</button>
                 </div>
             </div>
         )
@@ -143,17 +162,17 @@ function Rules(props) {
                     <div className='params fc ai-c jc-s'>
                         <div className='pregame-start-amount fc ai-c jc-c'>
                             <div className='pregame-rule bb'>Start Amount</div>
-                            <div className='pregame-amount'>${props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                            <div className='pregame-amount'>${props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                         </div>
                         <div className='pregame-bet fc ai-c jc-c'>
                             <div className='pregame-rule bb'>Bet</div>
-                            <div className='pregame-bet-amount'>${props.game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                            <div className='pregame-bet-amount'>${props.game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                         </div>
                     </div>
                     <div className='params fc ai-c jc-s'>
                         <div className='pregame-positions fc ai-c jc-c'>
                             <div className='pregame-rule bb'>Max Positions</div>
-                            <div className='pregame-position f jc-c'>{props.game.positions == 0 ? "Unlimited" : props.game.positions}</div>
+                            <div className='pregame-position f jc-c'>{props.game.positions == 0 ? 'Unlimited' : props.game.positions}</div>
                         </div>
                         <div className='fc ai-c jc-c'>
                             <div className='pregame-rule bb'>Duration</div>
@@ -209,8 +228,8 @@ function Rules(props) {
                             </div>
                             <div className='params fc ai-c jc-s'>
                                 <div className='fc ai-c jc-c'>
-                                    <div style={positions == "" ? noPositions : null} className='rule'>Max Positions</div>
-                                    <input style={positions == "" ? noPositions : null} className="amountInput-game" onChange={(e) => setPositions(e.target.value)} placeholder="Unlimited" type="number" min="5000" />
+                                    <div style={positions == '' ? noPositions : null} className='rule'>Max Positions</div>
+                                    <input style={positions == '' ? noPositions : null} className="amountInput-game" onChange={(e) => setPositions(e.target.value)} placeholder="Unlimited" type="number" min="5000" />
                                 </div>
                                 <div className='fc ai-c jc-c'>
                                     <div className='rule'>Duration</div>
@@ -238,7 +257,7 @@ function Rules(props) {
                             </div>
                         </div>
                         <div className='f jc-c'>
-                            <button onClick={(e) => create_game()} className='to-invites'>Invite Players</button>
+                            <button onClick={() => create_game()} className='to-invites'>Invite Players</button>
                         </div>
                     </div>
             }
@@ -250,6 +269,6 @@ function Rules(props) {
 const mapStateToProps = (state) => ({
     user: state.user.user,
     game: state.game.game
-});
+})
 
-export default connect(mapStateToProps, { createGame, loadGame, joinGame })(Rules);
+export default connect(mapStateToProps, { createGame, editGame, joinGame })(Rules)

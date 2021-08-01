@@ -1,21 +1,16 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-redeclare */
 import React, { useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
 
 function NewGraph(props) {
     const [showLine, ShowLine] = useState(0)
     const [screenWidth, setScreenWidth] = useState(0)
     const [left, setLeft] = useState(null)
-    const [price, setPrice] = useState(props.portfolio[props.period].periods.slice(-1)[0].price)
+    const [price, setPrice] = useState(props.data.periods.slice(-1)[0].price)
     const [time, setTime] = useState()
     const [timeShift, setShift] = useState()
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-    NewGraph.propTypes = {
-        portfolio: PropTypes.object
-    }
 
     useEffect(() => {
         if (window.innerWidth % 2 === 1) {
@@ -30,8 +25,8 @@ function NewGraph(props) {
     }
 
     const getDot = () => {
-        if (props.portfolio[props.period].periods[left].price !== null) {
-            const height = props.portfolio[props.period].periods[left].y
+        if (props.data.periods[left].price !== null) {
+            const height = props.data.periods[left].y
             return (
                 <g transform={'translate(' + left + ',' + height + ')'}>
                     <circle cx="0" cy="0" r="5" />
@@ -44,12 +39,11 @@ function NewGraph(props) {
         ShowLine(false)
         setLeft(null)
         setTime()
-        setPrice(props.portfolio[props.period].periods.slice(-1)[0].price)
+        setPrice(props.data.periods.slice(-1)[0].price)
     }
 
     const timeString = () => {
         if (time) {
-            console.log(time)
             var stringTime = time.minutes
             if (stringTime.toString().length === 1) {
                 stringTime = '0' + stringTime
@@ -72,11 +66,11 @@ function NewGraph(props) {
         if (screenWidth <= 1010) {
             left = e.clientX - 30
         }
-        if (left <= 676 && props.portfolio[props.period].periods[left].price !== null) {
+        if (left <= 676 && props.data.periods[left].price !== null) {
             ShowLine(true)
             setLeft(left)
-            setTime(props.portfolio[props.period].periods[left].time)
-            setPrice(props.portfolio[props.period].periods[left].price)
+            setTime(props.data.periods[left].time)
+            setPrice(props.data.periods[left].price)
             setShift(e.clientX)
         } else {
             ShowLine(false)
@@ -100,7 +94,7 @@ function NewGraph(props) {
                     <svg width={676} height={250}>
                         <g className="line">
                             <line x1={left} x2={left} y1={25} y2={225} />
-                            <path d={props.portfolio[props.period].path} fill="none"/>
+                            <path d={props.data.path} fill="none"/>
                         </g>
                         {getDot()}
                     </svg>
@@ -108,7 +102,7 @@ function NewGraph(props) {
             ) : (
                 <svg width={676} height={250}>
                     <g className="line">
-                        <path d={props.portfolio[props.period].path} fill="none"/>
+                        <path d={props.data.path} fill="none"/>
                     </g>
                 </svg>
             )}
@@ -116,8 +110,6 @@ function NewGraph(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    portfolio: state.portfolio
-})
 
-export default connect(mapStateToProps, {})(NewGraph)
+
+export default (NewGraph)

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
-import { loadGame, joinGame } from '../../actions/game';
-import Rules from './Rules';
+import React, { useState } from 'react'
+import { loadGame, joinGame } from '../../actions/game'
+import Rules from './Rules'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 
 
 function CreateGame(props) {
 
-    const [type, setType] = useState('create');
-    const [code, setCode] = useState(null);
+    const [type, setType] = useState('create')
+    const [code, setCode] = useState(null)
 
     CreateGame.propTypes = {
         joinGame: PropTypes.func.isRequired,
@@ -21,7 +21,7 @@ function CreateGame(props) {
     }
 
     const style = {
-        "background-color": "rgb(202, 202, 202)"
+        'background-color': 'rgb(202, 202, 202)'
     }
 
     const join_game = (
@@ -39,19 +39,19 @@ function CreateGame(props) {
     const timeString = (time) => {
         var stringTime = time.mins
         if (stringTime === 0) {
-            stringTime = stringTime + "0"
+            stringTime = stringTime + '0'
         }
         if (stringTime === 5) {
-            stringTime = "0" + stringTime
+            stringTime = '0' + stringTime
         }
-        stringTime = ":" + stringTime
+        stringTime = ':' + stringTime
         if (time.hour > 12) {
-            stringTime = (time.hour - 12) + stringTime + " PM"
+            stringTime = (time.hour - 12) + stringTime + ' PM'
         }
         else {
-            stringTime = time.hour + stringTime + " AM"
+            stringTime = time.hour + stringTime + ' AM'
         }
-        var stringDate = time.month + "/" + time.day + "/" + time.year
+        var stringDate = time.month + '/' + time.day + '/' + time.year
         return (
             <div>
                 <div>{stringDate}</div>
@@ -74,7 +74,7 @@ function CreateGame(props) {
             numbers[number] = (
                 <div className='history-player fr jc-s'>
                     <div style={{ 'color': game.players[numbers[number].username].color }}>{parseInt(number) + 1}. {numbers[number].username}</div>
-                    <div className='history-bet'>${numbers[number].worth.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                    <div className='history-bet'>${numbers[number].worth.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                 </div>
             )
         }
@@ -113,29 +113,29 @@ function CreateGame(props) {
         for (const game in props.history) {
             temp.push(
                 <div className='history-game fr ai-c'>
-                        <div className='history-date fc ai-c jc-c'>
-                            {timeString(props.history[game].start_time)}
-                        </div>
-                        <div className='history-rules fc ai-c jc-c'>
-                            <div className='history-rules-cont fc'>
-                                <div className='fr jc-s'>
-                                    <div>Duration</div>
-                                    <div>{getDuration(props.history[game].duration)}</div>
-                                </div>
-                                <div className='fr jc-s'>
-                                    <div>Start Amount</div>
-                                    <div>${props.history[game].start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                                </div>                                
-                                <div className='fr jc-s'>
-                                    <div>Bet</div> 
-                                    <div>${props.history[game].bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
-                                </div>                                
-                                <div className='fr jc-s'>
-                                    <div>Positions</div> 
-                                    <div>{props.history[game].positions == 0 ? 'Unlimited' : props.history[game].positions}</div>
-                                </div>                                
+                    <div className='history-date fc ai-c jc-c'>
+                        {timeString(props.history[game].start_time)}
+                    </div>
+                    <div className='history-rules fc ai-c jc-c'>
+                        <div className='history-rules-cont fc'>
+                            <div className='fr jc-s'>
+                                <div>Duration</div>
+                                <div>{getDuration(props.history[game].duration)}</div>
                             </div>
+                            <div className='fr jc-s'>
+                                <div>Start Amount</div>
+                                <div>${props.history[game].start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+                            </div>                                
+                            <div className='fr jc-s'>
+                                <div>Bet</div> 
+                                <div>${props.history[game].bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+                            </div>                                
+                            <div className='fr jc-s'>
+                                <div>Positions</div> 
+                                <div>{props.history[game].positions == 0 ? 'Unlimited' : props.history[game].positions}</div>
+                            </div>                                
                         </div>
+                    </div>
                     <div className='history-results fc ai-c jc-c'>                        
                         {getLeaderboard(props.history[game])}
                     </div>
@@ -177,6 +177,6 @@ const mapStateToProps = (state) => ({
     no_history: state.game.no_history,
     history: state.game.history,
     user: state.user.user
-});
+})
 
-export default connect(mapStateToProps, { loadGame, joinGame })(CreateGame);
+export default connect(mapStateToProps, { loadGame, joinGame })(CreateGame)
