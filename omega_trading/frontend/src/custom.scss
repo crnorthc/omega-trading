@@ -45,6 +45,61 @@ body {
     padding-bottom: 72px;
 }
 
+/******* Option *******/
+
+.options {
+    width: 700px
+}
+
+.options-btns {
+    width: 162px;
+    height: 36px;
+}
+
+.options-btn {
+    padding: 8px 3px;
+    width: 80px;
+    height: 34px;
+}
+
+.lft {
+    border-radius: 5px 0 0 5px;
+}
+
+.rght {
+    border-radius: 0 5px 5px 0;
+}
+
+.options-btn:focus {
+    background-color: rgb(202, 202, 202);
+}
+
+.date-drop {
+    width: 336px;
+    height: 36px;
+    text-align: left !important;
+}
+
+.date-drop:hover {
+    background-color: rgb(202, 202, 202);
+}
+
+.options-drop {
+    position: absolute;
+    width: 334px;
+    max-height: 202px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-top: 3px;
+    background-color: #fff;
+}
+
+.check {
+    margin-top: 2px;
+    margin-right: 8px;
+}
+
+
 /******* Leaderboard *******/
 
 .Leaderboard {

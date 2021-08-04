@@ -464,3 +464,12 @@ class Leaderboard(APIView):
         friends.sort(key=lambda x: x['worth'], reverse=True)
 
         return Response({"overall": overall, 'friends': friends}, status=status.HTTP_200_OK)
+
+
+class BuyOption(APIView):
+
+    def post(self, request, format=None):
+        symbol = request.data['symbol']
+        strike = request.data['strike']
+        time = request.data['time']
+        div = div_yield(symbol)

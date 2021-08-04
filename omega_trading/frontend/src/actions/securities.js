@@ -4,10 +4,14 @@ import {
     NO_SEARCH,
     SECURITY_LOADED,
     SECURITY_LOADING,
-    NEW_SECURITY
+    NEW_SECURITY,
+    OPTION_LOADED,
+    DATES_LOADED,
+    LOADING_OPTION
 } from './types'
 
 import axios from 'axios'
+
 
 function getCookie() {
     const value = `; ${document.cookie}`
@@ -99,4 +103,55 @@ export const newSecurity = () => (dispatch) => {
     })
 }
 
+export const optionsPrices = (symbol, expiration, type) => dispatch => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    dispatch({
+        type: LOADING_OPTION,
+        payload: type
+    })
+
+    const body = JSON.stringify({ symbol, expiration, type })
+    axios.post('/securities/options', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log('ooops')
+            }
+            else {
+                dispatch({
+                    type: OPTION_LOADED,
+                    payload: {'options': res.data.options, 'type': type}
+                })
+            }
+        })
+}
+
+
+export const dateRange = () => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ })
+    axios.post('/securities/dates', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log('ooops')
+            }
+            else {
+                dispatch({
+                    type: DATES_LOADED,
+                    payload: {'dates': res.data.dates }
+                })
+            }
+        })
+}
 

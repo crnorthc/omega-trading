@@ -5,10 +5,10 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .TopSecret import *
 from .utils import *
+from .options import get_price
 from rest_framework.permissions import AllowAny
 import requests
-import time
-import math
+
 
 
 class SearchSymbols(APIView):
@@ -16,7 +16,7 @@ class SearchSymbols(APIView):
     def post(self, request, format=None):
         search = request.data["search"]
         r = requests.get('https://finnhub.io/api/v1/search?q=' +
-                         search + '&token='+FINNHUB_API_KEY[0])
+                         search + '&token='+FINNHUB_API_KEY)
         r = r.json()
 
         values = []
@@ -62,3 +62,57 @@ class UpdateSecurity(APIView):
         r = requests.get(
             'https://finnhub.io/api/v1/quote?symbol=' + symbol + '&token=' + FINNHUB_API_KEY)
         return Response(r.json(), status=status.HTTP_200_OK)
+
+
+class Options(APIView):
+
+    def post(self, request, format=None):
+        symbol = request.data['symbol']
+        expiration = request.data['expiration'] # in days        
+        type = request.data['type']
+
+        if expiration == None:
+            expiration = this_friday(time.time(), True)
+
+        current_price = get_quote(symbol)
+        price_range = strike_price_range(current_price)
+        div = div_yield(symbol)
+
+        prices = []
+
+        for strike in price_range:
+            price = get_price(type, div, strike, current_price, expiration)
+            prices.append({
+                'strike': strike,
+                'price': price
+            })
+
+        return Response({"options": prices}, status=status.HTTP_200_OK)
+
+
+class ExpDates(APIView):
+
+    def post(self, request, format=None):        
+        print(time.time())
+        formatted_date, timestamp = format_date(time.time())
+        dates = []
+
+        dates.append(formatted_date)
+        
+        for i in range(1, 7):
+            formatted_date, _ = format_date(timestamp + (i * SECONDS_IN_WEEK))
+            dates.append(formatted_date)
+
+        formatted_date, timestamp = friday_two_months(timestamp)
+
+        dates.append(formatted_date)
+
+        for i in range(3, 5):
+            formatted_date, timestamp = friday_next_month(timestamp)
+            dates.append(formatted_date)
+
+        for i in range (1, 3):
+            timestamp += SECONDS_IN_YEAR
+            dates.extend(get_months(timestamp))
+
+        return Response({"dates": dates}, status=status.HTTP_200_OK)

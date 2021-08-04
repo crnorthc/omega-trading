@@ -566,3 +566,6 @@ def get_holdings(profile):
         profile_holdings[holding['symbol']] = holding['quantity']
 
     return profile_holdings
+
+
+

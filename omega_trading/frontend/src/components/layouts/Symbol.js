@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import NewGraph from './NewGraph.js'
 import Loader from './Loader'
+import Options from './Options.js'
 import queryString from 'query-string'
 
 // State Stuff
@@ -85,6 +86,7 @@ function Symbol(props) {
                 <div>
                     {graph()}
                 </div>
+                <Options symbol={props.symbol} />
             </div>
         )
     }    

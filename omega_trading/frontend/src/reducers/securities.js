@@ -6,7 +6,10 @@ import {
     LOGOUT_SUCCESS,
     SECURITY_UPDATED,
     SECURITY_LOADING,
-    NEW_SECURITY
+    NEW_SECURITY,
+    OPTION_LOADED,
+    DATES_LOADED,
+    LOADING_OPTION
 } from '../actions/types'
 
 const initialState = {
@@ -23,7 +26,10 @@ const initialState = {
     portfolio: null,
     small_charts: null,
     holdings: null,
-    data: null
+    data: null,
+    call: null,
+    put: null,
+    dates: null
 }
 
 
@@ -42,6 +48,19 @@ export default function (state = initialState, action) {
             ...state,
             noSearch: false,
             listLoading: true
+        }
+    case LOADING_OPTION:
+        if (action.payload == 'call') {
+            return {
+                ...state,
+                call: null
+            }
+        }
+        else {
+            return {
+                ...state,
+                put: null
+            }
         }
     case NO_SEARCH:
         return {
@@ -63,6 +82,25 @@ export default function (state = initialState, action) {
             symbol: action.payload.symbol,
             securityLoaded: true,
             securityLoading: false,
+        }
+    case OPTION_LOADED:
+        if (action.payload.type == 'call')
+        {
+            return {
+                ...state,
+                call: action.payload.options
+            }
+        }
+        else {
+            return {
+                ...state,
+                put: action.payload.options
+            }
+        }
+    case DATES_LOADED:
+        return {
+            ...state,
+            dates: action.payload.dates
         }
     case SECURITY_LOADING:
         return {

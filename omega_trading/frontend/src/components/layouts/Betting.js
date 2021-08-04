@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
-import profilePic from "../../static/profilePic.png";
-import Crypto from "./Crypto";
+import React, { useState, useEffect } from 'react'
+import { Redirect } from 'react-router-dom'
+import profilePic from '../../static/profilePic.png'
+import Crypto from './Crypto'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { loadUser, saveHistory } from "../../actions/user.js";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { loadUser, saveHistory } from '../../actions/user.js'
 
 function Betting(props) {
-    const [crypto, setCrypto] = useState(false);
+    const [crypto, setCrypto] = useState(false)
 
     if (!props.isAuthenticated) {
-        return <Redirect to="/login"></Redirect>;
+        return <Redirect to="/login"></Redirect>
     }
 
     Betting.propTypes = {
@@ -21,11 +21,11 @@ function Betting(props) {
         loadUser: PropTypes.func.isRequired,
         saveHistory: PropTypes.func.isRequired,
         isAuthenticated: PropTypes.bool,
-    };
+    }
 
     const getPlayers = () => {
-        var players = [];
-        const contract = props.game.contract;
+        var players = []
+        const contract = props.game.contract
 
         for (const player in contract.players) {
             players.push(
@@ -63,24 +63,24 @@ function Betting(props) {
                         )}
                     </div>
                 </div>
-            );
+            )
         }
 
-        return players;
-    };
+        return players
+    }
 
     return (
         <div className="pageContainer fr jc-c">
             <div className="bets b fc">{getPlayers()}</div>
             {crypto ? <Crypto value={props.game.contract.fee} bet={props.game.contract.bet} create={false} /> : null}
         </div>
-    );
+    )
 }
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     game: state.game.game,
     user: state.user.user,
-});
+})
 
-export default connect(mapStateToProps, { saveHistory, loadUser })(Betting);
+export default connect(mapStateToProps, { saveHistory, loadUser })(Betting)

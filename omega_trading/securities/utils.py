@@ -4,6 +4,14 @@ import math
 import requests
 from .TopSecret import *
 
+MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+SECONDS_IN_YEAR = 365 * 24 * 60 * 60
+SECONDS_IN_MONTH = 30 * 24 * 60 * 60
+SECONDS_IN_WEEK = 7 * 24 * 60 * 60
+SECONDS_IN_DAY = 24 * 60 * 60
+SECONDS_IN_HOUR = 60 * 60
+SECONDS_IN_MINUTE = 60
+
 def getMinMax(numbers):
     Min = numbers[0]['price']
     Max = 0
@@ -154,3 +162,109 @@ def day_numbers(numbers):
             numbers.append({'time': period, 'price': None})
 
     return numbers
+
+def get_quote(symbol):
+    r = requests.get(
+            'https://finnhub.io/api/v1/quote?symbol=' + symbol + '&token=' + FINNHUB_API_KEY)
+    r = r.json()
+
+    return r['c']
+
+def div_yield(symbol):
+    start_time = time.localtime()
+    start = ('{year}-{month}-{day}').format(year=start_time[0], month=start_time[1], day=start_time[2])
+    end = ('{year}-{month}-{day}').format(year=(start_time[0]  - 1), month=start_time[1], day=start_time[2])
+    quote = get_quote(symbol)
+
+    divs = requests.get('https://finnhub.io/api/v1/stock/dividend?symbol={symbol}&from={start}&to={end}&token={token}'.format(symbol=symbol, start=start, end=end, token=SANDBOX_KEY))
+    divs = divs.json()
+    div = 0
+
+    for dividend in divs:
+        div += dividend['amount']
+
+    return div / quote
+
+def strike_price_range(price):
+    RANGE = price * .2
+
+    if RANGE >= 50:
+        return [x for x in range(round(price - RANGE), round(price + RANGE), 10)]
+    else:
+        return [x for x in range(round(price - RANGE), round(price + RANGE), 1)]
+
+def format_date(timestamp):
+    date, timestamp = this_friday(timestamp)
+    current_date = time.localtime()
+    current_time = time.time()
+
+    if date[0] == current_date[0]:
+        year = None
+    else:
+        year = date[0]
+
+    days_until = round((timestamp - current_time) / SECONDS_IN_DAY)
+
+    return {
+        'day': date[2],
+        'month': MONTHS[date[1] - 1],
+        'year': year,
+        'days_until': days_until
+    }, timestamp
+
+def this_friday(timestamp, days_until=False):
+    date = time.localtime(timestamp)
+
+    if date[6] == 5:
+        days = 6
+    elif date[6] == 6:
+        days = 5
+    else: 
+        days = 4 - date[6]
+
+    date = time.mktime(date)
+    date += (SECONDS_IN_DAY * days)
+
+    if days_until:
+        return days
+
+    return time.localtime(date), date
+
+def friday_two_months(timestamp):
+    date = time.localtime(timestamp)
+    year = date[0]
+    
+    if date[1] == 11 or date[1] == 12:
+        year += 1
+    
+    month = 12 - (12 % (date[1] + 2))
+    date = (year, month, 15, date[3], date[4], date[5], date[6], date[7], date[8])
+
+    return format_date(time.mktime(date))
+    
+def friday_next_month(timestamp):
+    date = time.localtime(timestamp)
+    year = date[0]
+    
+    if date[1] == 12:
+        year += 1
+    
+    month = 12 - (12 % (date[1] + 1))
+
+    date = (year, month, 15, date[3], date[4], date[5], date[6], date[7], date[8])
+
+    return format_date(time.mktime(date))
+
+def get_months(timestamp):
+    months = [1, 3, 6, 9]
+    return_data = []
+
+    for month in months:
+        date = time.localtime(timestamp)
+        date = (date[0], month, 15, date[3], date[4], date[5], date[6], date[7], date[8])
+
+        formatted_date, _ = format_date(time.mktime(date))
+
+        return_data.append(formatted_date)
+
+    return return_data
