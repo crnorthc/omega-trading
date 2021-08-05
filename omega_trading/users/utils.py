@@ -230,7 +230,8 @@ def verify_user(verification_code):
         user = User.objects.filter(id=profile.user_id)[0]
         token = Token.objects.create(user=user)
         token.save()
-        return set_cookie(token.key)
+        headers = set_cookie(token.key)
+        Response({"Success": "Email Verrified"}, headers=headers, status=status.HTTP_200_OK)
     else:
         return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -451,9 +452,18 @@ def day_numbers(numbers):
 
     return numbers
 
+def no_transactions(period):
+    start, end, _, interval = determine_portfolio_period(period)
+
+    return [{'time': x, 'price': 25000} for x in range(start, end + 1, interval)], {}
+
 def portfolio_data(profile, period):
     start_time, _, _, interval = determine_portfolio_period(period)
     transactions, symbols, cash, holdings = get_transactions(profile.id, start_time, period)
+
+    if len(transactions) == 0:
+        return no_transactions(period)
+
     MAX = max(symbols, key=lambda symbol: len(symbols[symbol]))
     numbers = []
 
@@ -487,6 +497,10 @@ def portfolio_data(profile, period):
 
 def get_transactions(id, start_time, period):
     Transactions = Transaction.objects.filter(profile_id=id).values()
+    
+    if len(Transactions) == 1:
+        return {}, [], 25000, {}
+
     transactions = {}
     symbols = []
     cash = None

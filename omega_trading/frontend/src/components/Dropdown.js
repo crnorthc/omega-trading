@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useRef } from 'react'
+import React, { useRef } from 'react'
 import onClickOutside from 'react-onclickoutside'
 
 

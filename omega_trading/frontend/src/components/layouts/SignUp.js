@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { Link, Redirect } from 'react-router-dom';
-import MyNavbar from './MyNavbar';
+import React, { useState } from 'react'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import { Link, Redirect } from 'react-router-dom'
+import MyNavbar from './MyNavbar'
 
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { createUser } from "../../actions/auth";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { createUser } from '../../actions/auth'
 
 function SignUp(props) {
 
-    const [first_name, setfirstName] = useState('');
-    const [last_name, setlastName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
+    const [first_name, setfirstName] = useState('')
+    const [last_name, setlastName] = useState('')
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [username, setUsername] = useState('')
 
     SignUp.propTypes = {
         createUser: PropTypes.func.isRequired,
@@ -25,12 +25,12 @@ function SignUp(props) {
 
     const handleKeyPress = target => {
         if (target.charCode == 13) {
-            props.createUser(first_name, last_name, email, password, username);
+            props.createUser(first_name, last_name, email, password, username)
         }
     }
 
     const onSubmit = () => {
-        props.createUser(first_name, last_name, email, password, username);
+        props.createUser(first_name, last_name, email, password, username)
     }
 
     if (props.emailSent) {
@@ -91,6 +91,6 @@ function SignUp(props) {
 
 const mapStateToProps = state => ({
     emailSent: state.auth.emailSent
-});
+})
 
-export default connect(mapStateToProps, { createUser })(SignUp);
+export default connect(mapStateToProps, { createUser })(SignUp)

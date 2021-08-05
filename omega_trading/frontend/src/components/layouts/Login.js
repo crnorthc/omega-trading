@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { Link, Redirect } from 'react-router-dom';
-import MyNavbar from './MyNavbar';
+import React, { useState } from 'react'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import { Link, Redirect } from 'react-router-dom'
+
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { login } from "../../actions/auth.js";
-import { loadUser } from "../../actions/user.js"
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { login } from '../../actions/auth.js'
+import { loadUser } from '../../actions/user.js'
 
 function Login(props) {
 
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('')
+    const [password, setPassword] = useState('')
 
     Login.propTypes = {
         login: PropTypes.func.isRequired,
@@ -35,13 +35,13 @@ function Login(props) {
         return <Redirect to="/" />
     }
 
-    const onSubmit = (e) => {
-        props.login(username, password);
+    const onSubmit = () => {
+        props.login(username, password)
     }
 
     const loader = (
         <div className="loaderContainer f ai-c jc-c">
-            <div class="loader"></div>
+            <div className="loader"></div>
         </div>
     )
 
@@ -96,6 +96,6 @@ const mapStateToProps = (state) => ({
     logging_in: state.auth.logging_in,
     userLoaded: state.user.userLoaded,
     last_path: state.auth.last_path
-});
+})
 
-export default connect(mapStateToProps, { login, loadUser })(Login);
+export default connect(mapStateToProps, { login, loadUser })(Login)
