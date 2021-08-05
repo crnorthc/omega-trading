@@ -97,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Omega_trading',
         'USER': 'postgres',
-        'PASSWORD': '1223',
+        'PASSWORD': 'backspace',
         'HOST': 'localhost',
         'PORT': '5432',
     }
