@@ -38,9 +38,13 @@ export default function (state = initialState, action) {
             friends_loading: true
         }
     case FRIENDS_LOADED:
+        var friends = null
+        if (Object.keys(action.payload).length != 0) {
+            friends = action.payload
+        }
         return {
             ...state,
-            friends: action.payload,
+            friends: friends,
             friends_loading: false
         }
     case CLEAR:

@@ -13,7 +13,6 @@ import { loadPortfolio, friendsPortfolios } from '../../actions/portfolio.js'
 
 function Home(props) {
     const [period, setPeriod] = useState('day')
-    const [charts, setCharts] = useState(null)
     const [type, setType] = useState('stocks')
     const periodMap = {
         'day': 'day',
@@ -28,7 +27,6 @@ function Home(props) {
         loadPortfolio: PropTypes.func.isRequired,
         friendsPortfolios: PropTypes.func.isRequired,
         portfolio: PropTypes.object,
-        friends_charts: PropTypes.object,
         user: PropTypes.object,
         isAuthenticated: PropTypes.bool,
         loading: PropTypes.bool,
@@ -48,25 +46,28 @@ function Home(props) {
         )
     }
 
-    if (charts === null && props.portfolio.charts !== null && props.user !== null) {
-        var small_charts = []
-        for (const symbol in props.portfolio.charts) {
-            var temp = (
-                <Link to={'/chart?symbol=' + symbol} className='stock f ai-c jc-s'>
-                    <div className='left-stock'>
-                        <div className='stock-symbol'>{symbol}</div>
-                        <div className='stock-quantity f'>{props.user.holdings[symbol].toFixed(2)} Shares</div>
-                    </div>
-                    <div className='small-chart'>
-                        {smallChart(props.portfolio.charts[symbol].path)}
-                    </div>
-                    <div className='stock-price'>${props.portfolio.charts[symbol].last_price.toFixed(2)}</div>
-                </Link>
-            )
-            small_charts.push(temp)
+    const small_charts = () => {
+        if (charts === null && props.portfolio.charts !== null && props.user !== null) {
+            var charts = []
+            for (const symbol in props.portfolio.charts) {
+                var temp = (
+                    <Link to={'/chart?symbol=' + symbol} className='stock f ai-c jc-s'>
+                        <div className='left-stock'>
+                            <div className='stock-symbol'>{symbol}</div>
+                            <div className='stock-quantity f'>{props.user.holdings[symbol].toFixed(2)} Shares</div>
+                        </div>
+                        <div className='small-chart'>
+                            {smallChart(props.portfolio.charts[symbol].path)}
+                        </div>
+                        <div className='stock-price'>${props.portfolio.charts[symbol].last_price.toFixed(2)}</div>
+                    </Link>
+                )
+                charts.push(temp)
+            }
+            return charts
         }
-        setCharts(small_charts)
     }
+    
 
     if (props.portfolio.friends === null && type == 'friends' && !props.portfolio.friends_loading) {
         if (Object.keys(props.user.friends).length > 0) {
@@ -135,8 +136,10 @@ function Home(props) {
                     Friends
                     </button>
                 </div>
-                {type === 'stocks' ? (Object.keys(charts).length !== 0 ? charts : noCharts('stocks')) : 
-                    props.friends_charts !== null ? Object.keys(props.friends_charts).length !== 0 ? friendsCharts() : noCharts('friends') : noCharts('friends')}
+                {type === 'stocks' ? 
+                    props.portfolio.charts !== null ? Object.keys(props.portfolio.charts).length !== 0 ? small_charts() : noCharts('stocks') : noCharts('stocks')
+                    :
+                    props.portfolio.friends !== null ? friendsCharts() : noCharts('friends')}
             </div>
         )
     }
@@ -165,7 +168,6 @@ function Home(props) {
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
     portfolio: state.portfolio,
-    friends_charts: state.user.friends_charts,
     user: state.user.user,
     loading: state.user.loading
 })
