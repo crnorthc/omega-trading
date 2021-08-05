@@ -124,19 +124,22 @@ function Home(props) {
         )
     }
 
-    const actionbox = (
-        <div className='action-box b'>
-            <div className='buySell bb fr ai-c jc-c'>
-                <button className='buy' style={type === 'stocks' ? dayStyle : null} onClick={() => setType('stocks')}>
+    const actionbox = () => {
+        return (
+            <div className='action-box b'>
+                <div className='buySell bb fr ai-c jc-c'>
+                    <button className='buy' style={type === 'stocks' ? dayStyle : null} onClick={() => setType('stocks')}>
                     Stocks
-                </button>
-                <button className='sell' style={type === 'friends' ? dayStyle : null} onClick={() => setType('friends')}>
+                    </button>
+                    <button className='sell' style={type === 'friends' ? dayStyle : null} onClick={() => setType('friends')}>
                     Friends
-                </button>
+                    </button>
+                </div>
+                {type === 'stocks' ? (Object.keys(charts).length !== 0 ? charts : noCharts('stocks')) : 
+                    props.friends_charts !== null ? Object.keys(props.friends_charts).length !== 0 ? friendsCharts() : noCharts('friends') : noCharts('friends')}
             </div>
-            {type === 'stocks' ? (charts !== null ? charts : noCharts('stocks')) : props.friends_charts !== null ? friendsCharts() : noCharts('friends')}
-        </div>
-    )
+        )
+    }
 
     if (!props.isAuthenticated) {
         return <Redirect to='/login' />
@@ -151,7 +154,7 @@ function Home(props) {
                 <h1>Portfolio</h1>
                 <div>
                     {graph()}
-                    {actionbox}
+                    {actionbox()}
                 </div>
             </div>
         )
