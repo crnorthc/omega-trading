@@ -47,25 +47,23 @@ function Home(props) {
     }
 
     const small_charts = () => {
-        if (charts === null && props.portfolio.charts !== null && props.user !== null) {
-            var charts = []
-            for (const symbol in props.portfolio.charts) {
-                var temp = (
-                    <Link to={'/chart?symbol=' + symbol} className='stock f ai-c jc-s'>
-                        <div className='left-stock'>
-                            <div className='stock-symbol'>{symbol}</div>
-                            <div className='stock-quantity f'>{props.user.holdings[symbol].toFixed(2)} Shares</div>
-                        </div>
-                        <div className='small-chart'>
-                            {smallChart(props.portfolio.charts[symbol].path)}
-                        </div>
-                        <div className='stock-price'>${props.portfolio.charts[symbol].last_price.toFixed(2)}</div>
-                    </Link>
-                )
-                charts.push(temp)
-            }
-            return charts
+        var charts = []
+        for (const symbol in props.portfolio.charts) {
+            var temp = (
+                <Link to={'/chart?symbol=' + symbol} className='stock f ai-c jc-s'>
+                    <div className='left-stock'>
+                        <div className='stock-symbol'>{symbol}</div>
+                        <div className='stock-quantity f'>{props.user.holdings[symbol].toFixed(2)} Shares</div>
+                    </div>
+                    <div className='small-chart'>
+                        {smallChart(props.portfolio.charts[symbol].path)}
+                    </div>
+                    <div className='stock-price'>${props.portfolio.charts[symbol].last_price.toFixed(2)}</div>
+                </Link>
+            )
+            charts.push(temp)
         }
+        return charts
     }
     
 
@@ -139,7 +137,7 @@ function Home(props) {
                 {type === 'stocks' ? 
                     props.portfolio.charts !== null ? Object.keys(props.portfolio.charts).length !== 0 ? small_charts() : noCharts('stocks') : noCharts('stocks')
                     :
-                    props.portfolio.friends !== null ? friendsCharts() : noCharts('friends')}
+                    props.portfolio.friends !== null ? friendsCharts() : props.portfolio.friends_loading ? <Loader page={false} /> : noCharts('friends')}
             </div>
         )
     }

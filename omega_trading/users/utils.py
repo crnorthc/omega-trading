@@ -461,7 +461,7 @@ def portfolio_data(profile, period):
     start_time, _, _, interval = determine_portfolio_period(period)
     transactions, symbols, cash, holdings = get_transactions(profile.id, start_time, period)
 
-    if len(transactions) == 0:
+    if transactions == False:
         return no_transactions(period)
 
     MAX = max(symbols, key=lambda symbol: len(symbols[symbol]))
@@ -497,9 +497,9 @@ def portfolio_data(profile, period):
 
 def get_transactions(id, start_time, period):
     Transactions = Transaction.objects.filter(profile_id=id).values()
-    
+
     if len(Transactions) == 1:
-        return {}, [], 25000, {}
+        return False, [], 25000, {}
 
     transactions = {}
     symbols = []
