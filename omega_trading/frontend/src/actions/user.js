@@ -193,9 +193,6 @@ export const saveHistory = () => (dispatch) => {
 }
 
 export const loadLeaderboard = () => (dispatch) => {
-    dispatch({
-        type: LOADING,
-    })
 
     const config = {
         headers: {

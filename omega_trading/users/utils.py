@@ -88,11 +88,11 @@ def get_symbol_data(symbol, resolution, start, end):
     return r.json()
 
 def user_current_worth(profile):
-    worth = profile['portfolio_amount']
+    worth = profile['cash']
     holdings = Holdings.objects.filter(profile_id=profile['id']).values()
 
     for _, holding in enumerate(holdings):
-        worth += get_quote(holding['symbol']) * holding['quantity']
+        worth += get_quote(holding['symbol']) * float(holding['quantity'])
     
     return worth
 

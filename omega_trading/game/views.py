@@ -413,3 +413,24 @@ class ReadyUp(APIView):
             contract.save()
 
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+
+
+class CurrentGames(APIView):
+
+    def get(self, request, format=None):
+        profile = Profile.objects.filter(user_id=request.user.id)
+        profile = profile[0]
+        tournaments = Player.objects.filter(profile_id=profile.id).values()
+
+        games = []
+
+        for _, player in enumerate(tournaments):
+            game = Tournament.objects.filter(id=player['tournament_id'])
+            game = game[0]
+
+            games.append({
+                'room_code': game.room_code,
+                'name': game.name
+            })
+
+        return Response({"games": games}, status=status.HTTP_200_OK)

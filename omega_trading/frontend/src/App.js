@@ -8,7 +8,7 @@ import MyNavbar from './components/layouts/MyNavbar.js'
 import Home from './components/layouts/Home.js'
 import Account from './components/layouts/Account.js'
 import Portfolio from './components/layouts/Portfolio.js'
-import Lobby from './components/layouts/Lobby.js'
+import NewLobby from './components/layouts/NewLobby.js'
 import Leaderboard from './components/layouts/Leaderboard.js'
 import React, { Fragment } from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
@@ -30,7 +30,7 @@ function App() {
                     <Route exact path="/chart" component={Symbol} />
                     <Route exact path="/account" component={Account} />
                     <Route exact path="/portfolio" component={Portfolio} />
-                    <Route exact path="/lobby" component={Lobby} />
+                    <Route exact path="/lobby" component={NewLobby} />
                     <Route exaxt path="/leaderboard" component={Leaderboard} />
                 </Switch>
             </Fragment>

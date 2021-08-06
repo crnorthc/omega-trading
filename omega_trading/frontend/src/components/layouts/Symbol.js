@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom'
 import NewGraph from './NewGraph.js'
 import Loader from './Loader'
 import Options from './Options.js'
+import ActionBox from './ActionBox.js'
 import queryString from 'query-string'
 
 // State Stuff
@@ -72,75 +73,6 @@ function Symbol(props) {
         )
     }
 
-    const actionBox = (
-        <div className="action-box b">
-            {!props.no_game ?
-                <div className='bb fr'>
-                    <button className="mode-choice br" style={mode === 'nogame' ? modeStyle : null} onClick={() => setMode('nogame')}>Portfolio</button>
-                    <button className="modeChoice" style={mode === 'game' ? modeStyle : null} onClick={() => setMode('game')}>Game</button>
-                </div>
-                : null
-            }
-            <div className="buySell bb fr ai-c jc-c">
-                <button className="buy" style={type === 'buy' ? typeStyle : null} onClick={() => setType('buy')}>Buy {props.symbol}</button>
-                <button className="sell" style={type === 'sell' ? typeStyle : null} onClick={() => setType('sell')}>Sell {props.symbol}</button>
-            </div>
-            <div className="values">
-                <div className="investIn f ai-c jc-s">
-                    <div className="type">Invest In</div>
-                    <div className="buttons">
-                        <button onClick={(e) => onClick(e)} className="typeButton b f ai-c jc-s">
-                            <div className="metric">{metric}</div>
-                            <svg className="dropper" fill="none" height="16" role="img" viewBox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.50024 6L7.99953 2L11.5002 6H4.50024Z" stroke="#000" fill="#000"></path>
-                                <path d="M11.4998 10L8.00047 14L4.49976 10H11.4998Z" stroke="#000" fill="#000"></path>
-                            </svg>
-                        </button>
-                        {drop ? dropButton : null}
-                    </div>
-
-                </div>
-                <div className="bb f ai-c jc-s">
-                    <div className="type">Amount</div>
-                    {metric === 'Dollars' ?
-                        <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput b"
-                            placeholder="$0.00"
-                            type="number" min=".01" /> :
-                        <input onChange={(e) => changeQuantity(e.target.value)} className="amountInput b"
-                            placeholder="0"
-                            type="number" min="1" />
-                    }
-                </div>
-                <div className="Quantity f ai-c jc-s">
-                    {metric === 'Dollars' ? <div className="type">Est. Quantity</div> : <div className="type">Est. Cost</div>}
-                    {metric === 'Dollars' ? <div className="quantity">{quantity.toFixed(3).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div> : <div className="quantity">${quantity.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>}
-                </div>
-            </div>
-            <div className="reviewOrder bb">
-                <button onClick={() => submitOrder(false)} className="reviewButton b">Review Order</button>
-            </div>
-            <div className="Message f ai-c">
-                {props.user !== null ? type === 'buy' ?
-                    <div className="message fr ai-c jc-s">
-                                    ${props.user.portfolio_amount.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} buying power available
-                    </div>
-                    : metric === 'Dollars' ?
-                        <div className="message fr ai-c jc-s">
-                            <div className="amountAvailable">${(props.user.holdings[props.symbol] * props.current_value).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} Available</div>
-                            <button className="sellAll" onClick={() => submitOrder(true)}>Sell All</button>
-                        </div>
-                        :
-                        <div className="message fr ai-c jc-s">
-                            <div className="amountAvailable">{props.user.holdings[props.symbol].toFixed(6).toString()} Shares Available</div>
-                            <button className="sellAll" onClick={() => submitOrder(true)}>Sell All</button>
-                        </div>
-                    :
-                    <div></div>
-                }
-            </div>
-        </div>
-    )
-
     if (!props.isAuthenticated) {
         return <Redirect to='/login' />
     }
@@ -152,9 +84,8 @@ function Symbol(props) {
         return (
             <div className='pageContainer'>
                 <h1>{props.symbol}</h1>
-                <div>
-                    {graph()}
-                </div>
+                {graph()}
+                <ActionBox />
                 <Options symbol={props.symbol} />
             </div>
         )
