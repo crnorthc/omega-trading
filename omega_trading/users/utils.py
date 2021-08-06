@@ -88,11 +88,11 @@ def get_symbol_data(symbol, resolution, start, end):
     return r.json()
 
 def user_current_worth(profile):
-    worth = profile['portfolio_amount']
+    worth = profile['cash']
     holdings = Holdings.objects.filter(profile_id=profile['id']).values()
 
     for _, holding in enumerate(holdings):
-        worth += get_quote(holding['symbol']) * holding['quantity']
+        worth += get_quote(holding['symbol']) * float(holding['quantity'])
     
     return worth
 
@@ -461,7 +461,7 @@ def portfolio_data(profile, period):
     start_time, _, _, interval = determine_portfolio_period(period)
     transactions, symbols, cash, holdings = get_transactions(profile.id, start_time, period)
 
-    if len(transactions) == 0:
+    if transactions == False:
         return no_transactions(period)
 
     MAX = max(symbols, key=lambda symbol: len(symbols[symbol]))
@@ -497,9 +497,9 @@ def portfolio_data(profile, period):
 
 def get_transactions(id, start_time, period):
     Transactions = Transaction.objects.filter(profile_id=id).values()
-    
+
     if len(Transactions) == 1:
-        return {}, [], 25000, {}
+        return False, [], 25000, {}
 
     transactions = {}
     symbols = []

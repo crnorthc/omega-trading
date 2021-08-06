@@ -13,6 +13,14 @@
     justify-content: space-between;
 }
 
+.jc-a {
+    justify-content: space-around;
+}
+
+.ai-s {
+    align-items: stretch;
+}
+
 .f {
     display: flex;
 }
@@ -82,6 +90,10 @@
     font-size: 18px;
 }
 
+.f24 {
+    font-size: 24px;
+}
+
 .f32 {
     font-size: 32px;
 }
@@ -134,6 +146,11 @@
     margin-top: 24px;
 }
 
+// Huge Margin Top
+.hmt {
+    margin-top: 72px;
+}
+
 // Medium Padding Bottom
 .mpb {
     padding-bottom: 24px;
@@ -144,9 +161,19 @@
     padding-top: 24px;
 }
 
+// Large Margin Top 
+.lmt {
+    margin-top: 36px;
+}
+
 // Large Padding Left
 .lpl {
     padding-left: 36px;
+}
+
+// Tiny Padding Bottom
+.tpb {
+    padding-bottom: 6px;
 }
 
 // Small Padding Left
@@ -154,14 +181,30 @@
     padding-left: 12px;
 }
 
+// Small Padding Right
+.spr {
+    padding-right: 12px;
+}
+
 // Small Margin Left
 .sml {
     margin-left: 12px;
 }
 
+// Small Margin Bottom
+.smb {
+    margin-bottom: 12px;
+}
+
 // Medium Margin Left
 .mml {
     margin-left: 24px;
+}
+
+// Tiny Margin R/L
+.tmx {
+    margin-right: 6px;
+    margin-left: 6px;
 }
 
 // Small Margin R/L
@@ -170,10 +213,28 @@
     margin-left: 12px;
 }
 
+// Large Margin R/L
+.lmx {
+    margin-right: 36px;
+    margin-left: 36px;
+}
+
 // Medium Margin R/L
 .mmx {
     margin-right: 24px;
     margin-left: 24px;
+}
+
+// Teeny Tiny Margin R/L
+.ttmx {
+    margin-right: 3px;
+    margin-left: 3px;
+}
+
+//Tiny Margin T/B
+.tmy {
+    margin-top: 6px;
+    margin-bottom: 6px;
 }
 
 // Small Margin T/B
@@ -202,4 +263,9 @@
 // Tiny Margin Left
 .tml {
     margin-left: 6px;
+}
+
+// Tiny Margin Right
+.tmr {
+    margin-right: 6px;
 }

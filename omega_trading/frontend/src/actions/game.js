@@ -10,6 +10,7 @@ import {
     QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME,
+    GAMES_LOADED
 } from './types'
 
 function getCookie() {
@@ -521,6 +522,26 @@ export const readyUp = (room_code) => (dispatch) => {
             dispatch({
                 type: GAME_LOADED,
                 payload: res.data.game,
+            })
+        }
+    })
+}
+
+export const currentGames = () => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    axios.get('/game/games', config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAMES_LOADED,
+                payload: res.data.games,
             })
         }
     })

@@ -8,6 +8,7 @@ class Duration(models.Model):
 
 
 class Tournament(models.Model):
+    name = models.CharField(max_length=20)
     start_amount = models.FloatField(default=10000)
     room_code = models.CharField(max_length=8)
     start_time = models.CharField(max_length=10)

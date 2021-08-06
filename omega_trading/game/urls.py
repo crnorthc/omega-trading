@@ -16,5 +16,6 @@ urlpatterns = [
     path('quote-gas', GasQuote.as_view()),
     path('define-contract', DefineContract.as_view()),
     path('start-bet', StartBets.as_view()),
-    path('make-bet', MakeBet.as_view())
+    path('make-bet', MakeBet.as_view()),
+    path('games', CurrentGames.as_view())
 ]

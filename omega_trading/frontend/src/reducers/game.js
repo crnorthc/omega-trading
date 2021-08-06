@@ -10,6 +10,7 @@ import {
     QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME,
+    GAMES_LOADED
 } from '../actions/types'
 
 const initialState = {
@@ -21,10 +22,10 @@ const initialState = {
     no_history: false,
     history: null,
     history_loading: false,
-    history_loaded: false,
     game: null,
     etherQuote: null,
     gasQuote: null,
+    games: null
 }
 
 export default function (state = initialState, action) {
@@ -55,6 +56,16 @@ export default function (state = initialState, action) {
             game_loading: false,
             game_loaded: true,
             game: action.payload,
+        }
+    case GAMES_LOADED:
+        var game_list = action.payload
+        console.log(game_list)
+        if (game_list.length == 0) {
+            game_list = false
+        }
+        return {
+            ...state,
+            games: game_list
         }
     case GAME_JOINED:
         if (action.payload.unadd) {
@@ -89,7 +100,6 @@ export default function (state = initialState, action) {
     case HISTORY_LOADED:
         return {
             ...state,
-            history_loaded: true,
             history_loading: false,
             history: action.payload,
         }

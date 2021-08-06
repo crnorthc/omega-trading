@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom'
 import NewGraph from './NewGraph.js'
 import Loader from './Loader'
 import Options from './Options.js'
+import ActionBox from './ActionBox.js'
 import queryString from 'query-string'
 
 // State Stuff
@@ -83,9 +84,8 @@ function Symbol(props) {
         return (
             <div className='pageContainer'>
                 <h1>{props.symbol}</h1>
-                <div>
-                    {graph()}
-                </div>
+                {graph()}
+                <ActionBox />
                 <Options symbol={props.symbol} />
             </div>
         )
