@@ -11,7 +11,9 @@ import {
     QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME,
-    GAMES_LOADED
+    GAMES_LOADED,
+    SEARCH_LOADED,
+    MAKING_SEARCH
 } from '../actions/types'
 
 const initialState = {
@@ -27,7 +29,9 @@ const initialState = {
     etherQuote: null,
     gasQuote: null,
     games: null,
-    preview: null
+    preview: null,
+    search: null,
+    search_made: false
 }
 
 export default function (state = initialState, action) {
@@ -63,6 +67,21 @@ export default function (state = initialState, action) {
         return {
             ...state,
             preview: action.payload
+        }
+    case MAKING_SEARCH: 
+        return {
+            ...state,
+            search_made: false
+        }
+    case SEARCH_LOADED:
+        var searched_games = action.payload
+        if (searched_games.length == 0) {
+            searched_games = null
+        }
+        return {
+            ...state,
+            search: searched_games,
+            search_made: true
         }
     case GAMES_LOADED:
         var game_list = action.payload

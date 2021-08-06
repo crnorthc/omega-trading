@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react'
 import { Redirect, Link } from 'react-router-dom'
 import profilePic from '../../static/profilePic.png'
-import NewGraph from './NewGraph.js'
-import Loader from './Loader'
+import NewGraph from './Securities/NewGraph.js'
+import Loader from './Tools/Loader'
 
 // State Stuff
 import PropTypes from 'prop-types'

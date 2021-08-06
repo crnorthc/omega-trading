@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Redirect } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import { Redirect } from 'react-router-dom'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import profilePic from "../../static/profilePic.png";
-import { loadUsers, hideResults, sendInvite, acceptInvite } from "../../actions/user.js";
-import { joinGame, sendGameInvite, setColor } from "../../actions/game";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import profilePic from '../../static/profilePic.png'
+import { loadUsers, hideResults, sendInvite, acceptInvite } from '../../actions/user.js'
+import { joinGame, sendGameInvite, setColor } from '../../actions/game'
 
 function Friends(props) {
-    const [username, setUsername] = useState(null);
-    const [show, setShow] = useState(false);
+    const [username, setUsername] = useState(null)
+    const [show, setShow] = useState(false)
 
     Friends.propTypes = {
         loadUsers: PropTypes.func.isRequired,
@@ -24,70 +24,70 @@ function Friends(props) {
         game: PropTypes.object,
         users: PropTypes.object,
         users_loaded: PropTypes.bool,
-    };
+    }
 
     const onKeyUp = (e) => {
-        if (username !== "") {
-            props.loadUsers(username, props.friendsOnly);
+        if (username !== '') {
+            props.loadUsers(username, props.friendsOnly)
         } else {
-            props.hideResults();
+            props.hideResults()
         }
-    };
+    }
 
     const handleInvite = (username, accepted, unadd) => {
         if (props.friendsOnly) {
-            props.joinGame(username, accepted, unadd, props.game.room_code);
+            props.joinGame(username, accepted, unadd, props.game.room_code)
         } else {
-            props.acceptInvite(username, accepted, unadd);
+            props.acceptInvite(username, accepted, unadd)
         }
-    };
+    }
 
     const get_colors = (i) => {
-        const colors = ["black", "blue", "red", "orange", "green", "hotpink", "purple"];
-        var colors_taken = [];
+        const colors = ['black', 'blue', 'red', 'orange', 'green', 'hotpink', 'purple']
+        var colors_taken = []
         for (const player in props.game.players) {
-            colors_taken.push(props.game.players[player].color);
+            colors_taken.push(props.game.players[player].color)
         }
-        var temp = [];
+        var temp = []
         if (i.username == props.user.username) {
             for (const color in colors) {
                 if (colors_taken.includes(colors[color]) && colors[color] != props.game.players[i.username].color) {
                     temp.push(
-                        <svg style={{ "background-color": colors[color] }} height="15" width="15">
-                            <line x1="0" y1="0" x2="15" y2="15" style={{ stroke: "#fff", "stroke-width": "2" }} />
-                            <line x1="0" y1="15" x2="15" y2="0" style={{ stroke: "#fff", "stroke-width": "2" }} />
+                        <svg style={{ 'background-color': colors[color] }} height="15" width="15">
+                            <line x1="0" y1="0" x2="15" y2="15" style={{ stroke: '#fff', 'stroke-width': '2' }} />
+                            <line x1="0" y1="15" x2="15" y2="0" style={{ stroke: '#fff', 'stroke-width': '2' }} />
                         </svg>
-                    );
+                    )
                 } else {
                     if (colors[color] == props.game.players[i.username].color) {
-                        temp.push(<button style={{ "background-color": colors[color] }} className="myChoice"></button>);
+                        temp.push(<button style={{ 'background-color': colors[color] }} className="myChoice"></button>)
                     } else {
                         temp.push(
                             <button
                                 onClick={(e) => props.setColor(colors[color], props.game.room_code)}
-                                style={{ "background-color": colors[color] }}
+                                style={{ 'background-color': colors[color] }}
                                 className="colorChoice"
                             ></button>
-                        );
+                        )
                     }
                 }
             }
-            return temp;
+            return temp
         }
-    };
+    }
 
     const friendsList = () => {
-        var friends = [];
-        var list = [];
+        var friends = []
+        var list = []
         if (props.friendsOnly) {
-            list = props.game.players;
+            list = props.game.players
         } else {
-            list = props.user.friends;
+            list = props.user.friends
         }
 
         for (const i in list) {
             var temp = (
-                <div className={props.friendsOnly ? "otherUser-pregame fr ai-c jc-s" : "otherUser fr ai-c jc-s"}>
+                <div className={props.friendsOnly ? 'otherUser-pregame fr ai-c jc-s' : 'otherUser fr ai-c jc-s'}>
                     <div className="user-left fr ai-c">
                         <div className="userPic-cont">
                             <img className="userPic" src={profilePic} width={40} />
@@ -97,8 +97,8 @@ function Friends(props) {
                                 style={
                                     props.friendsOnly
                                         ? {
-                                              color: props.game.players[list[i].username].color,
-                                          }
+                                            color: props.game.players[list[i].username].color,
+                                        }
                                         : null
                                 }
                                 className="fullName-user"
@@ -131,11 +131,11 @@ function Friends(props) {
                         )}
                     </div>
                 </div>
-            );
-            friends.push(temp);
+            )
+            friends.push(temp)
         }
-        return friends;
-    };
+        return friends
+    }
 
     const getInvites = (i) => {
         if (props.friendsOnly) {
@@ -149,7 +149,7 @@ function Friends(props) {
                         <button className="editButton">Pending</button>
                     )}
                 </div>
-            );
+            )
         } else {
             return (
                 <div className="addFriend">
@@ -157,7 +157,7 @@ function Friends(props) {
                         <button onClick={(e) => props.sendInvite(i, true)} className="editButton">
                             Unsend Invite
                         </button>
-                    ) : "game" in props.user.invites[i] ? (
+                    ) : 'game' in props.user.invites[i] ? (
                         <div className="acceptButtons">
                             <button
                                 onClick={(e) => props.joinGame(props.user.username, true, false, props.user.invites[i].game.room_code)}
@@ -184,9 +184,9 @@ function Friends(props) {
                         </div>
                     )}
                 </div>
-            );
+            )
         }
-    };
+    }
 
     const getSender = (i) => {
         if (props.friendsOnly) {
@@ -202,9 +202,9 @@ function Friends(props) {
                         <div className="userName-user">@{i}</div>
                     </div>
                 </div>
-            );
+            )
         } else {
-            if ("game" in props.user.invites[i]) {
+            if ('game' in props.user.invites[i]) {
                 return (
                     <div className="game-user-left fr ai-c">
                         <div className="userPic-cont">
@@ -213,12 +213,12 @@ function Friends(props) {
                         <div className="sender">@{props.user.invites[i].sender}</div>
                         <div className="game-invite">
                             <div className="friends-start-amount">
-                                Start Amount: ${props.user.invites[i].game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                Start Amount: ${props.user.invites[i].game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             </div>
-                            <div className="friends-bet">Bet: ${props.user.invites[i].game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                            <div className="friends-bet">Bet: ${props.user.invites[i].game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                         </div>
                     </div>
-                );
+                )
             } else {
                 return (
                     <div className="user-left fr ai-c">
@@ -232,31 +232,31 @@ function Friends(props) {
                             <div className="userName-user">@{i}</div>
                         </div>
                     </div>
-                );
+                )
             }
         }
-    };
+    }
 
     const invitesList = () => {
-        var invites = [];
-        var list = [];
+        var invites = []
+        var list = []
         if (props.friendsOnly) {
-            list = props.game.invites;
+            list = props.game.invites
         } else {
-            list = props.user.invites;
+            list = props.user.invites
         }
 
         for (const i in list) {
             var temp = (
-                <div className={props.friendsOnly ? "otherUser-pregame fr ai-c jc-s" : "otherUser fr ai-c jc-s"}>
+                <div className={props.friendsOnly ? 'otherUser-pregame fr ai-c jc-s' : 'otherUser fr ai-c jc-s'}>
                     {getSender(i)}
                     {getInvites(i)}
                 </div>
-            );
-            invites.push(temp);
+            )
+            invites.push(temp)
         }
-        return invites;
-    };
+        return invites
+    }
 
     const show_users = (i) => {
         if (props.friendsOnly) {
@@ -276,7 +276,7 @@ function Friends(props) {
                         </button>
                     )}
                 </div>
-            );
+            )
         } else {
             return (
                 <div className="addFriend">
@@ -303,12 +303,12 @@ function Friends(props) {
                         )
                     ) : null}
                 </div>
-            );
+            )
         }
-    };
+    }
 
     const showUsers = () => {
-        var users = [];
+        var users = []
         if (props.users.length == 0) {
             return (
                 <div className="bb">
@@ -317,12 +317,12 @@ function Friends(props) {
                     </div>
                     <div className="noUsers">No results</div>
                 </div>
-            );
+            )
         }
 
         for (const i in props.users) {
             var temp = (
-                <div className={props.friendsOnly ? "otherUser-pregame fr ai-c jc-s" : "otherUser fr ai-c jc-s"}>
+                <div className={props.friendsOnly ? 'otherUser-pregame fr ai-c jc-s' : 'otherUser fr ai-c jc-s'}>
                     <div className="user-left fr ai-c">
                         <div className="userPic-cont">
                             <img className="userPic" src={profilePic} width={40} />
@@ -336,8 +336,8 @@ function Friends(props) {
                     </div>
                     {show_users(i)}
                 </div>
-            );
-            users.push(temp);
+            )
+            users.push(temp)
         }
         return (
             <div className="bb fc jc-c ai-c">
@@ -346,13 +346,13 @@ function Friends(props) {
                 </div>
                 {users}
             </div>
-        );
-    };
+        )
+    }
 
     return (
         <div>
             <div className="friendsHeader bb f ai-c jc-s">
-                <h3>{props.friendsOnly ? "Players" : "Friends"}</h3>
+                <h3>{props.friendsOnly ? 'Players' : 'Friends'}</h3>
                 <div className="search-friends b">
                     <img className="searchIcon" src="../../../static/search.png" />
                     <input
@@ -384,7 +384,7 @@ function Friends(props) {
                 )}
             </div>
             <div className="subHeader f jc-c">
-                <h4 className="friendsSection bb">{props.friendsOnly ? "Players" : "Your Friends"}</h4>
+                <h4 className="friendsSection bb">{props.friendsOnly ? 'Players' : 'Your Friends'}</h4>
             </div>
             <div className="fc f ai-c jc-c">
                 {props.friendsOnly ? (
@@ -396,7 +396,7 @@ function Friends(props) {
                 )}
             </div>
         </div>
-    );
+    )
 }
 
 const mapStateToProps = (state) => ({
@@ -404,7 +404,7 @@ const mapStateToProps = (state) => ({
     users: state.user.users,
     users_loaded: state.user.users_loaded,
     game: state.game.game,
-});
+})
 
 export default connect(mapStateToProps, {
     setColor,
@@ -414,4 +414,4 @@ export default connect(mapStateToProps, {
     hideResults,
     sendInvite,
     acceptInvite,
-})(Friends);
+})(Friends)

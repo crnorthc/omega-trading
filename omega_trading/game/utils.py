@@ -484,24 +484,6 @@ def transaction(request, bought, player):
 
     return SYMBOL, quantity, QUOTE, transaction
 
-def color_taken(game, color):
-    players = get_players(game)
-
-    for _, player in players.items():
-        if player['color'] == color:
-            return True
-
-    return False
-
-def get_color(game):
-    colors = ['black', 'blue', 'red', 'orange', 'green', 'purple', 'hotpink']
-    color = random.choice(colors)
-
-    if color_taken(game, color):
-        return get_color(game)
-
-    return color
-
 def get_history_players(game):
     players_info = []
     players = PlayerHistory.objects.filter(history_id=game.id).values()
@@ -513,8 +495,7 @@ def get_history_players(game):
 
         players_info.append = {
             'username': user.username,
-            'worth': player['cash'],
-            'color': player['color']
+            'worth': player['cash']
         }
 
     return players_info
@@ -681,3 +662,10 @@ def get_symbol_quote(symbol, time):
     r = r.json()
 
     return r['c']
+
+def format_duration(game_value):
+    return {
+        'days': game_value['days'],
+        'hours': game_value['hours'],
+        'mins': game_value['minutes']
+    }

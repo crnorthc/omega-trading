@@ -18,11 +18,13 @@ class Tournament(models.Model):
     active = models.BooleanField(default=True)
     duration = models.ForeignKey(Duration, on_delete=models.CASCADE)
     is_contract = models.BooleanField(default=False)
+    public = models.BooleanField(default=True)
 
 
 class Contract(models.Model):
     contract = models.JSONField(default=dict)
     bet = models.IntegerField(default=0)
+    dollar = models.DecimalField(max_digits=10, decimal_places=3)
     fee = models.IntegerField(default=0)
     bets_complete = models.BooleanField(default=False)
     ready_to_bet = models.BooleanField(default=False)
@@ -38,7 +40,6 @@ class Player(models.Model):
     is_host = models.BooleanField(default=False)
     payed = models.BooleanField(default=False)
     ready = models.BooleanField(default=False)
-    color = models.CharField(max_length=20, default='')
     cash = models.DecimalField(max_digits=25, decimal_places=4)
 
 
@@ -72,4 +73,3 @@ class PlayerHistory(models.Model):
     history = models.ForeignKey(History, on_delete=models.CASCADE)
     profile = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
     cash = models.DecimalField(max_digits=25, decimal_places=4)
-    color = models.CharField(max_length=20, default='')

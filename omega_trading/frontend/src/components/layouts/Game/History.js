@@ -1,6 +1,6 @@
 import React from 'react'
-import { loadHistory } from '../../actions/game'
-import Loader from './Loader'
+import { loadHistory } from '../../../actions/game'
+import Loader from '../Tools/Loader'
 
 // State Stuff
 import PropTypes from 'prop-types'

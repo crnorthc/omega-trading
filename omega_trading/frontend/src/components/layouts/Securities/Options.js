@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react'
-import Loader from './Loader'
-import Dropdown from '../Dropdown'
+import Loader from '../Tools/Loader'
+import Dropdown from '../Tools/Dropdown'
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { optionsPrices, dateRange } from '../../actions/securities'
+import { optionsPrices, dateRange } from '../../../actions/securities'
 
 
 function Options(props) {

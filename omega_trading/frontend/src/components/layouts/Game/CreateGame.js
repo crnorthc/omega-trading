@@ -1,22 +1,24 @@
 /* eslint-disable react/jsx-key */
-import React, { useState } from 'react'
-import { loadGame, joinGame } from '../../../actions/game'
+import React, { useEffect, useState } from 'react'
 import Rules from './Rules'
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { searchGames, searchNameCode } from '../../../actions/game'
 
 
 
 function CreateGame(props) {
 
     const [type, setType] = useState('create')
-    const [code, setCode] = useState(null)
+    const [code, setCode] = useState('')
+    const [name, setName] = useState('')
     const [join, setJoin] = useState('code')
     const [amount, setAmount] = useState({from: 0, to:0})
     const [positions, setPositions] = useState({from: 0, to:0})
     const [bet, setBet] = useState({from: 0, to:0})
+    const [betType, changeBet] = useState('bet')
     const [days, setDays] = useState({from: 0, to:0})
     const [hours, setHours] = useState({from: 0, to:0})
     const [mins, setMins] = useState({from: 0, to:0})
@@ -24,14 +26,21 @@ function CreateGame(props) {
     const [betError, setbetError] = useState(false)
     const [positionsError, setpositionsError] = useState(false)
     const [durationError, setdurationError] = useState(false)
+    const [view, setView] = useState('search')
 
 
     CreateGame.propTypes = {
-        joinGame: PropTypes.func.isRequired,
-        no_history: PropTypes.bool,
-        history: PropTypes.object,
-        user: PropTypes.object
+        searchNameCode: PropTypes.func.isRequired,
+        searchGames: PropTypes.func.isRequired,
+        search_made: PropTypes.bool,
+        search: PropTypes.array,
     }
+
+    useEffect(() => {
+        if (props.search_made) {
+            setView('results')
+        }
+    }, [props.search_made])
 
     const minutes = [0, 15, 30, 45]
 
@@ -46,6 +55,10 @@ function CreateGame(props) {
 
     const selected = {
         'border-bottom': '#000 1px solid'
+    }
+
+    const notSelected = {
+        'color': 'rgb(202, 202, 202)'
     }
 
     const error = {
@@ -144,6 +157,25 @@ function CreateGame(props) {
         }
     }
 
+    const basicSearch = () => {
+        if (name != '') {
+            if (code != '') {
+                alert('search for either code or name')
+            }
+            else {
+                props.searchNameCode('', name)
+            }
+        }
+        else {
+            if (code == '') {
+                alert('please enter a name or code')
+            }
+            else {
+                props.searchNameCode(code, '')
+            }            
+        }
+    }
+
     const makeSearch = () => {
         var validParams = true
         if (amount.to < amount.from) {
@@ -173,16 +205,56 @@ function CreateGame(props) {
         }
         if (validParams) {
             setdurationError(false)
-            alert('ALL GOOD')
+            props.searchGames({
+                'amount': amount,
+                'bet': bet, 
+                'positions': positions,
+                'days': days,
+                'hours': hours,
+                'mins': mins,
+                'smart-bet': betType == 'smart'
+            })
         }
     }
 
-    const room_code = (
-        <div className="rules">
-            <div className='enter-code fc ai-c jc-c'>
-                <input className="codeInput" onChange={e => setCode(e.target.value)} placeholder="Enter Code" type="text" />
-                <button onClick={() => props.joinGame(props.user.username, true, false, code)} className='code-button b ai-c'>Join</button>
+    const getGames = () => {
+        var games = []
+
+        for (const game in props.search) {
+            games.push(
+                <div className='fr ai-c jc-s'>
+                    <div className='spl'>{props.search[game].name}</div>
+                    <div className='spr'>{props.search[game].room_code}</div>
+                </div>
+            )
+        }
+
+        return games
+    }
+
+    const results = (
+        <div>
+            <div className='fr ai-c jc-s mmy lmx'>
+                <div className='f24 bld'>Results</div>
+                <button onClick={() => setView('search')} className='editButton'>Edit Filters</button>
             </div>
+            <div className='fc bt ai-c jc-c'>
+                {props.search != null ? getGames() :
+                    (
+                        <div className='no-history'>No games found</div>
+                    )}
+            </div>
+        </div>        
+    )
+
+    const room_code = (
+        <div className="rules fc ai-c jc-c">
+            <div className='enter-code fr ai-c jc-c'>
+                <input className="codeInput f24" onChange={e => setCode(e.target.value)} placeholder="Enter Code" type="text" />
+                <div className='f24 bld mmx'>or</div>
+                <input className="codeInput f24" onChange={e => setName(e.target.value)} placeholder="Enter Name" type="text" />                
+            </div>
+            <button onClick={() => basicSearch()} className='editButton lmt'>Search</button>
         </div>
     )
 
@@ -192,26 +264,29 @@ function CreateGame(props) {
                 <div className='fr ai-c jc-c'>
                     <div style={amountError ? error : noError} className='f16 bld tmx'>Start Amount</div>
                     <div className='fr ai-c jc-s'>
-                        <input className="input-small" onChange={(e) => changeValue(e.target.value, false, 'amount')} placeholder='$0.00' type="number" min="5000" />
+                        <input className="input-small" onChange={(e) => changeValue(e.target.value, false, 'amount')} placeholder='Any' type="number" min="5000" />
                         <div className='tmx'>to</div>
-                        <input className="input-small" onChange={(e) => changeValue(e.target.value, true, 'amount')} placeholder='$0.00' type="number" min="5000" />
+                        <input className="input-small" onChange={(e) => changeValue(e.target.value, true, 'amount')} placeholder='Any' type="number" min="5000" />
                     </div>
                 </div>
                 <div className='fr ai-c jc-c'>
-                    <div style={betError ? error : noError} className='f16 bld tmx'>Bet</div>
+                    <div className='fr ai-c jc-c'>
+                        <button style={betType == 'smart' ? betError ? error : noError : notSelected} onClick={() => changeBet('smart')} className='bet-btn smx'>Smart Bet</button>
+                        <button style={betType == 'bet' ? betError ? error : noError : notSelected} onClick={() => changeBet('bet')} className='bet-btn smx'>Bet</button>
+                    </div>
                     <div className='fr ai-c jc-s'>
-                        <input className="input-small" onChange={(e) => changeValue(e.target.value, false, 'bet')} placeholder='$0.00' type="number" min="5000" />
+                        <input className="input-small" onChange={(e) => changeValue(e.target.value, false, 'bet')} placeholder='Any' type="number" min="5000" />
                         <div className='tmx'>to</div>
-                        <input className="input-small" onChange={(e) => changeValue(e.target.value, true, 'bet')} placeholder='$0.00' type="number" min="5000" />
+                        <input className="input-small" onChange={(e) => changeValue(e.target.value, true, 'bet')} placeholder='Any' type="number" min="5000" />
                     </div>
                 </div>
             </div>
             <div className='fr smy ai-s jc-s'>
                 <div className='fr ai-c jc-c'>
                     <div style={positionsError ? error : noError} className='f16 bld tmx'>Positions</div>
-                    <input style={positions == '' ? noPositions : null} className="input-small" onChange={(e) => changeValue(e.target.value, false, 'positions')} placeholder='Unlimited' type="number" min="5000" />
+                    <input style={positions == '' ? noPositions : null} className="input-small" onChange={(e) => changeValue(e.target.value, false, 'positions')} placeholder='Any' type="number" min="5000" />
                     <div className='tmx'>to</div>
-                    <input style={positions == '' ? noPositions : null} className="input-small" onChange={(e) => changeValue(e.target.value, true, 'positions')} placeholder='Unlimited' type="number" min="5000" />
+                    <input style={positions == '' ? noPositions : null} className="input-small" onChange={(e) => changeValue(e.target.value, true, 'positions')} placeholder='Any' type="number" min="5000" />
                 </div>
                 <div className='fr ai-c jc-c'>
                     <div style={durationError ? error : noError} className='f16 bld tmx'>Duration</div>
@@ -265,19 +340,20 @@ function CreateGame(props) {
             <div className='fr jc-c mmy'>
                 <button onClick={() => makeSearch()} className='editButton'>Search</button>
             </div>            
-            <div className='fc ai-c jc-c'>
-                <div className='f24 bld'>Results</div>
-            </div>
         </div>
     )
 
-    const join_game = (
+    const join_game = (       
         <div>
-            <div className='fr ai-c jc-a'>
-                <button style={join == 'code' ? selected : null} onClick={() => setJoin('code')} className='f24 smmt tpb bld ai-c'>Room Code</button>
-                <button style={join == 'search' ? selected : null} onClick={() => setJoin('search')} className='f24 smmt tpb bld ai-c'>Search Games</button>
-            </div>
-            {join == 'code' ? room_code : search}
+            {props.search_made && view == 'results' ? results : (
+                <div>
+                    <div className='fr ai-c jc-a'>
+                        <button style={join == 'code' ? selected : null} onClick={() => setJoin('code')} className='f24 smmt tpb bld ai-c'>Room Code / Name</button>
+                        <button style={join == 'search' ? selected : null} onClick={() => setJoin('search')} className='f24 smmt tpb bld ai-c'>Search Games</button>
+                    </div>            
+                    {join == 'code' ? room_code : search}
+                </div>            
+            )}
         </div>
     )
 
@@ -295,9 +371,8 @@ function CreateGame(props) {
 
 
 const mapStateToProps = (state) => ({
-    no_history: state.game.no_history,
-    history: state.game.history,
-    user: state.user.user
+    search: state.game.search,
+    search_made: state.game.search_made
 })
 
-export default connect(mapStateToProps, { loadGame, joinGame })(CreateGame)
+export default connect(mapStateToProps, { searchGames, searchNameCode })(CreateGame)

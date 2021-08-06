@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { startGame, loadGame, loadHistory } from '../../../actions/game'
 import History from './History'
-import CurrentGames from '../CurrentGames'
+import CurrentGames from './CurrentGames'
 import CreateGame from './CreateGame'
 
 // State Stuff

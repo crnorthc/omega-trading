@@ -22,6 +22,8 @@ class CreateGame(APIView):
     def post(self, request, format=None):
         amount = request.data['amount']
         bet = request.data['bet']
+        public = request.data['public']
+        name = request.data['name']
         room_code = get_room_code()
 
         profile = Profile.objects.filter(user_id=request.user.id)
@@ -30,7 +32,7 @@ class CreateGame(APIView):
         duration = Duration(days=request.data['days'], hours=request.data['hours'], minutes=request.data['mins'])
 
         game = Tournament(
-            start_amount=amount, bet=bet, room_code=room_code, duration=duration)
+            start_amount=amount, bet=bet, room_code=room_code, duration=duration, name=name, public=public)
 
         if 'positions' in request.data:
             game.positions = request.data['positions']
@@ -234,22 +236,6 @@ class Sell(APIView):
         return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
-class SetColor(APIView):
-
-    def post(self, request, format=None):
-        color = request.data['color']
-        game = get_game(request.data['room_code'])
-
-        if color_taken(game, color):
-            return Response({"Error": "Color Taken"}, status=status.HTTP_400_BAD_REQUEST)
-
-        player = get_player(request.user)
-        player.color = color
-        player.save()
-
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
-
-
 class GameHistory(APIView):
     def post(self, request, format=None):
         profile = Profile.objects.filter(user_id=request.user.id)
@@ -438,8 +424,6 @@ class CurrentGames(APIView):
 
 class GameInfo(APIView):
 
-    permission_classes = [AllowAny]
-
     def get(self, request, room_code):
         game = Tournament.objects.filter(room_code=room_code)
         game = game[0]
@@ -459,3 +443,104 @@ class GameInfo(APIView):
 
         return Response({'game': game_info}, status=status.HTTP_200_OK)
             
+
+class SearchGames(APIView):
+
+    def post(self, request, format=None):
+        amount_floor = request.data['metrics']['amount']['from']
+        amount_ceil = request.data['metrics']['amount']['to']
+        bet_floor = request.data['metrics']['bet']['from']
+        bet_ceil = request.data['metrics']['bet']['to']
+        positions_floor = request.data['metrics']['positions']['from']
+        positions_ceil = request.data['metrics']['positions']['to']
+        days_floor = request.data['metrics']['days']['from']
+        days_ceil = request.data['metrics']['days']['to']
+        hours_floor = request.data['metrics']['hours']['from']
+        hours_ceil = request.data['metrics']['hours']['to']
+        mins_floor = request.data['metrics']['mins']['from']
+        mins_ceil = request.data['metrics']['mins']['to']
+        contract = request.data['metrics']['smart-bet']
+
+        if contract:
+            query = 'SELECT * FROM \
+                        (\
+                            SELECT * FROM \
+                                (\
+                                SELECT * FROM game_tournament \
+                                WHERE is_contract = TRUE AND public=TRUE\
+                                ) \
+                            FULL JOIN game_contract ON game_tournament.id=game_contract=tournament_id \
+                            WHERE game_contract.bet >= {floor} AND game_contract.bet <= {ceil} \
+                        ) \
+                        FULL JOIN game_duration ON game_tournament.duration_id=game_duration.id \
+                        WHERE '.format(floor=bet_floor, ceil=bet_ceil)
+        else:
+            query = 'SELECT * FROM \
+                        game_tournament FULL JOIN game_duration ON game_tournament.duration_id=game_duration.id \
+                    WHERE is_contract = FALSE AND public=TRUE AND '
+
+        if bet_ceil != 0:
+            query = query + 'bet >= {floor} AND bet <= {ceil} AND '.format(floor=bet_floor, ceil=bet_ceil)
+
+        if amount_ceil != 0:
+            query = query + 'start_amount >= {floor} AND start_amount <= {ceil} AND '.format(floor=amount_floor, ceil=amount_ceil)
+
+        if positions_ceil != 0:
+            query = query + 'positions >= {floor} AND positions <= {ceil} AND '.format(floor=positions_floor, ceil=positions_ceil)
+
+        if positions_ceil != 0:
+            query = query + 'positions >= {floor} AND positions <= {ceil} AND '.format(floor=positions_floor, ceil=positions_ceil)
+
+        query = query[:-5]
+
+        games = Tournament.objects.raw(query)
+
+        games_data = []
+        
+        for game in games:
+            days = game.days
+            hours = game.hours
+            mins = game.minutes
+            duration = False
+            game_info = {}
+        
+            if not days > days_floor and days < days_ceil:
+                if days_floor == days_ceil:
+                    if not hours > hours_floor and hours < hours_ceil:
+                        if hours_ceil == hours_floor:
+                            if mins >= mins_floor and mins <= mins_ceil:
+                                duration = True
+            else:
+                duration = True
+
+            if duration:
+                game_info ={
+                    'room_code': game.room_code,
+                    'name': game.name
+                }
+
+                games_data.append(game_info)
+
+        return Response({'search': games_data}, status=status.HTTP_200_OK)
+
+
+class SearchBasic(APIView):
+    
+    def post(self, request, format=None):
+        room_code = request.data['code']
+        name = request.data['name']
+
+        if room_code == '':
+            games = Tournament.objects.filter(name=name).values()
+        else:
+            games = Tournament.objects.filter(room_code=room_code).values()
+
+        games_info = []
+
+        for _, game in enumerate(games):
+            games_info.append({
+                'room_code': game['room_code'],
+                'name': game['name']
+            })
+
+        return Response({'search': games_info}, status=status.HTTP_200_OK)

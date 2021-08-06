@@ -11,7 +11,9 @@ import {
     QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME,
-    GAMES_LOADED
+    GAMES_LOADED,
+    SEARCH_LOADED,
+    MAKING_SEARCH
 } from './types'
 
 function getCookie() {
@@ -104,7 +106,7 @@ function getDates(games) {
     return temp
 }
 
-export const createGame = (amount, bet, positions, days, hours, mins) => (dispatch) => {
+export const createGame = (amount, bet, positions, days, hours, mins, name, Public) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })
@@ -123,7 +125,7 @@ export const createGame = (amount, bet, positions, days, hours, mins) => (dispat
     hours = parseInt(hours)
     mins = parseInt(mins)
     if (positions == '') {
-        body = JSON.stringify({ amount, bet, days, hours, mins })
+        body = JSON.stringify({ amount, bet, days, hours, mins,  name, Public })
     } else {
         positions = parseInt(positions)
         body = JSON.stringify({
@@ -133,6 +135,8 @@ export const createGame = (amount, bet, positions, days, hours, mins) => (dispat
             days,
             hours,
             mins,
+            name, 
+            Public
         })
     }
 
@@ -565,6 +569,54 @@ export const gameInfo = (room_code) => (dispatch) => {
             dispatch({
                 type: GAME_INFO_LOADED,
                 payload: res.data.game,
+            })
+        }
+    })
+}
+
+export const searchGames = (metrics) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    dispatch({
+        type: MAKING_SEARCH
+    })
+
+    var body = JSON.stringify({ metrics })
+
+    axios.post('/game/search', body, config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: SEARCH_LOADED,
+                payload: res.data.search,
+            })
+        }
+    })
+}
+
+export const searchNameCode = (code, name) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    var body = JSON.stringify({ code, name })
+
+    axios.post('/game/search-basic', body, config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: SEARCH_LOADED,
+                payload: res.data.search,
             })
         }
     })

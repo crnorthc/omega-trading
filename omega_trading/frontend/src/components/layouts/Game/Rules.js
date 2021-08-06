@@ -19,6 +19,8 @@ function Rules(props) {
     const [mins, setMins] = useState('')
     const [code, setCode] = useState('')
     const [edit, setEdit] = useState(false)
+    const [name, setName] = useState('')
+    const [Public, setPublic] = useState(true)
 
     Rules.propTypes = {
         createGame: PropTypes.func.isRequired,
@@ -75,7 +77,7 @@ function Rules(props) {
                         }
                     }
                 }
-                props.createGame(amount, bet, positions, days, hours, mins)
+                props.createGame(amount, bet, positions, days, hours, mins, name, Public)
             }
         }
     }
@@ -214,6 +216,10 @@ function Rules(props) {
                         : plain_rules()
                     :
                     <div className="rules">
+                        <div className='fr ai-c jc-c'>
+                            <input className="name-input" onChange={(e) => setName(e.target.value)} placeholder="Name" type="text"/>
+                            <button onClick={() => setPublic(!Public)} className='editButton mmy sml'>{Public ? 'Public' : 'Private'}</button>
+                        </div>
                         <div className="subHeader f jc-c">
                             <h4 className="rules-title bb">Rules</h4>
                         </div>

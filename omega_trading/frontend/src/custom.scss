@@ -45,6 +45,15 @@ body {
     padding-bottom: 72px;
 }
 
+/******* CreateGame *******/ 
+
+.bet-btn {
+    font-size: 16px;
+    font-style: bold;
+    border: None;
+}
+
+
 /******* Option *******/
 
 .options {
@@ -219,12 +228,10 @@ body {
 .enter-code {
     width: 732px;
     margin: 48px 72px 0px 72px;
-    font-size: 24px;
 }
 
 .codeInput {
     width: 272px;
-    margin-bottom: 48px;
     height: 48px;
     border-radius: 5px;
     border-style: solid;
@@ -251,6 +258,17 @@ body {
     border-width: 1px;
     border-color: rgb(66, 66, 66);
     text-align: right;
+}
+
+.name-input {
+    width: 342px;
+    height: 46px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(66, 66, 66);
+    text-align: center;
+    font-size: 24px;
 }
 
 .code-button {

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import NewGraph from './NewGraph.js'
 import Loader from '../Tools/Loader'
-import Options from '../Options.js'
+import Options from './Options.js'
 import ActionBox from './ActionBox.js'
 import queryString from 'query-string'
 

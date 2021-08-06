@@ -9,7 +9,6 @@ urlpatterns = [
     path('start', StartGame.as_view()),
     path('buy', Buy.as_view()),
     path('sell', Sell.as_view()),
-    path('color', SetColor.as_view()),
     path('history', GameHistory.as_view()),
     path('edit', EditGame.as_view()),
     path('quote-ether', EtherQuote.as_view()),
@@ -18,5 +17,7 @@ urlpatterns = [
     path('start-bet', StartBets.as_view()),
     path('make-bet', MakeBet.as_view()),
     path('games', CurrentGames.as_view()),
-    path('info/<str:room_code>/', GameInfo.as_view())
+    path('info/<str:room_code>/', GameInfo.as_view()),
+    path('search', SearchGames.as_view()),
+    path('search-basic', SearchBasic.as_view())
 ]
