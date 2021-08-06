@@ -233,6 +233,16 @@ body {
     text-align: center;
 }
 
+.input-small {
+    width: 75px;
+    height: 24px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(66, 66, 66);
+    text-align: right;
+}
+
 .amountInput-game {
     width: 151.58px;
     height: 36px;
@@ -285,6 +295,13 @@ body {
     border: #424242 1px solid;
 }
 
+.min-input-small {
+    height: 24px;
+    text-align: center;
+    border-radius: 5px;
+    border: #424242 1px solid;
+}
+
 .duration {
     font-size: 16px;
     font-weight: 550;
@@ -300,6 +317,14 @@ body {
     text-align: center;
     height: 34px;
     width: 36px;
+    border-radius: 5px;
+    border: #424242 1px solid;
+}
+
+.duration-input-small {
+    text-align: center;
+    height: 24px;
+    width: 26px;
     border-radius: 5px;
     border: #424242 1px solid;
 }

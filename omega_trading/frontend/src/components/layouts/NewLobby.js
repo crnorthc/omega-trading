@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import { startGame, loadGame, loadHistory } from '../../actions/game'
-import CreateGame from './CreateGame'
 import Pregame from './Pregame'
 import Betting from './Betting'
 import Game from './Game'
+import History from './History'
+import CurrentGames from './CurrentGames'
+import CreateGame from './CreateGame'
 
 // State Stuff
 import PropTypes from 'prop-types'
@@ -50,19 +52,13 @@ function Lobby(props) {
             </div>
         )
     } else {
-        if (props.no_game) {
-            return <CreateGame />
-        } else {
-            if (props.game.active) {
-                return <Game />
-            } else {
-                if (props.game.contract.ready_to_bet) {
-                    return <Betting />
-                } else {
-                    return <Pregame />
-                }
-            }
-        }
+        return (
+            <div className="pageContainer">
+                <CurrentGames />
+                <CreateGame />
+                <History />
+            </div>
+        )
     }
 }
 
