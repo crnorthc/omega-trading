@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { Link } from 'react-router-dom';
-import MyNavbar from './MyNavbar';
+import React, { useState } from 'react'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import { Link } from 'react-router-dom'
+import MyNavbar from '../MyNavbar'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { sendReset } from "../../actions/auth";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { sendReset } from '../../../actions/auth'
 
 function ForgotPassword(props) {
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState('')
     ForgotPassword.propTypes = {
         sendReset: PropTypes.func.isRequired,
         emailSent: PropTypes.bool
-    };
+    }
     const onSubmit = () => {
-        props.sendReset(email);
-    };
+        props.sendReset(email)
+    }
     const notSent = (
         <div>
             <div className="container">
@@ -43,15 +43,15 @@ function ForgotPassword(props) {
 
 
     if (props.emailSent) {
-        return sent;
+        return sent
     }
     else {
-        return notSent;
+        return notSent
     }
 }
 
 const mapStateToProps = (state) => ({
     emailSent: state.auth.emailSent
-});
+})
 
-export default connect(mapStateToProps, { sendReset })(ForgotPassword);
+export default connect(mapStateToProps, { sendReset })(ForgotPassword)

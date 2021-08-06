@@ -434,3 +434,28 @@ class CurrentGames(APIView):
             })
 
         return Response({"games": games}, status=status.HTTP_200_OK)
+
+
+class GameInfo(APIView):
+
+    permission_classes = [AllowAny]
+
+    def get(self, request, room_code):
+        game = Tournament.objects.filter(room_code=room_code)
+        game = game[0]
+
+        game_info = {
+            'room_code': game.room_code,
+            'start_amount': game.start_amount,
+            'bet': game.bet,
+            'duration': get_duration(game),
+            'positions': game.positions,
+            'players': get_players(game)
+        }
+
+        if game.is_contract: 
+            contract = get_contract_info(game)
+            game_info['contract'] = contract.bet
+
+        return Response({'game': game_info}, status=status.HTTP_200_OK)
+            

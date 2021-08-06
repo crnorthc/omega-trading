@@ -6,7 +6,7 @@ import Crypto from './Crypto'
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { loadUser, saveHistory } from '../../actions/user.js'
+import { loadUser, saveHistory } from '../../../actions/user.js'
 
 function Betting(props) {
     const [crypto, setCrypto] = useState(false)
@@ -55,7 +55,7 @@ function Betting(props) {
                                 <button className="editButtonHidden">Bet Made</button>
                             )
                         ) : player == props.user.username ? (
-                            <button onClick={(e) => setCrypto(true)} className="editButton">
+                            <button onClick={() => setCrypto(true)} className="editButton">
                                 Place Bet
                             </button>
                         ) : (

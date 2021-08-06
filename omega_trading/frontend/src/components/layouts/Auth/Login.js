@@ -7,8 +7,8 @@ import { Link, Redirect } from 'react-router-dom'
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { login } from '../../actions/auth.js'
-import { loadUser } from '../../actions/user.js'
+import { login } from '../../../actions/auth.js'
+import { loadUser } from '../../../actions/user.js'
 
 function Login(props) {
 

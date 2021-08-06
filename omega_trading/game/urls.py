@@ -17,5 +17,6 @@ urlpatterns = [
     path('define-contract', DefineContract.as_view()),
     path('start-bet', StartBets.as_view()),
     path('make-bet', MakeBet.as_view()),
-    path('games', CurrentGames.as_view())
+    path('games', CurrentGames.as_view()),
+    path('info/<str:room_code>/', GameInfo.as_view())
 ]

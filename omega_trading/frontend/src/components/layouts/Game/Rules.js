@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react'
-import { createGame, editGame, joinGame } from '../../actions/game'
+import { createGame, editGame, joinGame } from '../../../actions/game'
 
 // State Stuff
 import PropTypes from 'prop-types'

@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { Link, Redirect } from 'react-router-dom'
-import MyNavbar from './MyNavbar'
+import MyNavbar from '../MyNavbar'
 
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { createUser } from '../../actions/auth'
+import { createUser } from '../../../actions/auth'
 
 function SignUp(props) {
 

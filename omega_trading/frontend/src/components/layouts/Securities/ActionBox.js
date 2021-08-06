@@ -4,8 +4,8 @@ import React, { useState } from 'react'
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { buy, sell } from '../../actions/user.js'
-import { gameBuy, gameSell } from '../../actions/game'
+import { buy, sell } from '../../../actions/user.js'
+import { gameBuy, gameSell } from '../../../actions/game'
 
 
 function ActionBox(props) {

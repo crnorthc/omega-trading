@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import queryString from 'query-string'
-import Graph from './Graph'
+import Graph from '../Graph'
 import { Redirect } from 'react-router-dom'
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { buy, loadUser, sell } from '../../actions/user.js'
-import { gameBuy, gameSell, loadGame } from '../../actions/game'
+import { buy, loadUser, sell } from '../../../actions/user.js'
+import { gameBuy, gameSell, loadGame } from '../../../actions/game'
 
 function ChartDisplay(props) {
     const noStyle = {

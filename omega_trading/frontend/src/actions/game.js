@@ -6,6 +6,7 @@ import {
     GAME_JOINED,
     GAME_LOADING,
     HISTORY_LOADED,
+    GAME_INFO_LOADED,
     HISTORY_LOADING,
     QUOTE_LOADED,
     NO_HISTORY,
@@ -542,6 +543,28 @@ export const currentGames = () => (dispatch) => {
             dispatch({
                 type: GAMES_LOADED,
                 payload: res.data.games,
+            })
+        }
+    })
+}
+
+export const gameInfo = (room_code) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const url = '/game/info/' + room_code
+
+    axios.get(url, config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAME_INFO_LOADED,
+                payload: res.data.game,
             })
         }
     })

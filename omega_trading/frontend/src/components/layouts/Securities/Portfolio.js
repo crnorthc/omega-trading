@@ -7,9 +7,9 @@ import queryString from 'query-string'
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { friendPortfolio, clearPortfolio } from '../../actions/portfolio.js'
+import { friendPortfolio, clearPortfolio } from '../../../actions/portfolio.js'
 import NewGraph from './NewGraph.js'
-import Loader from './Loader.js'
+import Loader from '../Tools/Loader.js'
 
 
 

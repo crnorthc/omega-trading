@@ -1,18 +1,18 @@
-import React, { useState, Component } from 'react';
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { Link, Redirect } from 'react-router-dom';
-import MyNavbar from './MyNavbar'
-import queryString from 'query-string';
+import React, { useState, Component } from 'react'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import { Link, Redirect } from 'react-router-dom'
+import MyNavbar from '../MyNavbar'
+import queryString from 'query-string'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { verifyEmail } from "../../actions/auth";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { verifyEmail } from '../../../actions/auth'
 
 function VerifyAccount(props) {
 
-    const [code, setCode] = useState('');
+    const [code, setCode] = useState('')
 
     VerifyAccount.propTypes = {
         verifyEmail: PropTypes.func.isRequired,
@@ -22,7 +22,7 @@ function VerifyAccount(props) {
     }
 
     const onSubmit = () => {
-        props.verifyEmail(code);
+        props.verifyEmail(code)
     }
 
 
@@ -30,13 +30,13 @@ function VerifyAccount(props) {
         return <Redirect to="/login" />
     }
 
-    const values = queryString.parse(props.location.search);
+    const values = queryString.parse(props.location.search)
 
     if (!props.error) {
-        const keys = Object.keys(values);
+        const keys = Object.keys(values)
         if (keys.length != 0) {
-            if (keys[0] != "code") {
-                props.verifyEmail(values.verification_code);
+            if (keys[0] != 'code') {
+                props.verifyEmail(values.verification_code)
             }
         }
     }
@@ -68,6 +68,6 @@ const mapStateToProps = state => ({
     emailVerified: state.auth.emailVerified,
     error: state.auth.error,
     error_message: state.auth.error_message
-});
+})
 
-export default connect(mapStateToProps, { verifyEmail })(VerifyAccount);
+export default connect(mapStateToProps, { verifyEmail })(VerifyAccount)

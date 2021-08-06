@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
-import { Redirect } from 'react-router-dom';
-import MyNavbar from './MyNavbar';
-import queryString from 'query-string';
+import React, { useState } from 'react'
+import Button from 'react-bootstrap/Button'
+import Form from 'react-bootstrap/Form'
+import { Redirect } from 'react-router-dom'
+import MyNavbar from '../MyNavbar'
+import queryString from 'query-string'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { resetForgot, checkReset } from "../../actions/auth";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { resetForgot, checkReset } from '../../../actions/auth'
 
 function ResetPassword(props) {
 
-    const [username, setUsername] = useState('');
-    const [firstPassword, setfirstPassword] = useState('');
-    const [secondPassword, setsecondPassword] = useState('');
+    const [username, setUsername] = useState('')
+    const [firstPassword, setfirstPassword] = useState('')
+    const [secondPassword, setsecondPassword] = useState('')
 
     ResetPassword.propTypes = {
         resetForgot: PropTypes.func.isRequired,
@@ -22,12 +22,12 @@ function ResetPassword(props) {
         passwordReset: PropTypes.bool
     }
 
-    const values = queryString.parse(props.location.search);
+    const values = queryString.parse(props.location.search)
     if (!props.error) {
-        const keys = Object.keys(values);
+        const keys = Object.keys(values)
         if (keys.length != 0) {
             if (!props.codeChecked) {
-                props.checkReset(values.verification_code);
+                props.checkReset(values.verification_code)
             }
 
         }
@@ -37,7 +37,7 @@ function ResetPassword(props) {
         return <Redirect to="/login" />
     }
 
-    const notMatching = (<div></div>);
+    const notMatching = (<div></div>)
 
     const onSubmit = () => {
         if (firstPassword != secondPassword) {
@@ -45,7 +45,7 @@ function ResetPassword(props) {
                 <p>Password do not Match!</p>
             )
         }
-        props.resetForgot(username, firstPassword);
+        props.resetForgot(username, firstPassword)
     }
 
 
@@ -72,20 +72,20 @@ function ResetPassword(props) {
                 </div>
             </div>
         </div>
-    );
+    )
 
     const notChecked = (
-        <div class="loaderContainer">
-            <div class="loader"></div>
+        <div className="loaderContainer">
+            <div className="loader"></div>
         </div>
-    );
+    )
 
 
     if (props.codeChecked) {
-        return checked;
+        return checked
     }
     else {
-        return notChecked;
+        return notChecked
     }
 
 }
@@ -95,6 +95,6 @@ function ResetPassword(props) {
 const mapStateToProps = (state) => ({
     codeChecked: state.auth.codeChecked,
     passwordReset: state.auth.passwordReset
-});
+})
 
-export default connect(mapStateToProps, { resetForgot, checkReset })(ResetPassword);
+export default connect(mapStateToProps, { resetForgot, checkReset })(ResetPassword)

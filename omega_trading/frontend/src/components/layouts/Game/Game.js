@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import Graph from './Graph'
+import Graph from '../Graph'
 
 function Game(props) {
     const [showLine, ShowLine] = useState(0)

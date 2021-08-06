@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 import React, { useState } from 'react'
-import { loadGame, joinGame } from '../../actions/game'
+import { loadGame, joinGame } from '../../../actions/game'
 import Rules from './Rules'
 
 // State Stuff

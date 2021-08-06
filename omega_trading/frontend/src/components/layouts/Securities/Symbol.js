@@ -2,15 +2,15 @@
 import React, { useState, useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
 import NewGraph from './NewGraph.js'
-import Loader from './Loader'
-import Options from './Options.js'
+import Loader from '../Tools/Loader'
+import Options from '../Options.js'
 import ActionBox from './ActionBox.js'
 import queryString from 'query-string'
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-import { loadSecurity, newSecurity } from '../../actions/securities'
+import { loadSecurity, newSecurity } from '../../../actions/securities'
 
 
 function Symbol(props) {

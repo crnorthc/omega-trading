@@ -6,6 +6,7 @@ import {
     GAME_JOINED,
     GAME_LOADING,
     HISTORY_LOADED,
+    GAME_INFO_LOADED,
     HISTORY_LOADING,
     QUOTE_LOADED,
     NO_HISTORY,
@@ -25,7 +26,8 @@ const initialState = {
     game: null,
     etherQuote: null,
     gasQuote: null,
-    games: null
+    games: null,
+    preview: null
 }
 
 export default function (state = initialState, action) {
@@ -57,9 +59,13 @@ export default function (state = initialState, action) {
             game_loaded: true,
             game: action.payload,
         }
+    case GAME_INFO_LOADED: 
+        return {
+            ...state,
+            preview: action.payload
+        }
     case GAMES_LOADED:
         var game_list = action.payload
-        console.log(game_list)
         if (game_list.length == 0) {
             game_list = false
         }

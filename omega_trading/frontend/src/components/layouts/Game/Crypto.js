@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React, { useState } from 'react'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { defineContract, makeBet, getGasQuote, getEtherQuote } from "../../actions/game";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { defineContract, makeBet, getGasQuote, getEtherQuote } from '../../../actions/game'
 
 function Crypto(props) {
-    const [address, setAddress] = useState(null);
-    const [key, setKey] = useState(null);
-    const [drop, setDrop] = useState(false);
-    const [confirmed, confirm] = useState(false);
+    const [address, setAddress] = useState(null)
+    const [key, setKey] = useState(null)
+    const [drop, setDrop] = useState(false)
+    const [confirmed, confirm] = useState(false)
 
     Crypto.propTypes = {
         defineContract: PropTypes.func.isRequired,
@@ -20,41 +20,41 @@ function Crypto(props) {
         gasQuote: PropTypes.number,
         game: PropTypes.object,
         user: PropTypes.object,
-    };
+    }
 
     if (Object.keys(props.game.contract).length !== 0 && props.create) {
         if (props.user.username in props.game.contract.players) {
-            window.location.reload();
+            window.location.reload()
         }
     } else {
         if (props.game.contract.players[props.user.username].payed) {
-            window.location.reload();
+            window.location.reload()
         }
     }
 
     if (props.gasQuote == null) {
-        props.getGasQuote();
+        props.getGasQuote()
     }
 
     if (props.etherQuote == null) {
-        props.getEtherQuote();
+        props.getEtherQuote()
     }
 
     const onSubmit = () => {
         if (props.create) {
-            props.defineContract(address, props.bet);
+            props.defineContract(address, props.bet)
         } else {
-            props.makeBet(address, key, props.game.room_code);
+            props.makeBet(address, key, props.game.room_code)
         }
-    };
+    }
 
     const determineDrop = () => {
         if (drop) {
-            setDrop(false);
+            setDrop(false)
         } else {
-            setDrop(true);
+            setDrop(true)
         }
-    };
+    }
 
     const betInfo = () => {
         if (props.gasQuote == null || props.etherQuote == null) {
@@ -63,19 +63,19 @@ function Crypto(props) {
                     <div
                         className="loaderContainer f ai-c jc-c"
                         style={{
-                            height: "375px",
-                            width: "625px",
-                            display: "flex",
-                            "align-items": "center",
-                            "justify-content": "center",
+                            height: '375px',
+                            width: '625px',
+                            display: 'flex',
+                            'align-items': 'center',
+                            'justify-content': 'center',
                         }}
                     >
-                        <div class="loader"></div>
+                        <div className="loader"></div>
                     </div>
                 </div>
-            );
+            )
         } else {
-            var total_ether = (props.gasQuote / Object.keys(props.game.players).length + props.bet) / 1000000000;
+            var total_ether = (props.gasQuote / Object.keys(props.game.players).length + props.bet) / 1000000000
             return (
                 <div className="crypto-container fr ai-c jc-c">
                     <div className="crypto-page fc  ai-c jc-c">
@@ -86,14 +86,14 @@ function Crypto(props) {
                             <div className="fr mmt ai-c jc-s">
                                 <div className="f16 bld">Bet</div>
                                 <div className="fr ai-b">
-                                    <div className="f16">{(props.bet / 1000000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+                                    <div className="f16">{(props.bet / 1000000000).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
                                     <div className="f14 bld tml">Gwei</div>
                                 </div>
                             </div>
                             <div className="mmy fr ai-c jc-s">
                                 <div className="fr ai-c">
                                     <div className="f16 bld">Gas Fee</div>
-                                    <button onClick={(e) => determineDrop()} className="info smt bld tml">
+                                    <button onClick={() => determineDrop()} className="info smt bld tml">
                                         ?
                                     </button>
                                 </div>
@@ -102,7 +102,7 @@ function Crypto(props) {
                                         {(props.gasQuote / 1000000000 / Object.keys(props.game.players).length)
                                             .toFixed(0)
                                             .toString()
-                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     </div>
                                     <div className="f14 bld tml">Gwei</div>
                                 </div>
@@ -114,7 +114,7 @@ function Crypto(props) {
                                     <div className="f16">
                                         {((props.bet + props.gasQuote / Object.keys(props.game.players).length) / 1000000000)
                                             .toString()
-                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     </div>
                                     <div className="f14 bld tml">Gwei</div>
                                 </div>
@@ -130,7 +130,7 @@ function Crypto(props) {
                                         {((total_ether / 1000000000) * props.etherQuote.quote)
                                             .toFixed(2)
                                             .toString()
-                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                     </div>
                                     <div className="bld tml">USD</div>
                                 </div>
@@ -139,24 +139,24 @@ function Crypto(props) {
                                 <div className="smt">ETH:</div>
                                 <div className="tml smt">
                                     $
-                                    {props.etherQuote["quote"]
+                                    {props.etherQuote['quote']
                                         .toFixed(2)
                                         .toString()
-                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                                        .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                 </div>
-                                <div className="tt lt tml">as of{props.etherQuote["time"]}</div>
+                                <div className="tt lt tml">as of{props.etherQuote['time']}</div>
                             </div>
                         </div>
                         <div className="fr jc-c">
-                            <button onClick={(e) => confirm(true)} className="editButton mmy">
+                            <button onClick={() => confirm(true)} className="editButton mmy">
                                 Confirm
                             </button>
                         </div>
                     </div>
                 </div>
-            );
+            )
         }
-    };
+    }
 
     if (confirmed) {
         if (props.create) {
@@ -177,7 +177,7 @@ function Crypto(props) {
                         </div>
                     </div>
                 </div>
-            );
+            )
         } else {
             return (
                 <div className="crypto-container f ai-c jc-c">
@@ -197,10 +197,10 @@ function Crypto(props) {
                         </div>
                     </div>
                 </div>
-            );
+            )
         }
     } else {
-        return betInfo();
+        return betInfo()
     }
 }
 
@@ -209,11 +209,11 @@ const mapStateToProps = (state) => ({
     user: state.user.user,
     gasQuote: state.game.gasQuote,
     etherQuote: state.game.etherQuote,
-});
+})
 
 export default connect(mapStateToProps, {
     defineContract,
     makeBet,
     getGasQuote,
     getEtherQuote,
-})(Crypto);
+})(Crypto)

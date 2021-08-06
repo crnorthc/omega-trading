@@ -35,6 +35,7 @@ export const QUOTE_LOADED = 'QUOTE_LOADED'
 
 // GAME
 export const GAMES_LOADED = 'GAMES_LOADED'
+export const GAME_INFO_LOADED = 'GAME_INFO_LOADED'
 
 
 // SECURITIES
