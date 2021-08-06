@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react'
 import { createGame, editGame, joinGame } from '../../actions/game'
 
@@ -144,8 +146,8 @@ function Rules(props) {
                     </div>
                 </div>
                 <div className='enter-params-pregame fr ai-c jc-s'>
-                    <button onClick={(e) => setEdit(false)} className='editButton'>Cancel</button>
-                    <button onClick={(e) => edit_game()} className='editButton'>Save Changes</button>
+                    <button onClick={() => setEdit(false)} className='editButton'>Cancel</button>
+                    <button onClick={() => edit_game()} className='editButton'>Save Changes</button>
                 </div>
             </div>
         )
@@ -195,7 +197,7 @@ function Rules(props) {
                 </div>
                 {props.user.username == props.game.host.username ?
                     <div className='edit-rules'>
-                        <button onClick={(e) => setEdit(true)} className='editButton'>Edit</button>
+                        <button onClick={() => setEdit(true)} className='editButton'>Edit</button>
                     </div>
                     : null
                 }
