@@ -20,39 +20,52 @@ function Auth(props) {
         props.loadUser()
     }
 
-    if (props.user_loaded && props.user == null){
-        if (props.user == null) {
-            const value = `; ${document.cookie}`
-            var cookie = ''
-            if (value.includes('loggedIn')) {
-                const parts = value.split(`; ${'loggedIn'}=`)
-                if (parts.length === 2) {
-                    cookie = parts.pop().split(';').shift()
+    var path = window.location.pathname + window.location.search
+
+    if (path == '/login' || path == '/sign-up') {
+        return (
+            <div className='pageContainer'>
+                {props.children}
+            </div>
+        )
+    }
+    else {
+        if (props.user_loaded && props.user == null) {
+            if (props.user == null) {
+                const value = `; ${document.cookie}`
+                var cookie = ''
+                if (value.includes('loggedIn')) {
+                    const parts = value.split(`; ${'loggedIn'}=`)
+                    if (parts.length === 2) {
+                        cookie = parts.pop().split(';').shift()
+                    }
+                    if (cookie.length !== 0) {
+                        return <Redirect to='/'/>
+                    }
                 }
-                if (cookie.length !== 0) {
-                    return <Redirect to='/'/>
+                if (value.includes('uid')){
+                    const parts = value.split(`; ${'uid'}=`)
+                    if (parts.length === 2) {
+                        cookie = parts.pop().split(';').shift()
+                    }
+                    if (cookie.length !== 0) {
+                        return <Redirect to='/login'/>
+                    }
                 }
-            }
-            if (value.includes('uid')){
-                const parts = value.split(`; ${'uid'}=`)
-                if (parts.length === 2) {
-                    cookie = parts.pop().split(';').shift()
+                else {
+                    return <Redirect to='/sign-up'/>
                 }
-                if (cookie.length !== 0) {
-                    return <Redirect to='/login'/>
-                }
-            }
-            else {
-                return <Redirect to='/sign-up'/>
             }
         }
+
+        return (
+            <div className='pageContainer'>
+                {props.children}
+            </div>
+        )
     }
 
-    return (
-        <div className='pageContainer'>
-            {props.children}
-        </div>
-    )
+    
 }
 
 
