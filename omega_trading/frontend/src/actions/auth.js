@@ -49,14 +49,14 @@ export const createUser = (first_name, last_name, email, password, username) => 
         })
 }
 
-export const verifyEmail = (verification_code) => dispatch => {
+export const verifyEmail = (key) => dispatch => {
 
     const config = {
         headers: {
             'Content-Type': 'application/json'
         }
     }
-    const body = JSON.stringify({ verification_code })
+    const body = JSON.stringify({ key })
 
     axios.post('/users/verify-email', body, config)
         .then(res => {

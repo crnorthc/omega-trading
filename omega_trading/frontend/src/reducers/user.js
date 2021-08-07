@@ -7,6 +7,7 @@ import {
     HISTORY_SAVED,
     GAME_JOINED,
     LOADING,
+    NO_USER,
     LEADERBOARD_LOADED
 } from '../actions/types'
 
@@ -39,6 +40,12 @@ export default function (state = initialState, action) {
     case HISTORY_SAVED:
         return {
             ...state
+        }
+    case NO_USER:
+        return {
+            ...state,
+            user_loaded: true,
+            user: null
         }
     case USERS_LOADED:
         return {

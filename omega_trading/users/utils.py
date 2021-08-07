@@ -11,7 +11,6 @@ from django.apps import apps
 from datetime import datetime, timedelta
 import ssl
 import smtplib
-import datetime
 import binascii
 import os
 
@@ -99,16 +98,12 @@ def load_user(request=None, username=None):
 
     return response
 
-def set_cookie(key, now=False):
+def set_cookie(key, name, now=False):
     if now:
         expires = datetime.strftime(
             datetime.utcnow(),
             "%a, %d-%b-%Y %H:%M:%S GMT",
         )
-
-        return {
-            "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires + "; Path=/"
-            }
     else:
         age = 365 * 24 * 60 * 60
         expires = datetime.strftime(
@@ -116,14 +111,16 @@ def set_cookie(key, now=False):
             "%a, %d-%b-%Y %H:%M:%S GMT",
         )
 
-        return {
-            "Set-Cookie": "OmegaToken=" + key + "; expires=" + expires + "; Path=/"
-        }
+    return {
+        "Set-Cookie": "{name}={key}; expires={expires}; Path=/".format(name=name, key=key, expires=expires)
+    }
 
-def verify_user(user):
+def verify_user(id):
+    user = User.objects.filter(id=id)
+    user = user[0]
     token = Token.objects.create(user=user)
     token.save()
-    headers = set_cookie(token.key)
+    headers = set_cookie(token.key, 'loggedIn')
     return Response({"Success": "Email Verrified"}, headers=headers, status=status.HTTP_200_OK)
 
 def send_email(message, email):
@@ -173,17 +170,15 @@ def send_password_reset(user):
     send_email(message, email)
     return Response({"Success": "Email Sent"}, status=status.HTTP_200_OK)
 
-def send_email_verification(email, username, verification_code):
+def send_email_verification(email, username, key):
     message = MIMEMultipart("alternative")
     message["Subject"] = "Omega Trading Email Verification"
     sender_email = "omegatradingtest@gmail.com"
     message["From"] = sender_email
     message["To"] = email
     text = """\
-                Hello """ + username + """,
-                Your verification code is: """ + verification_code + "" ""
+                Hello """ + username + ""","""
 
-    key = verification_code.encode('base64', 'strict')
     html = """\
                 <html>
                 <body>
@@ -217,12 +212,12 @@ def get_friends(id):
 
 def login(user):
     token = Token.objects.filter(user_id=user.id)
-    headers = set_cookie(token[0].key)
+    headers = set_cookie(token[0].key, 'loggedIn')
 
     return Response({"Success": "User Logged In"}, headers=headers, status=status.HTTP_200_OK)
 
 def logout(user):
     token = Token.objects.filter(user_id=user.id)
-    headers = set_cookie(token[0].key, True)
+    headers = set_cookie(token[0].key, 'loggedIn', True)
 
     return Response({"Success": "User Logged Out"}, headers=headers, status=status.HTTP_200_OK)

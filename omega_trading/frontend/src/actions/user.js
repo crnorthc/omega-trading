@@ -3,30 +3,17 @@ import { USER_LOADED,
     USERS_LOADED, 
     HIDE_RESULTS, 
     UPDATE_USER, 
-    HISTORY_SAVED, 
+    HISTORY_SAVED,
+    NO_USER
 } from './types'
 
 function getCookie() {
     const value = `; ${document.cookie}`
-    const parts = value.split(`; ${'OmegaToken'}=`)
+    const parts = value.split(`; ${'loggedIn'}=`)
     var cookie = ''
     if (parts.length === 2) {
         cookie = parts.pop().split(';').shift()
     }
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + cookie,
-        },
-    }
-
-    var path = window.location.pathname + window.location.search
-
-    const body = JSON.stringify({ path })
-
-    axios.post('/users/history', body, config)
-
     return cookie
 }
 
@@ -37,18 +24,33 @@ export const hideResults = () => (dispatch) => {
 }
 
 export const loadUser = () => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
+    var cookie = getCookie()
+
+    if (cookie == '') {
+        var config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }
     }
+    else {
+        config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Token ' + getCookie(),
+            },
+        }
+    }
+
+
 
     const body = JSON.stringify({})
 
     axios.post('/users/load', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
+        if (res.status == 204) {
+            dispatch({
+                type: NO_USER
+            })
         } else {
             dispatch({
                 type: USER_LOADED,

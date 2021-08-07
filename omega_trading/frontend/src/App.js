@@ -5,34 +5,32 @@ import ForgotPassword from './components/layouts/Auth/ForgotPassword.js'
 import ResetPassword from './components/layouts/Auth/ResetPassword.js'
 import Symbol from './components/layouts/Securities/Symbol.js'
 import MyNavbar from './components/layouts/MyNavbar.js'
-import Home from './components/layouts/Home.js'
 import Account from './components/layouts/Account.js'
-import Portfolio from './components/layouts/Securities/Portfolio.js'
 import NewLobby from './components/layouts/Game/NewLobby.js'
-import Leaderboard from './components/layouts/Leaderboard.js'
+import Auth from './components/layouts/Auth/Auth'
 import React, { Fragment } from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 import './custom.scss'
 import './variables.scss'
+
 
 function App() {
     return (
         <Router>
             <MyNavbar />
             <Fragment>
-                <Switch>
-                    <Route exact path="/" component={Home} />
-                    <Route exact path="/login" component={Login} />
-                    <Route exact path="/sign-up" component={SignUp} />
-                    <Route exact path="/verify-account" component={VerifyAccount} />
-                    <Route exact path="/forgot-password" component={ForgotPassword} />
-                    <Route exact path="/reset-password" component={ResetPassword} />
-                    <Route exact path="/chart" component={Symbol} />
-                    <Route exact path="/account" component={Account} />
-                    <Route exact path="/portfolio" component={Portfolio} />
-                    <Route exact path="/lobby" component={NewLobby} />
-                    <Route exaxt path="/leaderboard" component={Leaderboard} />
-                </Switch>
+                <Auth>
+                    <Switch>
+                        <Route exact path="/" component={NewLobby} />
+                        <Route exact path="/chart" component={Symbol} />
+                        <Route exact path="/login" component={Login} />
+                        <Route exact path="/sign-up" component={SignUp} />
+                        <Route exact path="/verify-account" component={VerifyAccount} />
+                        <Route exact path="/forgot-password" component={ForgotPassword} />
+                        <Route exact path="/reset-password" component={ResetPassword} />
+                        <Route exact path="/account" component={Account} />
+                    </Switch>   
+                </Auth>            
             </Fragment>
         </Router>
     )

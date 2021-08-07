@@ -33,14 +33,14 @@ class CreateUser(APIView):
 
         user = User.objects.create_user(
             username=username, email=email, password=password, first_name=first_name, last_name=last_name)
-        token = Token(key=key, user=request.user)
+        token = IDToken(key=key, user=user)
 
         user.save()
         token.save()
 
         send_email_verification(email, username, key)
 
-        return Response({"Success": "Verification Email Sent"}, status=status.HTTP_200_OK)
+        return Response({"Success": "Verification Email Sent"}, headers=set_cookie(key, 'uid'), status=status.HTTP_200_OK)
 
 
 class VerifyEmail(APIView):
@@ -48,13 +48,12 @@ class VerifyEmail(APIView):
 
     def post(self, request, format=None):
         key = request.data['key']
-        
-        key = key.decode('base64', 'strict')
 
         keys = IDToken.objects.filter(key=key)
 
         if keys.exists():
-            return verify_user(request.user)
+            key = keys[0]
+            return verify_user(key.user_id)
         else:
             return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_403_FORBIDDEN)
 
@@ -133,8 +132,12 @@ class ForgotPassword(APIView):
 
 
 class LoadUser(APIView):
+    permission_classes = []
 
-    def get(self, request, format=None):
+    def post(self, request, format=None):
+        if request.auth == None:
+            return Response({"Error": 'No User'}, status=status.HTTP_204_NO_CONTENT)
+
         return Response({"Success": load_user(request=request)}, status=status.HTTP_200_OK)
 
 
