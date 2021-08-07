@@ -4,15 +4,15 @@ omega_trading/omega_trading/__pycache__/
 
 omega_trading/users/TopSecret.py
 omega_trading/users/__pycache__/
-omega_trading/users/migrations/
+
 
 omega_trading/frontend/node_modules
 
 omega_trading/securities/TopSecret.py
 omega_trading/securities/__pycache__/
-omega_trading/securities/migrations/
+
 
 omega_trading/game/TopSecret.py
 omega_trading/game/__pycache__/
-omega_trading/game/migrations/
+
 
