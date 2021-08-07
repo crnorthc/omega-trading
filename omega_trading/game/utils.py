@@ -1,4 +1,3 @@
-from users.models import Transaction
 from django.contrib.auth.models import User
 from django.apps import apps
 from .TopSecret import *
@@ -12,7 +11,6 @@ import math
 import time
 import requests
 
-Profile = apps.get_model('users', 'Profile')
 Invites = apps.get_model('users', 'Invites')
 SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
@@ -26,23 +24,21 @@ def load_user(request=None, username=None):
     else:
         user = request.user
 
-    profile = Profile.objects.filter(user_id=user.id)
-    profile = profile[0]
-
     response = {
         "username": user.username,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "portfolio_amount": profile.portfolio_amount,
-        "holdings": profile.holdings,
-        'invites': profile.invites,
-        'friends': profile.friends
     }
 
     return response
 
+def get_user(id):
+    user = User.objects.filter(id=id)
+
+    return user[0]
+
 def get_game(room_code):
-    game = Tournament.objects.filter(room_code=room_code)
+    game = Game.objects.filter(room_code=room_code)
 
     if game.exists():
         game = game[0]
@@ -53,10 +49,8 @@ def get_game(room_code):
 def uninvite(username, room_code):
     user = User.objects.filter(username=username)
     user = user[0]
-    profile = Profile.objects.filter(user_id=user.id)
-    profile = profile[0]
     game = get_game(room_code)
-    invite = Invites.objects.filter(receiever_id=profile.id, game_id=game.id)
+    invite = Invites.objects.filter(receiever=user, game=game)
     invite = invite[0]
 
     invite.delete()
@@ -83,24 +77,15 @@ def get_room_code():
     while True:
         room_code = ''.join(
             random.choice(choices) for i in range(8))
-        queryset = Tournament.objects.filter(
+        queryset = Game.objects.filter(
             room_code=room_code)
         if not queryset.exists():
             break
 
     return room_code
 
-def get_user(profile_id):
-    profile = Profile.objects.filter(id=profile_id)
-    profile = profile[0]
-    user = User.objects.filter(id=profile.user_id)
-
-    return user[0]
-
 def get_player(user):
-    profile = Profile.objects.filter(user_id=user.id)
-    profile = profile[0]
-    player = Player.objects.filter(profile_id=profile.id)
+    player = Player.objects.filter(user=user)
 
     if player.exists():
         return player[0]
@@ -108,14 +93,17 @@ def get_player(user):
         return player
 
 def get_players(game):
-    players = Player.objects.filter(tournament_id=game.id).values()
+    players = Player.objects.filter(game_id=game.id).values()
     formatted_players = {}
 
     for _, value in enumerate(players):
-        user = get_user(value['profile_id'])
+        user = User.objects.filter(id=value['user_id'])
+        user = user[0]
+
         value['first_name'] = user.first_name
         value['last_name'] = user.last_name
         formatted_players[user.username] = value
+        
         if value['is_host']:
             formatted_players['host'] = {
                 'username': user.username,
@@ -139,7 +127,7 @@ def get_players_info(game, player):
     charts = {}
     holdings = {}
 
-    user = get_user(player.profile_id)
+    user = get_user(player.user_id)
 
     players_data = get_players(game)
 
@@ -198,7 +186,7 @@ def get_contract_info(game):
     return contract_data
 
 def get_contract(game):
-    contract = Contract.objects.filter(tournament_id=game.id)
+    contract = Contract.objects.filter(game_id=game.id)
     contract = contract[0]
 
     return contract
@@ -457,9 +445,7 @@ def load_portfolio(player, game):
 def player_in_game(username):
     user = User.objects.filter(username=username)
     user = user[0]
-    profile = Profile.objects.filter(user_id=user.id)
-    profile = profile[0]
-    player = Player.objects.filter(profile_id=profile.id)
+    player = Player.objects.filter(user=user)
 
     return player.exists()
 
@@ -480,7 +466,7 @@ def transaction(request, bought, player):
     if request.data['dollars']:
         quantity = quantity / QUOTE['c']
 
-    transaction = Transaction(bought=bought, symbol=SYMBOL, quantity=round(quantity, 10), price=round(QUOTE['c'], 3), time=round(current_time, 5), cash=round(cash, 4))
+    transaction = Transactions(bought=bought, symbol=SYMBOL, quantity=round(quantity, 10), price=round(QUOTE['c'], 3), time=round(current_time, 5), cash=round(cash, 4))
 
     return SYMBOL, quantity, QUOTE, transaction
 
@@ -489,9 +475,7 @@ def get_history_players(game):
     players = PlayerHistory.objects.filter(history_id=game.id).values()
 
     for _, player in enumerate(players):
-        profile = Profile.objects.filter(id=player['profile_id'])
-        profile = profile[0]
-        user = User.objects.filter(id=profile.user_id)
+        user = get_user(player['user_id'])
 
         players_info.append = {
             'username': user.username,
@@ -532,6 +516,7 @@ def game_over(game):
 
     return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
 
+# Will be changed
 def get_address(request, game):
     profile = Profile.objects.filter(user_id=request.user.id)
     profile = profile[0]
@@ -592,7 +577,7 @@ def get_game(user):
     player = get_player(user)
     if player.exists():
         player = player[0]
-        game = Tournament.objects.filter(id=player.tournament_id)
+        game = Game.objects.filter(id=player.game_id)
         return game
     else:
         return player
@@ -607,14 +592,13 @@ def save_game_history(game):
     winner = {'player': None, 'cash': 0}
 
     for username, player in players.items():
-        profile = Profile.objects.filter(id=player['profile_id'])
-        profile = profile[0]
+        user = get_user(player['user_id'])
         cash = get_player_cash(player, game.end_time)
 
         if cash > winner['cash']:
             winner = {'player': player['address'], 'cash': cash}
 
-        player_history = PlayerHistory(history=history, profile=profile, cash=cash)
+        player_history = PlayerHistory(history=history, user=user, cash=cash)
         player_history.save()
 
     return winner['player']
@@ -627,7 +611,7 @@ def delete_game(game):
         holdings = Holdings.objects.filter(player_id=player['id'])
         duration = Duration.objects.filter(id=game.duration_id)
         player = Player.objects.filter(id=player['id'])
-        game = Tournament.objects.filter(id=game.id)
+        game = Game.objects.filter(id=game.id)
 
         for transaction in transactions:
             transaction.delete()
