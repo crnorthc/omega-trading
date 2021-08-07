@@ -204,7 +204,7 @@ function CreateGame(props) {
             }            
         }
         if (validParams) {
-            setdurationError(false)
+            setdurationError(false)      
             props.searchGames({
                 'amount': amount,
                 'bet': bet, 

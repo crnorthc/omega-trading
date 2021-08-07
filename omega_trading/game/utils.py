@@ -147,8 +147,7 @@ def get_players_info(game, player):
         players[username] = {
             'username': username,
             'first_name': player['first_name'],
-            'last_name': player['last_name'],
-            'color': player['color']
+            'last_name': player['last_name']
         }
 
         if 'address' in player:
@@ -239,6 +238,7 @@ def get_game_info(game, user):
 
     return {
         'host': host,
+        'name': game.name,
         'start_amount': game.start_amount,
         'bet': game.bet,
         'duration': game.duration,
