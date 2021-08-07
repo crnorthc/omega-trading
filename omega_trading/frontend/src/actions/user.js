@@ -3,31 +3,17 @@ import { USER_LOADED,
     USERS_LOADED, 
     HIDE_RESULTS, 
     UPDATE_USER, 
-    HISTORY_SAVED, 
-    LOADING, 
-    LEADERBOARD_LOADED } from './types'
+    HISTORY_SAVED,
+    NO_USER
+} from './types'
 
 function getCookie() {
     const value = `; ${document.cookie}`
-    const parts = value.split(`; ${'OmegaToken'}=`)
+    const parts = value.split(`; ${'loggedIn'}=`)
     var cookie = ''
     if (parts.length === 2) {
         cookie = parts.pop().split(';').shift()
     }
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + cookie,
-        },
-    }
-
-    var path = window.location.pathname + window.location.search
-
-    const body = JSON.stringify({ path })
-
-    axios.post('/users/history', body, config)
-
     return cookie
 }
 
@@ -38,18 +24,33 @@ export const hideResults = () => (dispatch) => {
 }
 
 export const loadUser = () => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
+    var cookie = getCookie()
+
+    if (cookie == '') {
+        var config = {
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }
     }
+    else {
+        config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Token ' + getCookie(),
+            },
+        }
+    }
+
+
 
     const body = JSON.stringify({})
 
     axios.post('/users/load', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
+        if (res.status == 204) {
+            dispatch({
+                type: NO_USER
+            })
         } else {
             dispatch({
                 type: USER_LOADED,
@@ -125,66 +126,6 @@ export const loadUsers = (username, friends) => (dispatch) => {
     })
 }
 
-export const buy = (symbol, quantity, dollars) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ symbol })
-
-    axios.post('/securities/update', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            var quote = res.data
-            var body = JSON.stringify({ symbol, quantity, quote, dollars })
-            axios.post('/users/buy', body, config).then((res) => {
-                if (res.data.Error) {
-                    console.log('oops')
-                } else {
-                    dispatch({
-                        type: USER_LOADED,
-                        payload: res.data,
-                    })
-                }
-            })
-        }
-    })
-}
-
-export const sell = (symbol, quantity, dollars) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ symbol })
-
-    axios.post('/securities/update', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            var quote = res.data
-            var body = JSON.stringify({ symbol, quantity, quote, dollars })
-            axios.post('/users/sell', body, config).then((res) => {
-                if (res.data.Error) {
-                    console.log('oops')
-                } else {
-                    dispatch({
-                        type: USER_LOADED,
-                        payload: res.data,
-                    })
-                }
-            })
-        }
-    })
-}
-
 export const saveHistory = () => (dispatch) => {
     getCookie()
     dispatch({
@@ -192,25 +133,3 @@ export const saveHistory = () => (dispatch) => {
     })
 }
 
-export const loadLeaderboard = () => (dispatch) => {
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    const body = JSON.stringify({})
-
-    axios.post('/users/leaderboard', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: LEADERBOARD_LOADED,
-                payload: res.data,
-            })
-        }
-    })
-}

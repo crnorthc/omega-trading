@@ -7,7 +7,7 @@ class Duration(models.Model):
     minutes = models.IntegerField(default=0)
 
 
-class Tournament(models.Model):
+class Game(models.Model):
     name = models.CharField(max_length=20)
     start_amount = models.FloatField(default=10000)
     room_code = models.CharField(max_length=8)
@@ -29,12 +29,12 @@ class Contract(models.Model):
     bets_complete = models.BooleanField(default=False)
     ready_to_bet = models.BooleanField(default=False)
     ready_to_start = models.BooleanField(default=False)
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
 
 
 class Player(models.Model):
-    profile = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
-    tournament = models.ForeignKey(Tournament, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
     address = models.CharField(max_length=42, default='')
     key = models.CharField(max_length=64, default ='')
     is_host = models.BooleanField(default=False)
@@ -71,5 +71,5 @@ class History(models.Model):
 
 class PlayerHistory(models.Model):
     history = models.ForeignKey(History, on_delete=models.CASCADE)
-    profile = models.ForeignKey('users.Profile', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     cash = models.DecimalField(max_digits=25, decimal_places=4)

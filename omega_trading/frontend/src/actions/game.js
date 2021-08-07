@@ -18,7 +18,7 @@ import {
 
 function getCookie() {
     const value = `; ${document.cookie}`
-    const parts = value.split(`; ${'OmegaToken'}=`)
+    const parts = value.split(`; ${'loggedIn'}=`)
     var cookie = ''
     if (parts.length === 2) {
         cookie = parts.pop().split(';').shift()
