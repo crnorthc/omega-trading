@@ -131,7 +131,6 @@ export const optionsPrices = (symbol, expiration, type) => dispatch => {
         })
 }
 
-
 export const dateRange = () => (dispatch) => {
     const config = {
         headers: {

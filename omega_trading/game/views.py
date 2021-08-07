@@ -14,8 +14,6 @@ import requests
 import string
 import json
 
-Profile = apps.get_model('users', 'Profile')
-
 
 class CreateGame(APIView):
 
@@ -26,18 +24,15 @@ class CreateGame(APIView):
         name = request.data['name']
         room_code = get_room_code()
 
-        profile = Profile.objects.filter(user_id=request.user.id)
-        profile = profile[0]
-
         duration = Duration(days=request.data['days'], hours=request.data['hours'], minutes=request.data['mins'])
 
-        game = Tournament(
+        game = Game(
             start_amount=amount, bet=bet, room_code=room_code, duration=duration, name=name, public=public)
 
         if 'positions' in request.data:
             game.positions = request.data['positions']
 
-        host = Player(profile=profile, tournament=game, is_host=True, color='black')
+        host = Player(user=request.user, tournament=game, is_host=True)
 
         game.save()
         host.save()
@@ -99,10 +94,6 @@ class SendInvite(APIView):
 
         receiever_user = User.objects.filter(username=username)
         receiever_user = receiever_user[0]
-        receiever_profile = Profile.objects.filter(user_id=receiever_user.id)
-        receiever_profile = receiever_profile[0]
-        sender_profile = Profile.objects.filter(user_id=request.user.id)
-        sender_profile = sender_profile[0]
         game = get_game(room_code)
         invites = get_invites(game)
 
@@ -111,17 +102,16 @@ class SendInvite(APIView):
 
         current_time = round(time.time(), 5)
 
-        invite = Invites(time=current_time, game_id=game.id, sender_id=sender_profile.id, receiver_id=receiever_profile.id)
+        invite = Invites(time=current_time, game_id=game.id, sender=request.user, receiver=receiever_user)
 
         invite.save()
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
-
+# Remove username from action params
 class JoinGame(APIView):
 
     def post(self, request, format=None):
-        username = request.data['username']
         room_code = request.data['room_code']
 
         if request.data['unadd']:
@@ -129,12 +119,10 @@ class JoinGame(APIView):
         else:
             uninvite(request.user.username, room_code)
 
-        profile = Profile.objects.filter(user_id=request.user.id)
-        profile = profile[0]
         game = get_game(room_code)
 
         if request.data['accepted'] and not player_in_game(request.user.username):
-            player = Player(profile=profile, tournament=game, color=get_color(game))
+            player = Player(user=request.user, tournament=game)
             player.save()
         else:
             return Response({"Error", "Player already in Game"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -238,10 +226,7 @@ class Sell(APIView):
 
 class GameHistory(APIView):
     def post(self, request, format=None):
-        profile = Profile.objects.filter(user_id=request.user.id)
-        profile = profile[0]
-
-        games = PlayerHistory.objects.filter(profile_id=profile.id)
+        games = PlayerHistory.objects.filter(user=request.user)
 
         if not games.exists():
             return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
@@ -341,7 +326,9 @@ class DefineContract(APIView):
 
     def post(self, request, format=None):
         bet_amount = request.data['bet']
-        game = Tournament.objects.filter(host_id=request.user.id, active=True)
+        player = Player.objects.filter(user=request.user)
+        player = player[0]
+        game = Game.objects.filter(id=player.game_id, active=True)
         game = game[0]
         address = get_address(request, game)
 
@@ -370,7 +357,9 @@ class DefineContract(APIView):
 class StartBets(APIView):
 
     def post(self, request, format=None):
-        game = Tournament.objects.filter(host_id=request.user.id, active=True)
+        player = Player.objects.filter(user=request.user)
+        player = player[0]
+        game = Game.objects.filter(id=player.game_id, active=True)
         game = game[0]
 
         contract = get_contract(game)
@@ -404,14 +393,12 @@ class ReadyUp(APIView):
 class CurrentGames(APIView):
 
     def get(self, request, format=None):
-        profile = Profile.objects.filter(user_id=request.user.id)
-        profile = profile[0]
-        tournaments = Player.objects.filter(profile_id=profile.id).values()
+        tournaments = Player.objects.filter(user=request.user).values()
 
         games = []
 
         for _, player in enumerate(tournaments):
-            game = Tournament.objects.filter(id=player['tournament_id'])
+            game = Game.objects.filter(id=player['game_id'])
             game = game[0]
 
             games.append({
@@ -425,7 +412,7 @@ class CurrentGames(APIView):
 class GameInfo(APIView):
 
     def get(self, request, room_code):
-        game = Tournament.objects.filter(room_code=room_code)
+        game = Game.objects.filter(room_code=room_code)
         game = game[0]
 
         game_info = {
@@ -466,17 +453,17 @@ class SearchGames(APIView):
                         (\
                             SELECT * FROM \
                                 (\
-                                SELECT * FROM game_tournament \
+                                SELECT * FROM game_game \
                                 WHERE is_contract = TRUE AND public=TRUE\
                                 ) \
-                            FULL JOIN game_contract ON game_tournament.id=game_contract=tournament_id \
+                            FULL JOIN game_contract ON game_game.id=game_contract=game_id \
                             WHERE game_contract.bet >= {floor} AND game_contract.bet <= {ceil} \
                         ) \
-                        FULL JOIN game_duration ON game_tournament.duration_id=game_duration.id \
+                        FULL JOIN game_duration ON game_game.duration_id=game_duration.id \
                         WHERE '.format(floor=bet_floor, ceil=bet_ceil)
         else:
             query = 'SELECT * FROM \
-                        game_tournament FULL JOIN game_duration ON game_tournament.duration_id=game_duration.id \
+                        game_game FULL JOIN game_duration ON game_game.duration_id=game_duration.id \
                     WHERE is_contract = FALSE AND public=TRUE AND '
 
         if bet_ceil != 0:
@@ -493,7 +480,7 @@ class SearchGames(APIView):
 
         query = query[:-5]
 
-        games = Tournament.objects.raw(query)
+        games = Game.objects.raw(query)
 
         games_data = []
         
@@ -531,9 +518,9 @@ class SearchBasic(APIView):
         name = request.data['name']
 
         if room_code == '':
-            games = Tournament.objects.filter(name=name).values()
+            games = Game.objects.filter(name=name).values()
         else:
-            games = Tournament.objects.filter(room_code=room_code).values()
+            games = Game.objects.filter(room_code=room_code).values()
 
         games_info = []
 

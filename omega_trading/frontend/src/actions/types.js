@@ -57,3 +57,7 @@ export const FIVE_YEAR_LOADED = 'FIVE_YEAR_LOADED'
 export const FRIENDS_LOADED = 'FRIENDS_LOADED'
 export const FRIENDS_LOADING = 'FRIENDS_LOADING'
 export const CLEAR = 'CLEAR'
+
+
+// USER
+export const NO_USER = 'NO_USER'

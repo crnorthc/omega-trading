@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react'
-import { Redirect } from 'react-router-dom'
 import NewGraph from './NewGraph.js'
 import Loader from '../Tools/Loader'
 import Options from './Options.js'
 import ActionBox from './ActionBox.js'
+import Auth from '../Auth/Auth.js'
 import queryString from 'query-string'
 
 // State Stuff
@@ -73,28 +73,23 @@ function Symbol(props) {
         )
     }
 
-    if (!props.isAuthenticated) {
-        return <Redirect to='/login' />
-    }
-
     if (props.data == null) {
         return <Loader page={true}/>
     }
     else {
         return (
-            <div className='pageContainer'>
+            <Auth>
                 <h1>{props.symbol}</h1>
                 {graph()}
                 <ActionBox />
                 <Options symbol={props.symbol} />
-            </div>
+            </Auth>
         )
     }    
 }
 
 
 const mapStateToProps = (state) => ({
-    isAuthenticated: state.auth.isAuthenticated,
     user: state.user.user,
     data: state.securities.data,
     symbol: state.securities.symbol, 

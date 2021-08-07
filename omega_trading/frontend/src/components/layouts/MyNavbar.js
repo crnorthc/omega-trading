@@ -1,12 +1,12 @@
-import React, { useEffect, Fragment, useState } from 'react'
-import { Link, Redirect } from 'react-router-dom'
+/* eslint-disable react/jsx-key */
+import React, { Fragment, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { searchSymbols } from '../../actions/securities.js'
-import { autoLogin, logout } from '../../actions/auth.js'
-import { loadUser } from '../../actions/user.js'
+import { logout } from '../../actions/auth.js'
 
 function MyNavbar(props) {
 
@@ -15,9 +15,7 @@ function MyNavbar(props) {
 
     MyNavbar.propTypes = {
         searchSymbols: PropTypes.func.isRequired,
-        autoLogin: PropTypes.func.isRequired,
         logout: PropTypes.func.isRequired,
-        loadUser: PropTypes.func.isRequired,
         isAuthenticated: PropTypes.bool,
         user: PropTypes.object,
         noSearch: PropTypes.bool,
@@ -25,31 +23,7 @@ function MyNavbar(props) {
         listLoading: PropTypes.bool
     }
 
-    useEffect(() => {
-        if (!props.isAuthenticated) {
-            const value = `; ${document.cookie}`
-            var cookie = ''
-            if (value.includes('OmegaToken')) {
-                const parts = value.split(`; ${'OmegaToken'}=`)
-                if (parts.length === 2) {
-                    cookie = parts.pop().split(';').shift()
-                }
-                if (cookie.length !== 0) {
-                    props.autoLogin(cookie)
-                }
-            }
-        }
-    }, [])
-
-
-    if (props.isAuthenticated && props.user === null) {
-        props.loadUser()
-    }
-
-
-
-
-    const onKeyUp = (e) => {
+    const onKeyUp = () => {
         props.searchSymbols(symbol)
     }
 
@@ -84,7 +58,7 @@ function MyNavbar(props) {
                             placeholder="Search"
                             className="searchInput"
                             value={symbol}
-                            onFocus={(e) => setShow(true)}
+                            onFocus={() => setShow(true)}
                             onChange={e => setSymbol(e.target.value)}
                             onKeyUp={onKeyUp} />
                     </div>
@@ -92,12 +66,10 @@ function MyNavbar(props) {
                         {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
                     </div>
                 </form>
-                {props.isAuthenticated ?
+                {props.user !== null ?
                     <div className="accountButtons fr ai-c">
-                        <Link to='/leaderboard' className="accountLink">Leaderboard</Link>
-                        <Link to='/lobby' className="accountLink">Lobby</Link>
                         <Link to='/account' className="accountLink">Account</Link>
-                        <button onClick={(e) => props.logout()} className="logout b">Logout</button>
+                        <button onClick={() => props.logout()} className="logout b">Logout</button>
                     </div>
                     :
                     <div className="navLoginSignup fr ai-c jc-c">
@@ -115,8 +87,7 @@ const mapStateToProps = (state) => ({
     results: state.securities.results,
     noSearch: state.securities.noSearch,
     listLoading: state.securities.listLoading,
-    isAuthenticated: state.auth.isAuthenticated,
     user: state.user.user
 })
 
-export default connect(mapStateToProps, { searchSymbols, autoLogin, loadUser, logout })(MyNavbar)
+export default connect(mapStateToProps, { searchSymbols, logout })(MyNavbar)
