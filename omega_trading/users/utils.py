@@ -78,11 +78,11 @@ def load_user_friends(id):
 
     return users_friends
 
-def load_user(request=None, username=None):
-    if request == None:
+def load_user(user=None, request=None, username=None):
+    if username != None:
         queryList = User.objects.filter(username=username)
         user = queryList[0]
-    else:
+    if request != None:
         user = request.user
 
     response = {
@@ -214,7 +214,7 @@ def login(user):
     token = Token.objects.filter(user_id=user.id)
     headers = set_cookie(token[0].key, 'loggedIn')
 
-    return Response({"Success": "User Logged In"}, headers=headers, status=status.HTTP_200_OK)
+    return Response({"Success": load_user(user=user)}, headers=headers, status=status.HTTP_200_OK)
 
 def logout(user):
     token = Token.objects.filter(user_id=user.id)

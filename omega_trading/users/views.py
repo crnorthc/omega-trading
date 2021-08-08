@@ -1,6 +1,5 @@
 from rest_framework import status
 from rest_framework.views import APIView
-from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from .models import *
 from .TopSecret import *
@@ -24,7 +23,15 @@ class CreateUser(APIView):
         users = User.objects.filter(username=username)
 
         if emails.exists():
-            return Response({'Error': 'Email Taken'}, status=status.HTTP_403_FORBIDDEN)
+            user = users[0]
+            token = Token.objects.filter(user_id=user.id)
+            id = IDToken.objects.filter(user=user)
+            if token.exists():
+                return Response({'Error': 'Email Taken'}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                if id.exists():
+                    return Response({'Error': 'Verify Account'}, status=status.HTTP_401_UNAUTHORIZED)
+
 
         if users.exists():
             return Response({'Error': 'Username Taken'}, status=status.HTTP_403_FORBIDDEN)
@@ -58,29 +65,36 @@ class VerifyEmail(APIView):
             return Response({'Error': 'Invalid Verification Code'}, status=status.HTTP_403_FORBIDDEN)
 
 
-class LoginUser(APIView):
+class Login(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request, format=None):
         username = request.data['username']
         password = request.data['password']
-        user = authenticate(username=username, password=password)
-        user_queryset = User.objects.filter(username=username)
+        user = User.objects.filter(username=username)
 
-        if not user_queryset.exists():
-            return Response({'Error': 'Invalid Username'}, status=status.HTTP_400_BAD_REQUEST)
+        if not user.exists():
+            return Response({'Error': 'Invalid Username'}, status=status.HTTP_403_FORBIDDEN)
 
-        if user is not None:
-            return login(user)
+        user = user[0]
+
+        if user.check_password(password):
+            token = Token.objects.filter(user_id=user.id)
+
+            if not token.exists():
+                return Response({'Error': 'Verify Account'}, status=status.HTTP_401_UNAUTHORIZED)
+            else:
+                return login(user)
+                
         else:
-            return Response({'Error': 'Invalid Password'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'Error': 'Invalid Password'}, status=status.HTTP_403_FORBIDDEN)
 
 
-class LogoutUser(APIView):
+class Logout(APIView):
 
     def post(self, request, format=None):
 
-        return logout(request)
+        return logout(request.user)
 
 
 class UpdateUsername(APIView):

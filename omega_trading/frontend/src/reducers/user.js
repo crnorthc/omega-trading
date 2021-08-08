@@ -2,6 +2,7 @@ import {
     USER_LOADED,
     USERS_LOADED,
     LOGOUT_SUCCESS,
+    LOGIN_SUCCESS,
     HIDE_RESULTS,
     UPDATE_USER,
     HISTORY_SAVED,
@@ -26,6 +27,11 @@ export default function (state = initialState, action) {
     switch (action.type) {
     case LOGOUT_SUCCESS:
         return initialState
+    case LOGIN_SUCCESS:
+        return {
+            ...state,
+            user: action.payload
+        }
     case LOADING:
         return {
             ...state,

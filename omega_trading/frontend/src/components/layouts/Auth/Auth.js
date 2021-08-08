@@ -14,15 +14,13 @@ function Auth(props) {
         loadUser: PropTypes.func.isRequired,
         user: PropTypes.object,
         user_loaded: PropTypes.bool,
+        logged_in: PropTypes.bool
     }
 
-    if (!props.user_loaded && props.user == null) {
-        props.loadUser()
-    }
+    var path = window.location.pathname
 
-    var path = window.location.pathname + window.location.search
 
-    if (path == '/login' || path == '/sign-up') {
+    if (path == '/' && !props.logged_in) {
         return (
             <div className='pageContainer'>
                 {props.children}
@@ -30,6 +28,10 @@ function Auth(props) {
         )
     }
     else {
+        if (!props.user_loaded && props.user == null) {
+            props.loadUser()
+        }
+    
         if (props.user_loaded && props.user == null) {
             if (props.user == null) {
                 const value = `; ${document.cookie}`
@@ -71,7 +73,8 @@ function Auth(props) {
 
 const mapStateToProps = (state) => ({
     user: state.user.user,
-    user_loaded: state.user.user_loaded
+    user_loaded: state.user.user_loaded,
+    logged_in: state.auth.logged_in
 })
 
 export default connect(mapStateToProps, { loadUser })(Auth)

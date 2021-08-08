@@ -1,5 +1,6 @@
 import axios from 'axios'
 import {
+    CREATING_USER,
     USER_CREATED,
     EMAIL_VERIFIED,
     LOGIN_SUCCESS,
@@ -8,13 +9,14 @@ import {
     EMAIL_SENT,
     RESET_SUCCESS,
     CHECK_SUCCESS,
-    ACTION_FAILED
+    ACTION_FAILED,
+    VERIFY_EMAIL
 } from './types'
 
 
 function getCookie() {
     const value = `; ${document.cookie}`
-    const parts = value.split(`; ${'OmegaToken'}=`)
+    const parts = value.split(`; ${'loggedIn'}=`)
     var cookie = ''
     if (parts.length === 2) {
         cookie = parts.pop().split(';').shift()
@@ -30,49 +32,40 @@ export const createUser = (first_name, last_name, email, password, username) => 
         }
     }
 
+    dispatch({
+        type: CREATING_USER
+    })
+
     const body = JSON.stringify({ first_name, last_name, email, password, username })
 
     axios.post('/users/create', body, config)
         .then(res => {
-            if (res.data.Error) {
+            dispatch({
+                type: USER_CREATED,
+                payload: res.data
+            })
+        })
+        .catch(error => {
+            if (error.response.status == 401) {
                 dispatch({
-                    type: ACTION_FAILED,
-                    payload: res.data
+                    type: VERIFY_EMAIL,
+                    payload: true
                 })
             }
             else {
                 dispatch({
-                    type: USER_CREATED,
-                    payload: res.data
+                    type: ACTION_FAILED,
+                    payload: error.response.data.Error
                 })
-            }
+            }            
         })
 }
 
-export const verifyEmail = (key) => dispatch => {
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-    const body = JSON.stringify({ key })
-
-    axios.post('/users/verify-email', body, config)
-        .then(res => {
-            if (res.data.Error) {
-                dispatch({
-                    type: ACTION_FAILED,
-                    payload: res.data
-                })
-            }
-            else {
-                dispatch({
-                    type: EMAIL_VERIFIED,
-                    payload: res.data
-                })
-            }
-        })
+export const verifyEmail = () => dispatch => {
+    dispatch({
+        type: VERIFY_EMAIL,
+        payload: false
+    })
 }
 
 // NEEDS TO BE REDONE
@@ -117,18 +110,24 @@ export const login = (username, password) => dispatch => {
 
     axios.post('/users/login', body, config)
         .then(res => {
-            if (res.data.Error) {
+            dispatch({
+                type: LOGIN_SUCCESS,
+                payload: res.data.Success
+            })
+        })
+        .catch(error => {
+            if (error.response.status == 401) {
                 dispatch({
-                    type: ACTION_FAILED,
-                    payload: res.data
+                    type: VERIFY_EMAIL,
+                    payload: true
                 })
             }
             else {
                 dispatch({
-                    type: LOGIN_SUCCESS,
-                    payload: 'success'
+                    type: ACTION_FAILED,
+                    payload: error.response.data.Error
                 })
-            }
+            }            
         })
 }
 
@@ -236,5 +235,3 @@ export const resetForgot = (username, password) => dispatch => {
             }
         })
 }
-
-
