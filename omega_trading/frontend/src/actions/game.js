@@ -24,19 +24,6 @@ function getCookie() {
         cookie = parts.pop().split(';').shift()
     }
 
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + cookie,
-        },
-    }
-
-    var path = window.location.pathname + window.location.search
-
-    const body = JSON.stringify({ path })
-
-    axios.post('/users/history', body, config)
-
     return cookie
 }
 

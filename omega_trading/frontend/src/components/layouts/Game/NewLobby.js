@@ -36,11 +36,11 @@ function Lobby(props) {
         return <Loader poage={true} />
     } else {
         return (
-            <Auth>
+            <div>
                 <CurrentGames />
                 <CreateGame />
                 <History />
-            </Auth>
+            </div>
         )
     }
 }

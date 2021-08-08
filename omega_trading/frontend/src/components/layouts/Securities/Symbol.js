@@ -4,6 +4,7 @@ import NewGraph from './NewGraph.js'
 import Loader from '../Tools/Loader'
 import Options from './Options.js'
 import ActionBox from './ActionBox.js'
+import Auth from '../Auth/Auth.js'
 import queryString from 'query-string'
 
 // State Stuff
