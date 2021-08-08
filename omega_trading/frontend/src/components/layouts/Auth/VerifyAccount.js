@@ -34,7 +34,7 @@ function VerifyAccount(props) {
     }
 
     if (props.emailVerified) {
-        return <Redirect to='/' />
+        return <Redirect to='/login' />
     }
 
     if (keys.length != 0 && !props.error) {
@@ -45,7 +45,7 @@ function VerifyAccount(props) {
     }
     else {
         if (props.error && redirect) {
-            return <Redirect to='/login' />
+            return <Redirect to='/sign-up' />
         }
         return (
             <div className='pageContainer'>

@@ -10,7 +10,8 @@ import {
     CHECK_SUCCESS,
     ACTION_FAILED,
     VERIFY_EMAIL,
-    VERIFYING_EMAIL
+    VERIFYING_EMAIL,
+    USER_LOADED
 } from '../actions/types'
 
 const initialState = {
@@ -68,6 +69,11 @@ export default function (state = initialState, action) {
         return {
             ...state,
             logging_in: true,
+        }
+    case USER_LOADED:
+        return {
+            ...state,
+            logged_in: true
         }
     case LOGIN_SUCCESS:
         return {
