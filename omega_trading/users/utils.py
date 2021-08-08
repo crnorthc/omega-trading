@@ -89,12 +89,15 @@ def load_user(user=None, request=None, username=None):
         "username": user.username,
         "first_name": user.first_name,
         "last_name": user.last_name,
-        "email": user.email
+        "email": user.email,
     }
 
     if request != None:
         response['invites'] = load_user_invites(user.id)
         response['friends'] = load_user_friends(user.id)
+    else:
+        response['invites'] = {}
+        response['friends'] = {}
 
     return response
 
