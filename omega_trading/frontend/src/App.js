@@ -1,5 +1,6 @@
 import Login from './components/layouts/Auth/Login.js'
 import SignUp from './components/layouts/Auth/SignUp.js'
+import VerifyAccount from './components/layouts/Auth/VerifyAccount.js'
 import ForgotPassword from './components/layouts/Auth/ForgotPassword.js'
 import ResetPassword from './components/layouts/Auth/ResetPassword.js'
 import Symbol from './components/layouts/Securities/Symbol.js'
@@ -29,6 +30,7 @@ function App() {
             <Switch>
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/sign-up" component={SignUp} />
+                <Route exact path="/verify-account" component={VerifyAccount} />
             </Switch>   
         </Router>
     )

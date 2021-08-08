@@ -9,7 +9,8 @@ import {
     RESET_SUCCESS,
     CHECK_SUCCESS,
     ACTION_FAILED,
-    VERIFY_EMAIL
+    VERIFY_EMAIL,
+    VERIFYING_EMAIL
 } from '../actions/types'
 
 const initialState = {
@@ -21,7 +22,8 @@ const initialState = {
     codeChecked: false,
     passwordReset: false,
     logging_in: false,
-    creating_user: false
+    creating_user: false,
+    verifying_emaill: false
 }
 
 export default function (state = initialState, action) {
@@ -36,6 +38,11 @@ export default function (state = initialState, action) {
         return {
             ...state,
             emailSent: action.payload
+        }
+    case VERIFYING_EMAIL:
+        return {
+            ...state,
+            verifying_email: true
         }
     case USER_CREATED:
         return {
@@ -54,7 +61,8 @@ export default function (state = initialState, action) {
         return {
             ...state,
             emailVerified: true,
-            emailSent: false
+            emailSent: false,
+            verifying_email: false
         }
     case LOGGING_IN:
         return {

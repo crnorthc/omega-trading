@@ -4,13 +4,13 @@ import {
     USER_CREATED,
     EMAIL_VERIFIED,
     LOGIN_SUCCESS,
-    LOGGING_IN,
     LOGOUT_SUCCESS,
     EMAIL_SENT,
     RESET_SUCCESS,
     CHECK_SUCCESS,
     ACTION_FAILED,
-    VERIFY_EMAIL
+    VERIFY_EMAIL,
+    VERIFYING_EMAIL
 } from './types'
 
 
@@ -61,41 +61,39 @@ export const createUser = (first_name, last_name, email, password, username) => 
         })
 }
 
-export const verifyEmail = () => dispatch => {
+export const closeVerified = () => dispatch => {
     dispatch({
         type: VERIFY_EMAIL,
         payload: false
     })
 }
 
-// NEEDS TO BE REDONE
-export const autoLogin = (cookie) => dispatch => {
-    dispatch({
-        type: LOGGING_IN
-    })
+export const verifyEmail = (key) => dispatch => {
+
     const config = {
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Token ' + cookie
+            'Content-Type': 'application/json'
         }
     }
 
-    const body = JSON.stringify({})
+    dispatch({
+        type: VERIFYING_EMAIL
+    })
 
-    axios.post('/users/autoLogin', body, config)
+    const body = JSON.stringify({ key })
+
+    axios.post('/users/verify-email', body, config)
         .then(res => {
-            if (res.data.Error) {
-                dispatch({
-                    type: ACTION_FAILED,
-                    payload: res.data
-                })
-            }
-            else {
-                dispatch({
-                    type: LOGIN_SUCCESS,
-                    payload: res.data.Success
-                })
-            }
+            dispatch({
+                type: EMAIL_VERIFIED,
+                payload: res.data
+            })
+        })
+        .catch(error => {
+            dispatch({
+                type: ACTION_FAILED,
+                payload: error.response.data.Error
+            })
         })
 }
 

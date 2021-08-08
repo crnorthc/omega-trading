@@ -66,3 +66,4 @@ export const NO_USER = 'NO_USER'
 // AUTH
 export const CREATING_USER = 'CREATING_USER'
 export const VERIFY_EMAIL = 'VERIFY_EMAIL'
+export const VERIFYING_EMAIL = 'VERIFYING_EMAIL'
