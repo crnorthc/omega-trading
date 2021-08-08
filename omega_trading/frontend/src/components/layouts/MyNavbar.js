@@ -41,41 +41,52 @@ function MyNavbar(props) {
             </div>
         )
     }
+
     const noSearch = (
         <div></div>
     )
+
     const loading = (
         <div>Loading...</div>
     )
+    
+
+
     return (
         <div bg="light" variant="dark" className="NavBar">
-            <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark" to="/">Omega Trading</Link></div>
-            <form className="symbolSearch b">
-                <div className="search-nav">
-                    <img className="searchIcon" src='../../../static/search.png' />
-                    <input type="text"
-                        placeholder="Search"
-                        className="searchInput"
-                        value={symbol}
-                        onFocus={() => setShow(true)}
-                        onChange={e => setSymbol(e.target.value)}
-                        onKeyUp={onKeyUp} />
-                </div>
-                <div className="results-nav">
-                    {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
-                </div>
-            </form>
-            {props.user !== null ?
-                <div className="accountButtons fr ai-c">
-                    <Link to='/account' className="accountLink">Account</Link>
-                    <button onClick={() => props.logout()} className="logout b">Logout</button>
-                </div>
-                :
-                <div className="navLoginSignup fr ai-c jc-c">
-                    <Link to="/login" className="navLogin">Login</Link>
-                    <Link to="/sign-up" className="navSignup">Signup</Link>
-                </div>
-            }
+            <div className='fr jc-s ai-c'>
+                <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark" to="/">Omega Trading</Link></div>
+                <form className="symbolSearch b">
+                    <div className="search-nav">
+                        <img className="searchIcon" src='../../../static/search.png' />
+                        <input type="text"
+                            placeholder="Search"
+                            className="searchInput"
+                            value={symbol}
+                            onFocus={() => setShow(true)}
+                            onChange={e => setSymbol(e.target.value)}
+                            onKeyUp={onKeyUp} />
+                    </div>
+                    <div className="results-nav">
+                        {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
+                    </div>
+                </form>
+            </div>
+            <div>
+                {props.user !== null ?
+                    <div className="accountButtons fr ai-c">
+                        <Link to='/games' className="accountLink">Games</Link>
+                        <Link to='/join' className="accountLink">Join</Link>
+                        <Link to='/account' className="accountLink">Account</Link>
+                        <button onClick={() => props.logout()} className="logout b">Logout</button>
+                    </div>
+                    :
+                    <div className="navLoginSignup fr ai-c jc-c">
+                        <Link to="/login" className="navLogin">Login</Link>
+                        <Link to="/sign-up" className="navSignup">Signup</Link>
+                    </div>
+                }
+            </div>            
         </div>
     )
 }

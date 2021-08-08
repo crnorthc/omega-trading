@@ -12,7 +12,6 @@ urlpatterns = [
     path('forgot-password', index),
     path('chart', index),
     path('account', index),
-    path('portfolio', index),
-    path('lobby', index),
-    path('leaderboard', index)
+    path('join', index),
+    path('games', index)
 ]

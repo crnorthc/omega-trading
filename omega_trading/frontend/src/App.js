@@ -3,6 +3,8 @@ import SignUp from './components/layouts/Auth/SignUp.js'
 import VerifyAccount from './components/layouts/Auth/VerifyAccount.js'
 import ForgotPassword from './components/layouts/Auth/ForgotPassword.js'
 import ResetPassword from './components/layouts/Auth/ResetPassword.js'
+import CurrentGames from './components/layouts/Game/CurrentGames.js'
+import CreateGame from './components/layouts/Game/CreateGame.js'
 import Symbol from './components/layouts/Securities/Symbol.js'
 import MyNavbar from './components/layouts/MyNavbar.js'
 import Account from './components/layouts/Account.js'
@@ -21,13 +23,15 @@ function App() {
             <Auth>
                 <Switch>
                     <Route exact path="/" component={NewHome} />
-                    <Route exact path="/chart" component={Symbol} />                                    
-                    <Route exact path="/forgot-password" component={ForgotPassword} />
+                    <Route exact path="/chart" component={Symbol} />                                                        
                     <Route exact path="/reset-password" component={ResetPassword} />
                     <Route exact path="/account" component={Account} />
+                    <Route exact path="/games" component={CurrentGames} />
+                    <Route exact path="/join" component={CreateGame} />
                 </Switch>                                        
             </Auth>           
             <Switch>
+                <Route exact path="/forgot-password" component={ForgotPassword} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/sign-up" component={SignUp} />
                 <Route exact path="/verify-account" component={VerifyAccount} />

@@ -81,7 +81,6 @@ function Symbol(props) {
             <Auth>
                 <h1>{props.symbol}</h1>
                 {graph()}
-                <ActionBox />
                 <Options symbol={props.symbol} />
             </Auth>
         )
