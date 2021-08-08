@@ -3,7 +3,6 @@ import { startGame, loadGame, loadHistory } from '../../../actions/game'
 import History from './History'
 import CurrentGames from './CurrentGames'
 import CreateGame from './CreateGame'
-import Auth from '../Auth/Auth'
 import Loader from '../Tools/Loader'
 
 // State Stuff
