@@ -53,13 +53,11 @@ function Bet(props) {
                     <div className="f16 bld">Bet</div>
                     <div className="fr ai-c jc-s">
                         <input
-                            className="amountInput-contract f14"
+                            className="amountInput"
                             onChange={(e) => setQuan(e.target.value)}
-                            placeholder="0"
+                            placeholder="$0.00"
                             type="number"
-                            min="5000"
                         />
-                        <div className="f14 bld tml">Gwei</div>
                     </div>
                 </div>
                 <div className="fr ai-c jc-s mmy smx mt">
