@@ -1,0 +1,171 @@
+.rules {
+    padding: 0px 48px;
+}
+
+.first-rule {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-around;
+    margin: 36px 100px 36px 100px;
+}
+
+.rules-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin: 36px 100px 36px 100px;
+}
+
+.rule-name-left {
+    margin-bottom: 6px;
+    padding-left: 6px;
+}
+
+.rule-name-right {
+    margin-bottom: 6px;
+    padding-right: 6px;
+    text-align: right;
+}
+
+.rule-name-small {
+    font-size: 16px;
+}
+
+.sub-rules {
+    margin: 48px 0px;
+}
+
+.name-input {
+    width: 342px;
+    height: 36px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(66, 66, 66);
+    text-align: left;
+    font-size: 20px;
+    font-weight: 400;
+    padding-left: 6px;
+}
+
+.parameter {
+    font-size: 20px;
+    font-weight: 400;
+    text-align: left;
+}
+
+.ruleButton {
+    width: 110px;
+    height: 36px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    font-size: 20;
+    font-weight: 400;
+    background-color: #fff;
+}
+
+.ruleButton:hover {
+    background-color: rgb(202, 202, 202);
+}
+
+.amount-input {
+    width: 150px;
+    height: 32px;
+    border-radius: 5px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(66, 66, 66);
+    text-align: left;
+    font-size: 20;
+    font-weight: 400;
+}
+
+.start-input {
+    width: 150px;
+    height: 36px;
+    text-align: center;
+    border-radius: 5px;
+    border: #424242 1px solid;
+    font-size: 20;
+    font-weight: 400;
+}
+
+.date-input {
+    height: 36px;
+    border-radius: 5px;
+    border: #424242 1px solid;
+}
+
+.time-input {
+    border: none;
+    border-radius: 5px;
+}
+
+.time-input:focus {
+    outline: none !important;
+}
+
+.time-choice {
+    height: 36px;
+    border: #424242 1px solid;
+    border-radius: 5px;
+    margin-left: 6px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.yesnoCont {
+    height: 36px;
+    width: 150px;
+    border: #424242 1px solid;
+    border-radius: 5px;
+}
+
+.yes {
+    width: 75px;
+    text-align: center;
+    border-width: 1px 0px 1px 1px;
+    border-radius: 5px 0px 0px 5px;
+}
+
+.no {
+    width: 75px;
+    text-align: center;
+    border-width: 1px 1px 1px 0px;
+    border-radius: 0px 5px 5px 0px;
+}
+
+.yes:hover, .no:hover {
+    opacity: 60%;
+}
+
+
+.bet-box {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.342);
+}
+
+.bet-page {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -187.5px;
+    margin-left: -312.5px;
+    height: 375px;
+    width: 625px;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.crypto-choice {
+    height: 60px;
+    width: 312.5px;
+    text-align: center;
+}

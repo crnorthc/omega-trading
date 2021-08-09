@@ -21,7 +21,7 @@ function Auth(props) {
 
     if (!props.user_loaded && props.user == null) {
         props.loadUser()
-        return <Redirect to='/' />
+        // return <Redirect to='/' />
     }
     
     return (

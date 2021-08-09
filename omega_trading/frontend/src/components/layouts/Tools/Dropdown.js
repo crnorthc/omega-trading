@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
-import React, { useRef } from 'react'
+import React from 'react'
 import onClickOutside from 'react-onclickoutside'
 
 
 
 function Dropdown(props) {
     Dropdown.handleClickOutside = () => props.dropChange()
-    const lastDate = useRef()
     return (
         <div>
             {props.button}
