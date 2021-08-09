@@ -15,4 +15,6 @@ omega_trading/securities/__pycache__/
 omega_trading/game/TopSecret.py
 omega_trading/game/__pycache__/
 
+omega_trading/node_modules/
+
 
