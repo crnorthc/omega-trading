@@ -21,17 +21,6 @@ class Game(models.Model):
     public = models.BooleanField(default=True)
 
 
-class Contract(models.Model):
-    contract = models.JSONField(default=dict)
-    bet = models.IntegerField(default=0)
-    dollar = models.DecimalField(max_digits=10, decimal_places=3)
-    fee = models.IntegerField(default=0)
-    bets_complete = models.BooleanField(default=False)
-    ready_to_bet = models.BooleanField(default=False)
-    ready_to_start = models.BooleanField(default=False)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-
-
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     game = models.ForeignKey(Game, on_delete=models.CASCADE)

@@ -7,7 +7,8 @@ import {
     NEW_SECURITY,
     OPTION_LOADED,
     DATES_LOADED,
-    LOADING_OPTION
+    LOADING_OPTION,
+    QUOTES_LOADED
 } from './types'
 
 import axios from 'axios'
@@ -141,4 +142,30 @@ export const dateRange = () => (dispatch) => {
             }
         })
 }
+
+export const getQuote = (symbol) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ symbol })
+
+    axios.post('/securities/crypto-quote', body, config)
+        .then(res => {
+            if (res.data.Error) {
+                console.log('ooops')
+            }
+            else {
+                dispatch({
+                    type: QUOTES_LOADED,
+                    payload: res.data.quotes
+                })
+            }
+        })
+}
+
+
 

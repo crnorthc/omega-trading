@@ -169,3 +169,47 @@
     width: 312.5px;
     text-align: center;
 }
+
+.jc-st {
+    justify-content: flex-start;
+}
+
+.jc-e {
+    justify-content: flex-end;
+}
+
+.bet-input {
+    max-width: 100px;
+    flex: 1 1 100px;
+    font-size: 22px;
+    padding: 0;
+    border: 1px solid #ccc;
+    border-left: 0;
+    width: 100%;
+    color: #666;
+    border-radius: 0 7px 7px 0;
+    text-align: right;
+}
+
+.currency {
+    font-size: 22px;
+    padding: 1.5px 5px 1.5px 12px;
+    color: #999;
+    border: 1px solid #ccc;
+    border-right: 0;
+    line-height: 1.5;
+    border-radius: 7px 0 0 7px;
+    background: white;
+}
+
+.contract-input {
+    padding: 19.5px 12px 19.5px 12px;
+}
+
+.contract-btn {
+    margin-top: 169px;
+}
+
+.input-bet-box {
+    height: 314px;
+}

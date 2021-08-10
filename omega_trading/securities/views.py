@@ -116,3 +116,32 @@ class ExpDates(APIView):
             dates.extend(get_months(timestamp))
 
         return Response({"dates": dates}, status=status.HTTP_200_OK)
+
+
+class CryptoQuote(APIView):
+
+    def post(self, request, format=None):
+        symbol = request.data['symbol']
+
+        r = requests.get(
+            'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?CMC_PRO_API_KEY=' + CRYPTO_KEY + '&symbol=' + symbol)
+
+        r = r.json()
+        time = r['status']['timestamp'][11:16]
+
+        if int(time[0:2]) - 4 > 12:
+            time = ' ' + str(int(time[0:2]) - 16) + time[2:] + " PM"
+        else:
+            if int(time[0:2]) >= 0 and int(time[0:2]) <= 4:
+                time = ' ' + str(8 + int(time[0:2])) + time[2:] + ' PM'
+            else:
+                time = ' ' + str((int(time[0:2]) - 4)) + time[2:] + ' AM'
+
+        quotes = {}
+
+        for symbol, value in r['data'].items():
+            quotes[symbol] = value['quote']['USD']['price']
+
+        quotes['time'] = time
+
+        return Response({"quotes": quotes}, status=status.HTTP_200_OK)

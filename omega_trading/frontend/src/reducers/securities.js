@@ -9,7 +9,8 @@ import {
     NEW_SECURITY,
     OPTION_LOADED,
     DATES_LOADED,
-    LOADING_OPTION
+    LOADING_OPTION,
+    QUOTES_LOADED
 } from '../actions/types'
 
 const initialState = {
@@ -29,7 +30,8 @@ const initialState = {
     data: null,
     call: null,
     put: null,
-    dates: null
+    dates: null,
+    crypto: null
 }
 
 
@@ -101,6 +103,11 @@ export default function (state = initialState, action) {
         return {
             ...state,
             dates: action.payload.dates
+        }
+    case QUOTES_LOADED:
+        return {
+            ...state,
+            crypto: action.payload
         }
     case SECURITY_LOADING:
         return {
