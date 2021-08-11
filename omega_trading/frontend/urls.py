@@ -13,5 +13,6 @@ urlpatterns = [
     path('chart', index),
     path('account', index),
     path('join', index),
-    path('games', index)
+    path('games', index),
+    path('rules', index)
 ]

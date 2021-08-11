@@ -21,6 +21,10 @@
     align-items: stretch;
 }
 
+.ai-e {
+    align-items: flex-end;
+}
+
 .f {
     display: flex;
 }
@@ -92,6 +96,10 @@
 
 .f18 {
     font-size: 18px;
+}
+
+.f22 {
+    font-size: 22px;
 }
 
 .f24 {
@@ -219,8 +227,8 @@
 
 // Large Margin R/L
 .lmx {
-    margin-right: 36px;
-    margin-left: 36px;
+    margin-right: 48px;
+    margin-left: 48px;
 }
 
 // Medium Margin R/L
@@ -251,6 +259,12 @@
 .mmy {
     margin-top: 24px;
     margin-bottom: 24px;
+}
+
+// Large Margin T/B
+.lmy {
+    margin-top: 48px;
+    margin-bottom: 48px;
 }
 
 // Medium Padding T/B

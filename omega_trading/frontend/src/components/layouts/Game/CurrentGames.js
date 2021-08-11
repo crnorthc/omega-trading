@@ -28,7 +28,6 @@ function CurrentGame(props) {
                 </div>
             )
         }
-
         return games
     }
 

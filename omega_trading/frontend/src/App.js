@@ -12,6 +12,7 @@ import NewHome from './components/layouts/NewHome.js'
 import Auth from './components/layouts/Auth/Auth'
 import React  from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
+import NewRules from './components/layouts/Game/NewRules.js'
 
 // import './custom.scss'
 // import './variables.scss'
@@ -28,10 +29,11 @@ function App() {
                     <Route exact path="/reset-password" component={ResetPassword} />
                     <Route exact path="/account" component={Account} />
                     <Route exact path="/games" component={CurrentGames} />
-                    <Route exact path="/join" component={CreateGame} />
+                    <Route exact path="/join" component={CreateGame} />                    
                 </Switch>                                        
             </Auth>           
             <Switch>
+                <Route exact path='/rules' component={NewRules} />
                 <Route exact path="/forgot-password" component={ForgotPassword} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/sign-up" component={SignUp} />

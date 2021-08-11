@@ -34,7 +34,7 @@ a {
 }
 
 body {
-    background-color: #fff;
+    background-color:#fff;
 }
 
 .pageContainer {
@@ -249,27 +249,6 @@ body {
     text-align: right;
 }
 
-.amountInput-game {
-    width: 151.58px;
-    height: 36px;
-    border-radius: 5px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(66, 66, 66);
-    text-align: right;
-}
-
-.name-input {
-    width: 342px;
-    height: 46px;
-    border-radius: 5px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: rgb(66, 66, 66);
-    text-align: center;
-    font-size: 24px;
-}
-
 .code-button {
     width: 136px;
     height: 48px;
@@ -281,9 +260,6 @@ body {
     background-color: rgb(202, 202, 202);
 }
 
-.rules {
-    padding: 12px 48px 24px 48px;
-}
 
 .rules-title {
     padding-bottom: 12px;
@@ -476,10 +452,6 @@ body {
     margin: 0px 24px 0px 0px;
 }
 
-.contract-input {
-    padding: 19.5px 12px 19.5px 12px;
-}
-
 .amountInput-contract {
     width: 100px;
     text-align: right;
@@ -510,9 +482,15 @@ body {
     height: 100%;
     width: 100%;
     background-color: rgba(0, 0, 0, 0.342);
+    
 }
 
 .crypto-page {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    margin-top: -187.5px;
+    margin-left: -312.5px;
     height: 375px;
     width: 625px;
     background-color: #fff;
@@ -1067,7 +1045,7 @@ input[type="number"] {
     display: flex;
     margin: auto;
     align-items: center;
-    background-color: #fff;
+    background-color: rgb(255, 255, 255);
     margin-bottom: 30px;
     padding-top: 1rem;
     padding-bottom: 0.5rem;

@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 import React, { useEffect, useState } from 'react'
-import Rules from './Rules'
+import NewRules from './NewRules'
 
 // State Stuff
 import PropTypes from 'prop-types'
@@ -357,14 +357,13 @@ function CreateGame(props) {
         </div>
     )
 
-
     return (
         <div className="smx hmt b">
             <div className='bb fr ai-c'>
                 <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='create-game st br ai-c'>Create a Game</button>
                 <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='join-game st ai-c'>Join a Game</button>
             </div>
-            {type == 'create' ? <Rules edit={false} /> : join_game}
+            {type == 'create' ? <NewRules /> : join_game}
         </div>
     )
 }
