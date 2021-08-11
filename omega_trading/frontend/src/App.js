@@ -12,9 +12,10 @@ import NewHome from './components/layouts/NewHome.js'
 import Auth from './components/layouts/Auth/Auth'
 import React  from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
-import './custom.scss'
-import './variables.scss'
 
+// import './custom.scss'
+// import './variables.scss'
+import './tailwind.css'
 
 function App() {
     return (
