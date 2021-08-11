@@ -45,7 +45,7 @@ class CreateGame(APIView):
             hour += 12
 
         if commission != None:
-            commission = int(commission[1:])
+            commission = float(commission[1:])
 
         time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
         
@@ -109,7 +109,7 @@ class EditGame(APIView):
         game.start_amount = int(request.data['amount'][1:].replace(',',''))
 
         if commission != None:
-            game.commission = int(commission[1:])
+            game.commission = float(commission[1:])
         else:
             game.commission = None
 
