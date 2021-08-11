@@ -65,6 +65,9 @@ function EditRules(props) {
         if (props.game.commission == null) {
             setCommission('Disabled')
         }
+        else {
+            setCommission('$' + props.game.commission)
+        }
 
         var month = props.game.time.month.toString()
         if (month.length == 1) {
