@@ -357,13 +357,17 @@ function CreateGame(props) {
         </div>
     )
 
+    const handleCreate = (name, Public, start, duration, commision, options, bet) => {
+        
+    }
+
     return (
         <div className="smx hmt b">
             <div className='bb fr ai-c'>
                 <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='create-game st br ai-c'>Create a Game</button>
                 <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='join-game st ai-c'>Join a Game</button>
             </div>
-            {type == 'create' ? <NewRules /> : join_game}
+            {type == 'create' ? <NewRules create={handleCreate()} /> : join_game}
         </div>
     )
 }

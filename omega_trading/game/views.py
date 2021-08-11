@@ -11,28 +11,48 @@ from .bets import *
 import time
 import math
 import requests
-import string
+import datetime
 import json
 
 
 class CreateGame(APIView):
 
     def post(self, request, format=None):
-        amount = request.data['amount']
+        amount = int(request.data['amount'][1:].replace(',',''))
         bet = request.data['bet']
-        public = request.data['public']
+        public = request.data['Public']
         name = request.data['name']
+        date = request.data['date']
+        commission = request.data['commission']
+        time = request.data['time']
         room_code = get_room_code()
 
-        duration = Duration(days=request.data['days'], hours=request.data['hours'], minutes=request.data['mins'])
+        month = int(date['month'])
+        day = int(date['day'])
+        year = int(date['year'])
 
+        hour = int(time['hour'])
+        min = int(time['min'])
+        type = time['type']
+
+        if bet == 'no':
+            bet = False
+        else:
+            bet = True
+
+        if type == 'PM': 
+            hour += 12
+
+        if commission != None:
+            commission = int(commission[1:])
+
+        time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
+        print(time)
+        
         game = Game(
-            start_amount=amount, bet=bet, room_code=room_code, duration=duration, name=name, public=public)
+            start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=str(time), name=name, public=public)
 
-        if 'positions' in request.data:
-            game.positions = request.data['positions']
-
-        host = Player(user=request.user, tournament=game, is_host=True)
+        host = Player(user=request.user, game=game, is_host=True, cash=amount)
 
         game.save()
         host.save()
@@ -393,11 +413,11 @@ class ReadyUp(APIView):
 class CurrentGames(APIView):
 
     def get(self, request, format=None):
-        tournaments = Player.objects.filter(user=request.user).values()
+        games_query = Player.objects.filter(user_id=request.user.id).values()
 
         games = []
 
-        for _, player in enumerate(tournaments):
+        for _, player in enumerate(games_query):
             game = Game.objects.filter(id=player['game_id'])
             game = game[0]
 

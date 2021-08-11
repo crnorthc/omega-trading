@@ -19,6 +19,10 @@ button {
     outline: inherit;
 }
 
+input {
+    font-size: inherit;
+}
+
 h2,
 .h2,
 h3,
@@ -1130,9 +1134,3 @@ input[type="number"] {
         transform: rotate(360deg);
     }
 }
-
-// Must be at bottom
-@import "~bootstrap/scss/bootstrap.scss";
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";

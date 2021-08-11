@@ -31,13 +31,13 @@ function CurrentGame(props) {
         return games
     }
 
-    if (props.games) {
+    if (props.games == null) {
         return <Loader page={false} />
     } else {
         return (
             <div className='b smx'>
                 <div className='h63 fr bb ai-c jc-c st'>Current Games</div>
-                {props.games == false? getGames() :
+                {props.games != false ? getGames() :
                     (
                         <div className='no-history'>You do not have any active games.</div>
                     )}
@@ -47,7 +47,7 @@ function CurrentGame(props) {
 }
 
 const mapStateToProps = (state) => ({
-    games: state.game.game,
+    games: state.game.games,
 })
 
 export default connect(mapStateToProps, { currentGames })(CurrentGame)

@@ -169,27 +169,6 @@ def contract_players(game):
         }
 
     return contract_info
-        
-def get_contract_info(game):
-    if game.is_contract:
-        contract = get_contract(game)
-
-        contract_data = {
-            'bet': contract.bet,
-            'fee': contract.fee,
-            'bets_complete': contract.bets_complete,
-            'ready_to_bet': contract.ready_to_bet,
-            'players': contract_players(game),
-            'ready_to_start': contract.ready_to_start
-        }
-
-    return contract_data
-
-def get_contract(game):
-    contract = Contract.objects.filter(game_id=game.id)
-    contract = contract[0]
-
-    return contract
 
 def get_invites(game):
     invites = Invites.objects.filter(game_id=game.id)
@@ -217,27 +196,45 @@ def get_duration(game):
         'mins': duration.minutes
     }
 
+def get_end_time(end_time):
+    end_time = time.localtime(end_time)
+
+    hour = end_time[3] + 1
+
+    type = 'AM'
+
+    if hour > 12:
+        hour = hour - 12
+        type = 'PM'
+
+    return {
+        'year': end_time[0],
+        'month': end_time[1],
+        'day': end_time[2],
+        'hour': hour,
+        'minute': end_time[4],
+        'type': type
+    }
+
+
 def get_game_info(game, user):
-    host = User.objects.filter(username=game.host.username)
+    host = User.objects.filter(username=user.username)
     host = host[0]
     player = get_player(user)
-    contract = get_contract_info(game)
     players, charts, holdings, host = get_players_info(game, player)
 
     return {
         'host': host,
         'name': game.name,
         'start_amount': game.start_amount,
-        'bet': game.bet,
-        'duration': game.duration,
+        'time': get_end_time(int(game.end_time)),
         'room_code': game.room_code,
-        'positions': game.positions,
+        'commission': game.commission,
         'players': players,
         'invites': get_invites(game),
         'active': game.start_time != "",
         'charts': charts,
-        'holdings': holdings,
-        'contract': contract
+        'holdings': holdings
     }
 
 def get_symbol_data(symbol, start_time, end_time):

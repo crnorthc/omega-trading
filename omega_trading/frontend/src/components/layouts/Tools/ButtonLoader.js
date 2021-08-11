@@ -1,7 +1,7 @@
 import React from 'react'
 import './Loader.scss'
 
-function Login() {
+function ButtonLoader() {
 
     return (
         <div className="loading-dots">
@@ -13,4 +13,4 @@ function Login() {
 }
 
 
-export default (Login)
+export default (ButtonLoader)

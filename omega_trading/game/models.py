@@ -1,11 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-class Duration(models.Model):
-    days = models.IntegerField(default=0)
-    hours = models.IntegerField(default=0)
-    minutes = models.IntegerField(default=0)
-
 
 class Game(models.Model):
     name = models.CharField(max_length=20)
@@ -14,10 +9,9 @@ class Game(models.Model):
     start_time = models.CharField(max_length=10)
     end_time = models.CharField(max_length=10)
     bet = models.FloatField(default=10000)
-    positions = models.IntegerField(default=0)
+    commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
     active = models.BooleanField(default=True)
-    duration = models.ForeignKey(Duration, on_delete=models.CASCADE)
-    is_contract = models.BooleanField(default=False)
+    e_bet = models.BooleanField(default=False)
     public = models.BooleanField(default=True)
 
 
