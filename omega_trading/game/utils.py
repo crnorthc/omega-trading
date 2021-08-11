@@ -37,15 +37,6 @@ def get_user(id):
 
     return user[0]
 
-def get_game(room_code):
-    game = Game.objects.filter(room_code=room_code)
-
-    if game.exists():
-        game = game[0]
-        return game
-
-    return Response({"Error": "No Room Found"}, status=status.HTTP_404_NOT_FOUND)
-
 def uninvite(username, room_code):
     user = User.objects.filter(username=username)
     user = user[0]
@@ -68,6 +59,14 @@ def remove_player(request):
     player.delete()
 
     return Response({'game': get_game_info(game, user), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+
+def get_host_username(game):
+    host = Player.objects.filter(is_host=True, game_id=game.id)
+    host = host[0]
+    host = User.objects.filter(id=host.user_id)
+    host = host[0]
+
+    return host.username
 
 def get_room_code():
     choices = string.ascii_uppercase + string.digits
@@ -216,7 +215,6 @@ def get_end_time(end_time):
         'type': type
     }
 
-
 def get_game_info(game, user):
     host = User.objects.filter(username=user.username)
     host = host[0]
@@ -226,10 +224,12 @@ def get_game_info(game, user):
     return {
         'host': host,
         'name': game.name,
+        'type': game.public,
         'start_amount': game.start_amount,
         'time': get_end_time(int(game.end_time)),
         'room_code': game.room_code,
         'commission': game.commission,
+        'options': game.options,
         'players': players,
         'invites': get_invites(game),
         'active': game.start_time != "",

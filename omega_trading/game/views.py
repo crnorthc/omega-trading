@@ -25,6 +25,7 @@ class CreateGame(APIView):
         date = request.data['date']
         commission = request.data['commission']
         time = request.data['time']
+        options = request.data['options']
         room_code = get_room_code()
 
         month = int(date['month'])
@@ -47,10 +48,9 @@ class CreateGame(APIView):
             commission = int(commission[1:])
 
         time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
-        print(time)
         
         game = Game(
-            start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=str(time), name=name, public=public)
+            start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=str(time), name=name, public=public, options=options)
 
         host = Player(user=request.user, game=game, is_host=True, cash=amount)
 
@@ -63,10 +63,13 @@ class CreateGame(APIView):
 class LoadGame(APIView):
 
     def post(self, request, format=None):
-        game = get_game(request.user)
+        code = request.data['room_code']
+        game = Game.objects.filter(room_code=code)        
 
         if not game.exists():
             return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
+
+        game = game[0]
 
         current_time = time.time()
 
@@ -80,23 +83,49 @@ class LoadGame(APIView):
 class EditGame(APIView):
 
     def post(self, request, format=None):
-        amount = request.data['amount']
-        bet = request.data['bet']
-        game = get_game(request.user)
-        duration = Duration.objects.filter(id=game.duration_id)
+        date = request.data['date']
+        commission = request.data['commission']
+        time = request.data['time']
+        code = request.data['code']
 
-        duration['days'] = request.data['days'],
-        duration['hours'] = request.data['hours'],
-        duration['mins'] = request.data['mins']
+        game = Game.objects.filter(room_code=code)
+        game= game[0]
 
-        duration.save()
+        month = int(date['month'])
+        day = int(date['day'])
+        year = int(date['year'])
 
-        game.start_amount = amount
-        game.bet = bet
+        hour = int(time['hour'])
+        min = int(time['min'])
+        type = time['type']
 
-        if 'positions' in request.data:
-            game.positions = request.data['positions']
+        if type == 'PM': 
+            hour += 12
 
+        time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp()) - 3600
+
+        game.options = request.data['options']
+        game.end_time = time
+        game.start_amount = int(request.data['amount'][1:].replace(',',''))
+
+        if commission != None:
+            game.commission = int(commission[1:])
+        else:
+            game.commission = None
+
+        game.save()
+
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+
+
+class ChangeType(APIView):
+
+    def post(self, request, format=None):
+        code = request.data['code']
+        game = Game.objects.filter(room_code=code)
+        game = game[0]
+
+        game.public = request.data['type']
         game.save()
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
@@ -421,9 +450,16 @@ class CurrentGames(APIView):
             game = Game.objects.filter(id=player['game_id'])
             game = game[0]
 
+            players = Player.objects.filter(game_id=player['game_id']).count()
+
             games.append({
                 'room_code': game.room_code,
-                'name': game.name
+                'name': game.name,
+                'size': players,
+                'status': game.start_time != '',
+                'end': get_end_time(int(game.end_time)),
+                'host': get_host_username(game),
+                'eBet': game.e_bet
             })
 
         return Response({"games": games}, status=status.HTTP_200_OK)

@@ -23,8 +23,9 @@ function NewRules(props) {
     const [current, setCurrent] = useState(null)
     const [end, setEnd] = useState(null)
     const [hour, setHour] = useState(null)
+    const [minDate, setMinDate] = useState(null)
     const [min, setMin] = useState('00')
-    const [options, setOptions] = useState('yes')
+    const [options, setOptions] = useState(true)
     const [bet, setBet] = useState('no')
     const [type, setType] = useState('AM')
     const [max, setMax] = useState(null)
@@ -80,6 +81,7 @@ function NewRules(props) {
         setHour(Hour)
         setZone(timezone)
         setMax((year + 1) + '-' + month + '-' + day)
+        setMinDate(year + '-' + month + '-' + day)
         setDate(year + '-' + month + '-' + day)
     }
 
@@ -150,7 +152,7 @@ function NewRules(props) {
                     type: type
                 }
 
-                props.createGame(amount, bet, comish, end, end_time, name, Public)
+                props.createGame(amount, bet, comish, end, end_time, name, Public, options)
             }
         }
     }
@@ -180,7 +182,7 @@ function NewRules(props) {
                         <div className='parameter'>      
                             <div className='rule-name-right'>End Date: {zone}</div>
                             <div className='fr'>
-                                <input onChange={((e) => handleDate(e.target.value))} type="date" className="date-input" value={date} min={date} max={max}/>
+                                <input onChange={((e) => handleDate(e.target.value))} type="date" className="date-input" value={date} min={minDate} max={max}/>
                                 <div className='time-choice'>
                                     <select className='time-input' value={hour} onChange={(e) => setHour(e.target.value)}>
                                         {choices([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])}
@@ -205,8 +207,8 @@ function NewRules(props) {
                         <div className='parameter'>
                             <div className='rule-name-right'>Options</div>
                             <div className='yesnoCont fr jc-s'>
-                                <button style={options == 'yes' ? selected : not} onClick={() => setOptions('yes')} className='yes'>Yes</button>
-                                <button style={options == 'no' ? selected : not} onClick={() => setOptions('no')} className='no'>No</button>
+                                <button style={options ? selected : not} onClick={() => setOptions(true)} className='yes'>Yes</button>
+                                <button style={!options ? selected : not} onClick={() => setOptions(false)} className='no'>No</button>
                             </div>
                         </div>
                     </div>

@@ -13,11 +13,16 @@ import {
     NO_GAME,
     GAMES_LOADED,
     SEARCH_LOADED,
-    MAKING_SEARCH
+    MAKING_SEARCH,
+    SELECTING_GAME,
+    GAME_SELECTED,
+    TYPE_CHANGING,
+    MAKING_EDIT
 } from '../actions/types'
 
 const initialState = {
     creating_game: false,
+    selecting_game: false,
     game_created: false,
     no_game: false,
     no_history: false,
@@ -27,7 +32,9 @@ const initialState = {
     games: null,
     preview: null,
     search: null,
-    search_made: false
+    search_made: false,
+    type_changing: true,
+    making_edit: false
 }
 
 export default function (state = initialState, action) {
@@ -38,6 +45,17 @@ export default function (state = initialState, action) {
         return {
             ...state,
             creating_game: true,
+        }
+    case TYPE_CHANGING:
+        return {
+            ...state,
+            game: action.payload,
+            type_changing: true
+        }
+    case MAKING_EDIT:
+        return {
+            ...state,
+            making_edit: true
         }
     case GAME_CREATED:
         return {
@@ -51,6 +69,19 @@ export default function (state = initialState, action) {
         return {
             ...state,
             game_loading: true,
+        }
+    case SELECTING_GAME:
+        return {
+            ...state,
+            selecting_game: true,
+        }
+    case GAME_SELECTED:
+        return {
+            ...state,
+            selecting_game: false,
+            game: action.payload,
+            type_changing: false,
+            making_edit: false
         }
     case GAME_LOADED:
         return {

@@ -13,6 +13,10 @@
     justify-content: space-between;
 }
 
+.jc-e {
+    justify-content: end;
+}
+
 .jc-a {
     justify-content: space-around;
 }
@@ -211,6 +215,11 @@
 // Medium Margin Left
 .mml {
     margin-left: 24px;
+}
+
+// Medium Margin Right
+.mmr {
+    margin-right: 24px;
 }
 
 // Tiny Margin R/L

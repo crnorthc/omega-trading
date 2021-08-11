@@ -13,7 +13,11 @@ import {
     NO_GAME,
     GAMES_LOADED,
     SEARCH_LOADED,
-    MAKING_SEARCH
+    MAKING_SEARCH,
+    SELECTING_GAME,
+    GAME_SELECTED,
+    TYPE_CHANGING,
+    MAKING_EDIT
 } from './types'
 
 function getCookie() {
@@ -25,57 +29,6 @@ function getCookie() {
     }
 
     return cookie
-}
-
-function getData(game) {
-    for (const player in game.players) {
-        if ('periods' in game.players[player]) {
-            for (let i = 0; i < game.players[player].periods.length; i++) {
-                var time = game.players[player].periods[i].time
-                var date = new Date(time * 1000)
-                var year = date.getFullYear()
-                var month = date.getMonth()
-                var day = date.getDate()
-                var hours = date.getHours()
-                var mins = date.getMinutes()
-                game.players[player].periods[i].time = {
-                    year: year,
-                    month: month,
-                    day: day,
-                    hours: hours,
-                    minutes: mins,
-                }
-            }
-        }
-    }
-    if ('charts' in game) {
-        var charts = game.charts
-        for (const chart in game.charts) {
-            var temp = []
-            for (let i = 0; i < game.charts[chart].length; i++) {
-                var time = game.charts[chart][i].time
-                var date = new Date(time * 1000)
-                var year = date.getFullYear()
-                var month = date.getMonth()
-                var day = date.getDate()
-                var hours = date.getHours()
-                var mins = date.getMinutes()
-                temp.push({
-                    time: {
-                        year: year,
-                        month: month,
-                        day: day,
-                        hours: hours,
-                        minutes: mins,
-                    },
-                    price: game.charts[chart][i]['price'],
-                })
-            }
-            charts[chart] = temp
-        }
-        game.charts = charts
-    }
-    return game
 }
 
 function getDates(games) {
@@ -93,7 +46,7 @@ function getDates(games) {
     return temp
 }
 
-export const createGame = (amount, bet, commission, date, time, name, Public) => (dispatch) => {
+export const createGame = (amount, bet, commission, date, time, name, Public, options) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })
@@ -112,7 +65,8 @@ export const createGame = (amount, bet, commission, date, time, name, Public) =>
         date,
         time,
         name, 
-        Public
+        Public,
+        options
     })
 
     axios.post('/game/create', body, config).then((res) => {
@@ -127,9 +81,9 @@ export const createGame = (amount, bet, commission, date, time, name, Public) =>
     })
 }
 
-export const editGame = (amount, bet, positions, days, hours, mins) => (dispatch) => {
+export const editGame = (amount, date, time, commission, options, code) => (dispatch) => {
     dispatch({
-        type: GAME_LOADING,
+        type: MAKING_EDIT,
     })
 
     const config = {
@@ -139,34 +93,23 @@ export const editGame = (amount, bet, positions, days, hours, mins) => (dispatch
         },
     }
 
-    var body
-    amount = parseInt(amount)
-    bet = parseInt(bet)
-    days = parseInt(days)
-    hours = parseInt(hours)
-    mins = parseInt(mins)
-    if (positions == '') {
-        body = JSON.stringify({ amount, bet, days, hours, mins})
-    } else {
-        positions = parseInt(positions)
-        body = JSON.stringify({amount, bet, positions, days, hours, mins})
-    }
+    var body = JSON.stringify({amount, date, time, commission, options, code})
 
     axios.post('/game/edit', body, config).then((res) => {
         if (res.data.Error) {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_LOADED,
+                type: GAME_SELECTED,
                 payload: res.data.game,
             })
         }
     })
 }
 
-export const loadGame = () => (dispatch) => {
+export const loadGame = (room_code) => (dispatch) => {
     dispatch({
-        type: GAME_LOADING,
+        type: SELECTING_GAME,
     })
 
     const config = {
@@ -176,7 +119,7 @@ export const loadGame = () => (dispatch) => {
         },
     }
 
-    var body = JSON.stringify({})
+    var body = JSON.stringify({ room_code })
 
     axios.post('/game/load', body, config).then((res) => {
         if (res.status == 204) {
@@ -185,8 +128,8 @@ export const loadGame = () => (dispatch) => {
             })
         } else {
             dispatch({
-                type: GAME_LOADED,
-                payload: getData(res.data.game),
+                type: GAME_SELECTED,
+                payload: res.data.game,
             })
         }
     })
@@ -596,3 +539,34 @@ export const searchNameCode = (code, name) => (dispatch) => {
         }
     })
 }
+
+export const changeType = (type, game) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+    game.type = type
+
+    dispatch({
+        type: TYPE_CHANGING,
+        payload: game
+    })
+
+    var code = game.room_code
+
+    var body = JSON.stringify({ type, code })
+
+    axios.post('/game/type', body, config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAME_SELECTED,
+                payload: res.data.game,
+            })
+        }
+    })
+}
+

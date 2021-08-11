@@ -19,5 +19,6 @@ urlpatterns = [
     path('games', CurrentGames.as_view()),
     path('info/<str:room_code>/', GameInfo.as_view()),
     path('search', SearchGames.as_view()),
-    path('search-basic', SearchBasic.as_view())
+    path('search-basic', SearchBasic.as_view()),
+    path('type', ChangeType.as_view())
 ]
