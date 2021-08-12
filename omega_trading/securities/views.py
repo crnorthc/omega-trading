@@ -22,6 +22,10 @@ class SearchSymbols(APIView):
         values = []
         count = 0
 
+        d = requests.post('http://127.0.0.1:3000/test')
+
+        print(d.json())
+
         while True:
             if len(search) == 0:
                 break

@@ -37,15 +37,6 @@ def get_user(id):
 
     return user[0]
 
-def get_game(room_code):
-    game = Game.objects.filter(room_code=room_code)
-
-    if game.exists():
-        game = game[0]
-        return game
-
-    return Response({"Error": "No Room Found"}, status=status.HTTP_404_NOT_FOUND)
-
 def uninvite(username, room_code):
     user = User.objects.filter(username=username)
     user = user[0]
@@ -68,6 +59,14 @@ def remove_player(request):
     player.delete()
 
     return Response({'game': get_game_info(game, user), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+
+def get_host_username(game):
+    host = Player.objects.filter(is_host=True, game_id=game.id)
+    host = host[0]
+    host = User.objects.filter(id=host.user_id)
+    host = host[0]
+
+    return host.username
 
 def get_room_code():
     choices = string.ascii_uppercase + string.digits
@@ -169,27 +168,6 @@ def contract_players(game):
         }
 
     return contract_info
-        
-def get_contract_info(game):
-    if game.is_contract:
-        contract = get_contract(game)
-
-        contract_data = {
-            'bet': contract.bet,
-            'fee': contract.fee,
-            'bets_complete': contract.bets_complete,
-            'ready_to_bet': contract.ready_to_bet,
-            'players': contract_players(game),
-            'ready_to_start': contract.ready_to_start
-        }
-
-    return contract_data
-
-def get_contract(game):
-    contract = Contract.objects.filter(game_id=game.id)
-    contract = contract[0]
-
-    return contract
 
 def get_invites(game):
     invites = Invites.objects.filter(game_id=game.id)
@@ -217,27 +195,46 @@ def get_duration(game):
         'mins': duration.minutes
     }
 
+def get_end_time(end_time):
+    end_time = time.localtime(end_time)
+
+    hour = end_time[3] + 1
+
+    type = 'AM'
+
+    if hour > 12:
+        hour = hour - 12
+        type = 'PM'
+
+    return {
+        'year': end_time[0],
+        'month': end_time[1],
+        'day': end_time[2],
+        'hour': hour,
+        'minute': end_time[4],
+        'type': type
+    }
+
 def get_game_info(game, user):
-    host = User.objects.filter(username=game.host.username)
+    host = User.objects.filter(username=user.username)
     host = host[0]
     player = get_player(user)
-    contract = get_contract_info(game)
     players, charts, holdings, host = get_players_info(game, player)
 
     return {
         'host': host,
         'name': game.name,
+        'type': game.public,
         'start_amount': game.start_amount,
-        'bet': game.bet,
-        'duration': game.duration,
+        'time': get_end_time(int(game.end_time)),
         'room_code': game.room_code,
-        'positions': game.positions,
+        'commission': game.commission,
+        'options': game.options,
         'players': players,
         'invites': get_invites(game),
         'active': game.start_time != "",
         'charts': charts,
-        'holdings': holdings,
-        'contract': contract
+        'holdings': holdings
     }
 
 def get_symbol_data(symbol, start_time, end_time):
