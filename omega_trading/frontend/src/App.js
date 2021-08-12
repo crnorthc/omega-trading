@@ -14,8 +14,7 @@ import React  from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 import NewRules from './components/layouts/Game/NewRules.js'
 
-// import './custom.scss'
-// import './variables.scss'
+
 import './tailwind.css'
 
 function App() {
@@ -29,7 +28,7 @@ function App() {
                     <Route exact path="/reset-password" component={ResetPassword} />
                     <Route exact path="/account" component={Account} />
                     <Route exact path="/games" component={CurrentGames} />
-                    <Route exact path="/join" component={CreateGame} />                    
+                    <Route exact path="/new-game" component={CreateGame} />                    
                 </Switch>                                        
             </Auth>           
             <Switch>

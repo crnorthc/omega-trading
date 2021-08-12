@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-key */
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom'
 
 // State Stuff
@@ -9,33 +9,47 @@ import { searchSymbols } from '../../actions/securities.js'
 import { logout } from '../../actions/auth.js'
 
 // Styling stuff 
-import { Listbox, Transition } from "@headlessui/react";
+import { Dialog, Listbox, Transition } from '@headlessui/react';
 import {
-  SelectorIcon,
-  CheckIcon,
-  UserCircleIcon,
-  SearchIcon,
-  SparklesIcon,
-  ViewListIcon,
-  StarIcon,
-} from "@heroicons/react/outline";
+    SelectorIcon,
+    CheckIcon,
+    UserCircleIcon,
+    SearchIcon,
+    SparklesIcon,
+    ViewListIcon,
+    StarIcon,
+} from '@heroicons/react/outline';
 
 // --------------------------------
 
 const people = [
-  { name: "No Game" },
-  { name: "Fuck Matt Medhurst" },
-  { name: "Matt Medhurst Sucks" },
-  { name: "Matt Medhurst Wack" },
-  { name: "Worst Matt Medhurst" },
-  { name: "Matt Medhurst" },
-];
+    { name: 'No Game' },
+    { name: 'Fuck Matt Medhurst' },
+    { name: 'Matt Medhurst Sucks' },
+    { name: 'Matt Medhurst Wack' },
+    { name: 'Worst Matt Medhurst' },
+    { name: 'Matt Medhurst' },
+]
 
- function MyNavbar(props) {
+
+
+
+
+function MyNavbar(props) {
 
     const [symbol, setSymbol] = useState()
     const [show, setShow] = useState(false)
-    const [selected, setSelected] = useState(people[0]);
+    const [selected, setSelected] = useState(people[0])
+    let [isOpen, setIsOpen] = useState(false)
+
+    function closeModal() {
+        setIsOpen(false)
+    }
+
+    function openModal() {
+        setIsOpen(true)
+    }
+
 
 
     MyNavbar.propTypes = {
@@ -54,17 +68,17 @@ const people = [
 
     const dropDown = () => {
         return (
-            <div className="bg-white divide-y-2 divide-gray-200 divide-dashed shadow-xl rounded-lg py-2 ">
+            <div className="bg-white divide-y-2 divide-gray-200 divide-dashed py-2 ">
                 {
                     props.results.map(symbol => (
                         <div>
-                        <Link to={'/chart?symbol=' + symbol.displaySymbol}>
-                            <div className="hover:bg-green-100 hover:text-green-900 px-4">
-                            <div>{symbol.displaySymbol}</div>
-                            <div>{symbol.description}</div>
-                            </div>
-                        </Link>
-                       </div>
+                            <Link  onClick={closeModal} to={'/chart?symbol=' + symbol.displaySymbol}>
+                                <div className="hover:bg-green-100 hover:text-green-900 px-4 py-3">
+                                    <div>{symbol.displaySymbol}</div>
+                                    <div>{symbol.description}</div>
+                                </div>
+                            </Link>
+                        </div>
                     ))
                 }
             </div>
@@ -76,169 +90,251 @@ const people = [
     )
 
     const loading = (
-        <div className="bg-white shadow-xl rounded-lg py-2 px-4">Loading...</div>
+        <div className="bg-white py-2 px-4">Loading...</div>
     )
 
 
 
 
-  return (
-    <div className=''>
-      <div className='bg-gray-200 h-16 '>
-        <div className='flex items-center h-full justify-center sm:justify-between'>
-          <div className='flex items-center justify-center px-5'>
-            <a href='/' className='text-gray-500 font-bold'>
+    return (
+        <div className=''>
+            <div className='bg-gray-200 h-16 '>
+                {props.user !== null ?
+                    <div className='flex items-center h-full justify-center sm:justify-between'>
+                    
+                        <div className='flex items-center justify-center px-5'>
+                            <Link to={'/join'} className='text-gray-500 font-bold hover:text-gray-600'>
               Omega Trading
-            </a>
-            <div className='w-40 sm:w-52 ml-5'>
-              <Listbox value={selected} onChange={setSelected}>
-                <div className='rounded-lg shadow-md'>
-                  <div
-                    className={`
-                    ${selected === people[0] ? "bg-white" : "bg-green-100"} 
+                            </Link>
+                            <div className='w-40 sm:w-52 ml-5'>
+                                <Listbox value={selected} onChange={setSelected}>
+                                    <div className='rounded-lg shadow-md'>
+                                        <div
+                                            className={`
+                    ${selected === people[0] ? 'bg-white' : 'bg-green-100 '} 
                       relative flex items-center w-full py-2 pl-3 pr-10 text-left  rounded-lg  cursor-pointer focus:outline-none  sm:text-sm
                   `}
-                  >
-                    <span
-                      className={`
+                                        >
+                                        
+                                            <a  href='#fuck' 
+                                                className={`
                     ${
-                      selected === people[0]
-                        ? "text-gray-800"
-                        : "text-green-900"
-                    } 
+        selected === people[0]
+            ? 'text-gray-800 hover:text-gray-900'
+            : 'text-green-900 hover:text-green-900 '
+        } 
                       inline-block truncate
-                  `}
-                    >
-                      <a href='#fuck'>{selected.name}</a>
-                    </span>
-                    <Listbox.Button className=''>
-                      <span className='absolute inset-y-0 right-0 flex items-center pl-2 pr-2 cursor-pointer border-l-2 border-gray-400 bg-white rounded-r-lg'>
-                        <SelectorIcon
-                          className='w-5 h-5 text-gray-400'
-                          aria-hidden='true'
-                        />
-                      </span>
-                    </Listbox.Button>
-                    <Transition
-                      as={Fragment}
-                      leave='transition ease-in duration-150'
-                      leaveFrom='opacity-100'
-                      leaveTo='opacity-0'
-                    >
-                      <Listbox.Options className='absolute top-10 right-0 w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm '>
-                        {people.map((person, personIdx) => (
-                          <Listbox.Option
-                            key={personIdx}
-                            className={({ active }) =>
-                              `${
-                                active && personIdx !== 0
-                                  ? "text-green-900 bg-green-100"
-                                  : active && personIdx === 0
-                                  ? "text-gray-800 bg-gray-200"
-                                  : "text-gray-900"
-                              }
-                          cursor-pointer select-none relative py-2 pl-10 pr-4`
-                            }
-                            value={person}
-                          >
-                            {({ selected, active }) => (
-                              <>
-                                <span
-                                  className={`${
-                                    selected ? "font-medium" : "font-normal"
-                                  } block truncate`}
-                                >
-                                  {person.name}
-                                </span>
-                                {selected ? (
-                                  <span
-                                    className={`${
-                                      active
-                                        ? "text-amber-600"
-                                        : "text-amber-600"
-                                    }
-                                absolute inset-y-0 left-0 flex items-center pl-3`}
-                                  >
-                                    <CheckIcon
-                                      className='w-5 h-5'
-                                      aria-hidden='true'
-                                    />
-                                  </span>
-                                ) : null}
-                              </>
-                            )}
-                          </Listbox.Option>
-                        ))}
-                      </Listbox.Options>
-                    </Transition>
-                  </div>
-                </div>
-              </Listbox>
-            </div>
-          </div>
-          <div className=' space-x-7 hidden sm:flex sm:mr-7'>
-            <button className='text-sm text-gray-500 hover:text-gray-600'>
+                  `}>{selected.name}</a>
+  
+                                            <Listbox.Button className=''>
+                                                <span className='absolute inset-y-0 right-0 flex items-center pl-2 pr-2 cursor-pointer border-l-2 border-gray-400 bg-white rounded-r-lg'>
+                                                    <SelectorIcon
+                                                        className='w-5 h-5 text-gray-400'
+                                                        aria-hidden='true'
+                                                    />
+                                                </span>
+                                            </Listbox.Button>
+                                            <Transition
+                                                as={Fragment}
+                                                leave='transition ease-in duration-150'
+                                                leaveFrom='opacity-100'
+                                                leaveTo='opacity-0'
+                                            >
+                                                <Listbox.Options className='absolute top-10 right-0 w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm '>
+                                                    {people.map((person, personIdx) => (
+                                                        <Listbox.Option
+                                                            key={personIdx}
+                                                            className={({ active }) =>
+                                                                `${
+                                                                    active && personIdx !== 0
+                                                                        ? 'text-green-900 bg-green-100'
+                                                                        : active && personIdx === 0
+                                                                            ? 'text-gray-800 bg-gray-200'
+                                                                            : 'text-gray-900'
+                                                                }
+cursor-pointer select-none relative py-2 pl-10 pr-4`
+                                                            }
+                                                            value={person}
+                                                        >
+                                                            {({ selected, active }) => (
+                                                                <>
+                                                                    <span
+                                                                        className={`${
+                                                                            selected ? 'font-medium' : 'font-normal'
+                                                                        } block truncate`}
+                                                                    >
+                                                                        {person.name}
+                                                                    </span>
+                                                                    {selected ? (
+                                                                        <span
+                                                                            className={`${
+                                                                                active
+                                                                                    ? 'text-amber-600'
+                                                                                    : 'text-amber-600'
+                                                                            }
+    absolute inset-y-0 left-0 flex items-center pl-3`}
+                                                                        >
+                                                                            <CheckIcon
+                                                                                className='w-5 h-5'
+                                                                                aria-hidden='true'
+                                                                            />
+                                                                        </span>
+                                                                    ) : null}
+                                                                </>
+                                                            )}
+                                                        </Listbox.Option>
+                                                    ))}
+                                                </Listbox.Options>
+                                            </Transition>
+                                        </div>
+                                    </div>
+                                </Listbox>
+                            </div>
+                        </div>
+                        <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
+                            <Link to='/games' className='text-sm text-gray-500 hover:text-gray-600'>
               My Games
-            </button>
-            <button className='text-sm text-gray-500 hover:text-gray-600'>
+                            </Link>
+                            <Link to='/new-game' className='text-sm text-gray-500 hover:text-gray-600'>
               New Game
-            </button>
+                            </Link>
+
+                            <div className="relative  flex items-center justify-center">
+                                <button
+                                    type="button"
+                                    onClick={openModal}
+                                    className="transition duration-500 ease-in-out transform hover:scale-110 px-2 py-1 text-sm  text-gray-500 bg-white rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                                >
+                                    <SearchIcon
+                                        className='relative h-5 w-5 pr-1 inline-block text-gray-500'
+                                        aria-hidden='true'
+                                    />
+          Search
+                                </button>
+                            </div>
             
-              <form >
-             <div className='relative w-40'>
-              <input
-                type='text'
-                name='search-stonks'
-                id='search-stonks'
-                className='w-40 pl-10 py-2 outline-none rounded-3xl text-sm border-gray-300 border-none'
-                placeholder='Search Stonks'
-                 value={symbol}
-                 onFocus={() => setShow(true)}
-                 onChange={e => setSymbol(e.target.value)}
-                 onKeyUp={onKeyUp} 
-              />
-              <SearchIcon
-                className='absolute bottom-2 left-4 h-5 w-5 inline-block text-gray-600'
-                aria-hidden='true'
-              />
-                    
-                     </div>
-                </form>
-              
-              
-           
-
-            <button className=' text-gray-500 hover:text-gray-600'>
-              <UserCircleIcon className='h-6 w-6 ' aria-hidden='true' />
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className='absolute w-full bg-gray-200 h-16 bottom-0 block sm:hidden'>
-        <div className='flex w-full items-center h-full justify-between px-10'>
-          <button class='text-gray-500 hover:text-green-500'>
-            <StarIcon className='h-6 w-6 ' aria-hidden='true' />
-          </button>
-          <button className='text-gray-500 hover:text-green-500'>
-            <SearchIcon className='h-6 w-6' aria-hidden='true' />
-          </button>
-          <button className='text-gray-500 hover:text-green-500'>
-            <ViewListIcon className='h-6 w-6' aria-hidden='true' />
-          </button>
-          <button className='text-gray-500 hover:text-green-500'>
-            <SparklesIcon className='h-6 w-6' aria-hidden='true' />
-          </button>
-          <button className='text-gray-500 hover:text-green-500'>
-            <UserCircleIcon className='h-6 w-6' aria-hidden='true' />
-          </button>
-        </div>
-      </div>
-
-      <div className="absolute w-1/3 top-11 right-0 mt-3  ">
-                        {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
+                            <Link to='/account' className=' text-gray-500 hover:text-gray-600'>
+                                <UserCircleIcon className='h-6 w-6 ' aria-hidden='true' />
+                            </Link>
+                        </div>
+                               
                     </div>
-    </div>
-  );
+                    :   <div className='flex items-center h-full justify-center sm:justify-between'>
+                    
+                        <div className='flex items-center justify-center px-5'>
+                            <Link to={'/join'} className='text-gray-500 font-bold hover:text-gray-600'>
+              Omega Trading
+                            </Link>
+                            
+                        </div>
+                        <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
+                            <Link to='/login' className=' text-sm text-gray-500 hover:text-gray-600'>
+              Login
+                            </Link>
+                            <Link to='/sign-up' className='text-sm text-gray-500 hover:text-gray-600'>
+              Sign Up
+                            </Link>
+            
+                           
+                        </div>
+                               
+                    </div> }  
+                
+            </div>
+            <div className='absolute w-full bg-gray-200 h-16 bottom-0 block sm:hidden'>
+                <div className='flex w-full items-center h-full justify-between px-10'>
+                    <button class='text-gray-500 hover:text-green-500'>
+                        <StarIcon className='h-6 w-6 ' aria-hidden='true' />
+                    </button>
+                    <button className='text-gray-500 hover:text-green-500'>
+                        <SearchIcon className='h-6 w-6' aria-hidden='true' />
+                    </button>
+                    <button className='text-gray-500 hover:text-green-500'>
+                        <ViewListIcon className='h-6 w-6' aria-hidden='true' />
+                    </button>
+                    <button className='text-gray-500 hover:text-green-500'>
+                        <SparklesIcon className='h-6 w-6' aria-hidden='true' />
+                    </button>
+                    <button className='text-gray-500 hover:text-green-500'>
+                        <UserCircleIcon className='h-6 w-6' aria-hidden='true' />
+                    </button>
+                </div>
+            </div>
+
+            
+
+            <Transition appear show={isOpen} as={Fragment}>
+                <Dialog
+                    as="div"
+                    className="fixed top-11 mt-3 right-0 w-1/3 z-10"
+                    onClose={closeModal}
+                >
+                    <div className="min-h-screen text-center">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                        >
+                            <Dialog.Overlay className="fixed inset-0" />
+                        </Transition.Child>
+
+                        {/* This element is to trick the browser into centering the modal contents. */}
+                        {/* <span
+              className="inline-block h-screen align-middle"
+              aria-hidden="true"
+            >
+              &#8203;
+            </span> */}
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 scale-95"
+                            enterTo="opacity-100 scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-95"
+                        >
+                            <div className="inline-block w-full overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
+                
+                
+                                <form >
+                                    <div className='relative'>
+                                        <input
+                                            type='text'
+                                            name='search-stonks'
+                                            id='search-stonks'
+                                            className=' pl-10 py-2 outline-none text-sm border-gray-300 border-none w-full'
+                                            placeholder='Search Stonks'
+                                            value={symbol}
+                                            onFocus={() => setShow(true)}
+                                            onChange={e => setSymbol(e.target.value)}
+                                            onKeyUp={onKeyUp} 
+                                        />
+                                        <SearchIcon
+                                            className='absolute bottom-2 left-4 h-5 w-5 inline-block text-gray-600'
+                                            aria-hidden='true'
+                                        />
+                    
+                                    </div>
+                                </form>
+              
+                                <div  className="relative">
+                                    {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
+                                </div>
+               
+                            </div>
+                        </Transition.Child>
+                    </div>
+                </Dialog>
+            </Transition>
+
+
+        </div>
+    );
 }
 
 
