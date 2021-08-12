@@ -151,7 +151,6 @@ function NewRules(props) {
                     min: Number(min),
                     type: type
                 }
-
                 props.createGame(amount, bet, comish, end, end_time, name, Public, options)
             }
         }
