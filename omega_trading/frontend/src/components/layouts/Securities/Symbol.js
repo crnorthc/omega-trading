@@ -78,11 +78,11 @@ function Symbol(props) {
     }
     else {
         return (
-            <Auth>
+            <div>
                 <h1>{props.symbol}</h1>
                 {graph()}
                 <Options symbol={props.symbol} />
-            </Auth>
+            </div>
         )
     }    
 }

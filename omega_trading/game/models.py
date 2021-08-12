@@ -1,6 +1,11 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+class Duration(models.Model):
+    days = models.IntegerField(default=0)
+    hours = models.IntegerField(default=0)
+    minutes = models.IntegerField(default=0)
+
 
 class Game(models.Model):
     name = models.CharField(max_length=20)
@@ -13,6 +18,7 @@ class Game(models.Model):
     e_bet = models.BooleanField(default=False)
     public = models.BooleanField(default=True)
     options = models.BooleanField(default=True)
+    duration = models.ForeignKey(Duration, on_delete=models.SET_NULL, null=True)
 
 
 class Player(models.Model):

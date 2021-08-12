@@ -46,7 +46,7 @@ function getDates(games) {
     return temp
 }
 
-export const createGame = (amount, bet, commission, date, time, name, Public, options) => (dispatch) => {
+export const createGame = (amount, bet, commission, date, endOn, name, Public, options) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })
@@ -63,7 +63,7 @@ export const createGame = (amount, bet, commission, date, time, name, Public, op
         bet,
         commission,
         date,
-        time,
+        endOn,
         name, 
         Public,
         options
@@ -81,7 +81,7 @@ export const createGame = (amount, bet, commission, date, time, name, Public, op
     })
 }
 
-export const editGame = (amount, date, time, commission, options, code) => (dispatch) => {
+export const editGame = (amount, date, endOn, commission, options, code) => (dispatch) => {
     dispatch({
         type: MAKING_EDIT,
     })
@@ -93,7 +93,7 @@ export const editGame = (amount, date, time, commission, options, code) => (disp
         },
     }
 
-    var body = JSON.stringify({amount, date, time, commission, options, code})
+    var body = JSON.stringify({amount, date, endOn, commission, options, code})
 
     axios.post('/game/edit', body, config).then((res) => {
         if (res.data.Error) {

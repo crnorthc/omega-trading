@@ -38,6 +38,20 @@ function CurrentGame(props) {
     
     }
 
+    const formatDuration = (duration) => {
+        var day = ' days '
+        if (duration.days == 1) {
+            day = ' day '
+        }
+
+        var hour = ' hours '
+        if (duration.hours == 1) {
+            hour = ' hour '
+        }
+
+        return duration.days + day + duration.hours + hour + duration.mins + ' mins' 
+    }
+
     const getGames = () => {
         var games = []
 
@@ -66,10 +80,17 @@ function CurrentGame(props) {
                             </div>
                         </div>                                        
                         <div className='fc ai-e'>
-                            <div className='fr jc-e ai-b'>
-                                <div className='f22 bld'>Ends:</div>
-                                <div className='f18 sml'>{formatDate(props.games[game].end)}</div>
-                            </div>
+                            {props.games[game].end == undefined ? 
+                                <div className='fr jc-e ai-b'>
+                                    <div className='f22 bld'>Ends:</div>
+                                    <div className='f18 sml'>{formatDuration(props.games[game].duration)}</div>
+                                </div>
+                                :
+                                <div className='fr jc-e ai-b'>
+                                    <div className='f22 bld'>Ends:</div>
+                                    <div className='f18 sml'>{formatDate(props.games[game].end)}</div>
+                                </div>
+                            }                            
                             <div className='fr jc-e ai-b'>
                                 <div className='f18 bld'>Members:</div>
                                 <div className='f18 sml'>{props.games[game].size}</div>

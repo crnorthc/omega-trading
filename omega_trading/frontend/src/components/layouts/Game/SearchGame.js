@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 import React, { useEffect, useState } from 'react'
-import NewNewRules from './NewNewRules'
+import NewRules from './NewRules'
 
 // State Stuff
 import PropTypes from 'prop-types'
@@ -9,7 +9,7 @@ import { searchGames, searchNameCode } from '../../../actions/game'
 
 
 
-function CreateGame(props) {
+function SearchGame(props) {
 
     const [type, setType] = useState('create')
     const [code, setCode] = useState('')
@@ -29,7 +29,7 @@ function CreateGame(props) {
     const [view, setView] = useState('search')
 
 
-    CreateGame.propTypes = {
+    SearchGame.propTypes = {
         searchNameCode: PropTypes.func.isRequired,
         searchGames: PropTypes.func.isRequired,
         search_made: PropTypes.bool,
@@ -363,7 +363,7 @@ function CreateGame(props) {
                 <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='create-game st br ai-c'>Create a Game</button>
                 <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='join-game st ai-c'>Join a Game</button>
             </div>
-            {type == 'create' ? <NewNewRules/> : join_game}
+            {type == 'create' ? <NewRules/> : join_game}
         </div>
     )
 }
@@ -374,4 +374,4 @@ const mapStateToProps = (state) => ({
     search_made: state.game.search_made
 })
 
-export default connect(mapStateToProps, { searchGames, searchNameCode })(CreateGame)
+export default connect(mapStateToProps, { searchGames, searchNameCode })(SearchGame)

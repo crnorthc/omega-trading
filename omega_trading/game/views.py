@@ -24,33 +24,44 @@ class CreateGame(APIView):
         name = request.data['name']
         date = request.data['date']
         commission = request.data['commission']
-        time = request.data['time']
         options = request.data['options']
+        endOn = request.data['endOn']
         room_code = get_room_code()
-
-        month = int(date['month'])
-        day = int(date['day'])
-        year = int(date['year'])
-
-        hour = int(time['hour'])
-        min = int(time['min'])
-        type = time['type']
 
         if bet == 'no':
             bet = False
         else:
             bet = True
 
-        if type == 'PM': 
-            hour += 12
-
         if commission != None:
             commission = float(commission[1:])
 
-        time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
-        
-        game = Game(
+        if endOn == 'date':
+            month = int(date['month'])
+            day = int(date['day'])
+            year = int(date['year'])
+            hour = int(date['hour'])
+            min = int(date['min'])
+            type = date['type']
+
+            if type == 'PM': 
+                hour += 12
+
+            time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
+
+            game = Game(
             start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=str(time), name=name, public=public, options=options)
+        else:
+            days = int(date['days'])
+            hours = int(date['hours'])
+            mins = int(date['mins'])
+
+            duration = Duration(days=days, hours=hours, minutes=mins)
+
+            duration.save()
+    
+            game = Game(
+                start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, duration=duration, name=name, public=public, options=options)
 
         host = Player(user=request.user, game=game, is_host=True, cash=amount)
 
@@ -85,33 +96,56 @@ class EditGame(APIView):
     def post(self, request, format=None):
         date = request.data['date']
         commission = request.data['commission']
-        time = request.data['time']
         code = request.data['code']
+        endOn = request.data['endOn']
 
         game = Game.objects.filter(room_code=code)
-        game= game[0]
+        game = game[0]
+        duration = Duration.objects.filter(id=game.duration_id)
 
-        month = int(date['month'])
-        day = int(date['day'])
-        year = int(date['year'])
+        if endOn == 'date':
+            month = int(date['month'])
+            day = int(date['day'])
+            year = int(date['year'])
+            hour = int(date['hour'])
+            min = int(date['min'])
+            type = date['type']
 
-        hour = int(time['hour'])
-        min = int(time['min'])
-        type = time['type']
+            if type == 'PM': 
+                hour += 12
 
-        if type == 'PM': 
-            hour += 12
+            time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
+            game.end_time = str(time)
+            
+            if duration.exists():
+                duration = duration[0]
+                duration.delete()                
+                game.duration_id = None
+        else:
+            days = int(date['days'])
+            hours = int(date['hours'])
+            mins = int(date['mins'])
 
-        time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp()) - 3600
+            if duration.exists():
+                duration = duration[0]
+                duration.days = days
+                duration.hours = hours
+                duration.minutes = mins
+            else:
+                game.end_time = ''
+                duration = Duration(days=days, hours=hours, minutes=mins)
 
+            duration.save()
+    
         game.options = request.data['options']
-        game.end_time = time
         game.start_amount = int(request.data['amount'][1:].replace(',',''))
 
         if commission != None:
             game.commission = float(commission[1:])
         else:
             game.commission = None
+
+        game.duration_id = duration.id
 
         game.save()
 
@@ -452,15 +486,21 @@ class CurrentGames(APIView):
 
             players = Player.objects.filter(game_id=player['game_id']).count()
 
-            games.append({
+            info = {
                 'room_code': game.room_code,
                 'name': game.name,
                 'size': players,
                 'status': game.start_time != '',
-                'end': get_end_time(int(game.end_time)),
                 'host': get_host_username(game),
                 'eBet': game.e_bet
-            })
+            }
+
+            if game.duration == None:
+                info['end'] = get_end_time(int(game.end_time))
+            else:
+                info['duration'] = get_duration(game)
+
+            games.append(info)
 
         return Response({"games": games}, status=status.HTTP_200_OK)
 

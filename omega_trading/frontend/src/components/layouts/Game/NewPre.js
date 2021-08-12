@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Friends from '../Friends'
-import EditRules from './EditRules'
-import GameRules from './GameRules'
+import NewEditRules from './EditRules/NewEditRules'
+import NewGameRules from './NewGameRules'
 import ButtonLoader from '../Tools/ButtonLoader'
 import './Game.scss'
 
@@ -36,7 +36,7 @@ function NewPre(props) {
                     <button onClick={() => props.changeType(!props.game.type, props.game)} className='editButton'>{props.type_changing ? <ButtonLoader /> : props.game.type ? 'Public' : 'Private'}</button>
                 </div>
                 <div className="game_rules mmt b">
-                    {edit ? <EditRules edit={handleEdit} /> : <GameRules edit={handleEdit} /> }
+                    {edit ? <NewEditRules edit={handleEdit} /> : <NewGameRules edit={handleEdit} /> }
                 </div>
             </div>
             <div className="fc mmy b">

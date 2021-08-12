@@ -66,6 +66,18 @@
     background-color: #fff;
 }
 
+.ruleButton-hidden {
+    width: 110px;
+    height: 36px;
+    border: rgb(202, 202, 202) 1px solid;
+    border-radius: 5px;
+    font-size: 20;
+    font-weight: 400;
+    background-color: #fff;
+    color: rgb(202, 202, 202);
+    pointer-events: none;
+}
+
 .ruleButton:hover {
     background-color: rgb(202, 202, 202);
 }
@@ -215,4 +227,16 @@
 
 .input-bet-box {
     height: 314px;
+}
+
+.end-selector-row {
+    margin-top: 36px;
+}
+
+.end-selector {
+    margin-top: 36px;
+    width: 784px;
+    height: 72px;
+    font-size: 20px;
+    font-weight: 400;
 }

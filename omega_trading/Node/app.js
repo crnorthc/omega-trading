@@ -3,7 +3,7 @@ var Web3 = require('web3')
 var app = express();
 
 const hostname = '127.0.0.1';
-const port = 3000;
+const port = 1100;
 
 app.post('/test', function (req, res) {
     var web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545')
@@ -12,7 +12,7 @@ app.post('/test', function (req, res) {
     res.end( JSON.stringify(rest));
  })
 
-var server = app.listen(3000, function () {
+var server = app.listen(8101, function () {
     var host = server.address().address
     var port = server.address().port
     console.log("Example app listening at http://%s:%s", host, port)

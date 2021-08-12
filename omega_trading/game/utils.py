@@ -215,18 +215,27 @@ def get_end_time(end_time):
         'type': type
     }
 
+def get_duration(game):
+    duration = Duration.objects.filter(id=game.duration_id)
+    duration = duration[0]
+
+    return {
+        'days': duration.days,
+        'hours': duration.hours,
+        'mins': duration.minutes
+    }
+
 def get_game_info(game, user):
     host = User.objects.filter(username=user.username)
     host = host[0]
     player = get_player(user)
     players, charts, holdings, host = get_players_info(game, player)
 
-    return {
+    info = {
         'host': host,
         'name': game.name,
         'type': game.public,
         'start_amount': game.start_amount,
-        'time': get_end_time(int(game.end_time)),
         'room_code': game.room_code,
         'commission': game.commission,
         'options': game.options,
@@ -236,6 +245,13 @@ def get_game_info(game, user):
         'charts': charts,
         'holdings': holdings
     }
+
+    if game.duration_id == None:
+        info['time'] = get_end_time(int(game.end_time))
+    else:
+        info['duration'] = get_duration(game)
+
+    return info
 
 def get_symbol_data(symbol, start_time, end_time):
     r = requests.get('https://finnhub.io/api/v1/stock/candle?symbol=' + symbol +
