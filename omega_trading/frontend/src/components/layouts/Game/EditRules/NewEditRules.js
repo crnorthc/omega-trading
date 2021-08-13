@@ -75,6 +75,7 @@ function NewEditRules(props) {
             setEndType('duration')
         }
 
+        setAmount('$' + props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ','))
         setOptions(props.game.options)
     }
 

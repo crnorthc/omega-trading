@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-key */
 import React, { useEffect, useState } from 'react'
-import NewRules from './NewRules'
 
 // State Stuff
 import PropTypes from 'prop-types'
@@ -11,7 +10,6 @@ import { searchGames, searchNameCode } from '../../../actions/game'
 
 function SearchGame(props) {
 
-    const [type, setType] = useState('create')
     const [code, setCode] = useState('')
     const [name, setName] = useState('')
     const [join, setJoin] = useState('code')
@@ -47,10 +45,6 @@ function SearchGame(props) {
     const noPositions = {
         'color': 'rgb(175, 175, 175)',
         'border-color': 'rgb(175, 175, 175)'
-    }
-
-    const style = {
-        'background-color': 'rgb(202, 202, 202)'
     }
 
     const selected = {
@@ -248,12 +242,8 @@ function SearchGame(props) {
     )
 
     const room_code = (
-        <div className="rules fc ai-c jc-c">
-            <div className='enter-code fr ai-c jc-c'>
-                <input className="codeInput f24" onChange={e => setCode(e.target.value)} placeholder="Enter Code" type="text" />
-                <div className='f24 bld mmx'>or</div>
-                <input className="codeInput f24" onChange={e => setName(e.target.value)} placeholder="Enter Name" type="text" />                
-            </div>
+        <div className="rules fc lmy ai-c jc-a">
+            <input className="codeInput f24" onChange={e => setCode(e.target.value)} placeholder="Enter Code" type="text" />             
             <button onClick={() => basicSearch()} className='editButton lmt'>Search</button>
         </div>
     )
@@ -343,27 +333,17 @@ function SearchGame(props) {
         </div>
     )
 
-    const join_game = (       
+    return (       
         <div>
             {props.search_made && view == 'results' ? results : (
                 <div>
                     <div className='fr ai-c jc-a'>
-                        <button style={join == 'code' ? selected : null} onClick={() => setJoin('code')} className='f24 smmt tpb bld ai-c'>Room Code / Name</button>
+                        <button style={join == 'code' ? selected : null} onClick={() => setJoin('code')} className='f24 smmt tpb bld ai-c'>Room Code</button>
                         <button style={join == 'search' ? selected : null} onClick={() => setJoin('search')} className='f24 smmt tpb bld ai-c'>Search Games</button>
                     </div>            
                     {join == 'code' ? room_code : search}
                 </div>            
             )}
-        </div>
-    )
-
-    return (
-        <div className="smx hmt b">
-            <div className='bb fr ai-c'>
-                <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='create-game st br ai-c'>Create a Game</button>
-                <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='join-game st ai-c'>Join a Game</button>
-            </div>
-            {type == 'create' ? <NewRules/> : join_game}
         </div>
     )
 }

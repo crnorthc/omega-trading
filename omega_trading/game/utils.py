@@ -104,13 +104,13 @@ def get_players(game):
         formatted_players[user.username] = value
         
         if value['is_host']:
-            formatted_players['host'] = {
+            host = {
                 'username': user.username,
                 'first_name': user.first_name,
                 'last_name': user.last_name
             }
 
-    return formatted_players
+    return formatted_players, host
 
 def get_holdings(player):
     holdings = Holdings.objects.filter(player_id=player.id).values()
@@ -128,7 +128,7 @@ def get_players_info(game, player):
 
     user = get_user(player.user_id)
 
-    players_data = get_players(game)
+    players_data, host = get_players(game)
 
     for username, player in players_data.items():
         players[username] = {
@@ -153,7 +153,7 @@ def get_players_info(game, player):
                     holdings = get_holdings(player)
                 
 
-    return players, charts, holdings, players_data['host']
+    return players, charts, holdings, host
 
 def contract_players(game):
     players = get_players(game)
