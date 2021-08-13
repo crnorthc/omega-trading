@@ -5,7 +5,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loadUser } from '../../../actions/user'
-import { Redirect } from 'react-router-dom'
 
 
 
@@ -21,7 +20,6 @@ function Auth(props) {
 
     if (!props.user_loaded && props.user == null) {
         props.loadUser()
-        // return <Redirect to='/' />
     }
     
     return (

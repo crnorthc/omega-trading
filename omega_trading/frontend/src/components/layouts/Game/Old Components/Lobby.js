@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import { Redirect } from 'react-router-dom'
-import { startGame, loadGame, loadHistory } from '../../../actions/game'
-import CreateGame from './CreateGame'
+import { startGame, loadGame, loadHistory } from '../../../../actions/game'
+import CreateGame from '../NewGame'
 import Pregame from '../Pregame'
-import Betting from './Betting'
+import Betting from '../Betting'
 import Game from './Game'
 
 // State Stuff

@@ -8,10 +8,10 @@ import './Game.scss'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
-function NewGameRules(props) {
+function EditRules(props) {
     const [zone, setZone] = useState(null)
 
-    NewGameRules.propTypes = {
+    EditRules.propTypes = {
         editGame: PropTypes.func.isRequired,
         game: PropTypes.object
     }
@@ -41,20 +41,6 @@ function NewGameRules(props) {
     
     }
 
-    const formatDuration = (duration) => {
-        var day = ' days '
-        if (duration.days == 1) {
-            day = ' day '
-        }
-
-        var hour = ' hours '
-        if (duration.hours == 1) {
-            hour = ' hour '
-        }
-
-        return duration.days + day + duration.hours + hour + duration.mins + ' mins' 
-    }
-
     return (
         <div className="game_rules fc jc-s">
             <div className='rules-row'>
@@ -65,7 +51,7 @@ function NewGameRules(props) {
                 <div className='fc jc-c ai-e'>      
                     <div className='f22 bld'>End Date: {zone}</div>
                     <div className='f22'>
-                        {props.game.duration == undefined ? formatDate(props.game.time) : formatDuration(props.game.duration)}
+                        {formatDate(props.game.time)}
                     </div>                                        
                 </div>               
             </div>
@@ -92,4 +78,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game
 })
 
-export default connect(mapStateToProps, {})(NewGameRules)
+export default connect(mapStateToProps, {})(EditRules)

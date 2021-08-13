@@ -14,7 +14,6 @@ import React  from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 import './custom.scss'
 import './variables.scss'
-import NewRules from './components/layouts/Game/NewRules.js'
 import NewGame from './components/layouts/Game/NewGame.js'
 
 
@@ -34,7 +33,6 @@ function App() {
                 </Switch>                                        
             </Auth>           
             <Switch>
-                <Route exact path='/rules' component={NewRules} />
                 <Route exact path="/forgot-password" component={ForgotPassword} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/sign-up" component={SignUp} />
@@ -43,5 +41,6 @@ function App() {
         </Router>
     )
 }
+//<Route exact path='/rules' component={NewRules} />
 
 export default App
