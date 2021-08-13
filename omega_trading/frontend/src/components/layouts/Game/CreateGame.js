@@ -219,7 +219,7 @@ function CreateGame(props) {
 
     if (date !== null) {
         return (
-            <div>
+            <div className='b lmt'>
                 <div className='first-rule'>     
                     <div className='parameter'>
                         <div className='rule-name-left'>Name</div>

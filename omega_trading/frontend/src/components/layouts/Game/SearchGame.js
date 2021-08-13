@@ -10,8 +10,6 @@ import { searchGames, searchNameCode } from '../../../actions/game'
 
 function SearchGame(props) {
 
-    const [code, setCode] = useState('')
-    const [name, setName] = useState('')
     const [join, setJoin] = useState('code')
     const [amount, setAmount] = useState({from: 0, to:0})
     const [positions, setPositions] = useState({from: 0, to:0})
@@ -151,25 +149,6 @@ function SearchGame(props) {
         }
     }
 
-    const basicSearch = () => {
-        if (name != '') {
-            if (code != '') {
-                alert('search for either code or name')
-            }
-            else {
-                props.searchNameCode('', name)
-            }
-        }
-        else {
-            if (code == '') {
-                alert('please enter a name or code')
-            }
-            else {
-                props.searchNameCode(code, '')
-            }            
-        }
-    }
-
     const makeSearch = () => {
         var validParams = true
         if (amount.to < amount.from) {
@@ -239,13 +218,6 @@ function SearchGame(props) {
                     )}
             </div>
         </div>        
-    )
-
-    const room_code = (
-        <div className="rules fc lmy ai-c jc-a">
-            <input className="codeInput f24" onChange={e => setCode(e.target.value)} placeholder="Enter Code" type="text" />             
-            <button onClick={() => basicSearch()} className='editButton lmt'>Search</button>
-        </div>
     )
 
     const searchParams = (
@@ -336,12 +308,8 @@ function SearchGame(props) {
     return (       
         <div>
             {props.search_made && view == 'results' ? results : (
-                <div>
-                    <div className='fr ai-c jc-a'>
-                        <button style={join == 'code' ? selected : null} onClick={() => setJoin('code')} className='f24 smmt tpb bld ai-c'>Room Code</button>
-                        <button style={join == 'search' ? selected : null} onClick={() => setJoin('search')} className='f24 smmt tpb bld ai-c'>Search Games</button>
-                    </div>            
-                    {join == 'code' ? room_code : search}
+                <div>     
+                    {search}
                 </div>            
             )}
         </div>

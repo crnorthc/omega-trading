@@ -11,3 +11,25 @@
     font-size: 20;
     font-weight: 400;
 }
+
+.new-game-nav {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 100%;
+    background-color: rgb(98, 99, 110);
+}
+
+.game-nav-choices {
+    height: 40px;
+    color: #fff;
+    width: 400px;
+}
+
+.game-nav-choice {
+    border: 1px solid rgb(98, 99, 110);
+}
+
+.game-nav-choice:hover {
+    border: #fff 1px solid
+}

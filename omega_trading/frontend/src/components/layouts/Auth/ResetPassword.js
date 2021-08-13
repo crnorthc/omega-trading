@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { Redirect } from 'react-router-dom'
-import MyNavbar from '../MyNavbar'
 import queryString from 'query-string'
 
 // State Stuff

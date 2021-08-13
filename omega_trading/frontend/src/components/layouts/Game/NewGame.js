@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 import CreateGame from './CreateGame'
 import SearchGame from './SearchGame'
+import CodeJoin from './CodeJoin'
+import './Game.scss'
 
 
 
@@ -10,16 +12,27 @@ function NewGame() {
     const [type, setType] = useState('create')
 
     const style = {
-        'background-color': 'rgb(202, 202, 202)'
+        'border-bottom': '#fff 1px solid'
     }
 
     return (
-        <div className="smx hmt b">
-            <div className='bb fr ai-c'>
-                <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='create-game st br ai-c'>Create a Game</button>
-                <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='join-game st ai-c'>Join a Game</button>
+        <div>
+            <div className='new-game-nav fr jc-c ai-c'>
+                <div className='game-nav-choices fr ai-c jc-s'>
+                    <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='game-nav-choice ai-c'>
+                        <div className='tpy spx'>Create</div>
+                    </button>
+                    <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='game-nav-choice ai-c'>
+                        <div className='tpy spx'>Search</div>
+                    </button>
+                    <button style={type == 'code' ? style : null} onClick={() => setType('code')} className='game-nav-choice ai-c'>
+                        <div className='tpy spx'>Code</div>
+                    </button>
+                </div>            
             </div>
-            {type == 'create' ? <CreateGame/> : <SearchGame />}
+            <div className="smx hmt">            
+                {type == 'create' ? <CreateGame/> : type == 'code' ? <CodeJoin /> : <SearchGame />}
+            </div>
         </div>
     )
 }
