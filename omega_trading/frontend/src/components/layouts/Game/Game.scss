@@ -33,3 +33,156 @@
 .game-nav-choice:hover {
     border: #fff 1px solid
 }
+
+//--------------------------------
+//--------- SEARCH GAMES ---------
+//--------------------------------
+
+.search-cont {
+    position: fixed;
+    top: 150px;
+    left: 50%;
+    transform: translate(-50%, 0);
+}
+
+.search-games {
+    width: 1400px;
+    height: 700px;
+}
+
+.filters {
+    overflow-x: hidden;
+}
+
+.filter-choices {
+    max-height: 700px;
+    overflow-y: auto;
+    width: 290px;
+}
+
+.results {
+    width: 1110px;
+}
+
+.filter-dropper-up {
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+.filter-dropper-down {
+    stroke: #000;
+    stroke-width: 2px;
+}
+
+.check-box {
+    height: 20px;
+    width: 20px;
+    border: #000 1px solid;
+    border-radius: 5px;
+}
+
+.checked {
+    height: 20px;
+    width: 20px;
+    border-width:1px;
+    border-style: solid;
+    border-radius: 5px;
+    border-color: #000;
+    background-color: rgb(221, 221, 221);
+}
+
+.time-filter {
+    width: 125px;
+    height: 32px;
+    color: #000;
+}
+
+.noTime {
+    border: rgb(221, 221, 221) 1px solid;
+    color: rgb(221, 221, 221);
+    height: 32px;
+    border-radius: 5px;
+    background-color: rgb(221, 221, 221);
+    width: 125px;
+}
+
+.date-filter {
+    width: 150px;
+    height: 32px;
+    color: #000;
+    border: #000 1px solid;
+    border-radius: 5px;
+}
+
+.anyDate {
+    width: 150px;
+    height: 32px;
+    border: rgb(221, 221, 221) 1px solid;
+    border-radius: 5px;
+    background-color: rgb(221, 221, 221);
+}
+
+.duration-filter {
+    width: 160px;
+}
+
+.anyHour {
+    width: 36px;
+    height: 34px;
+    border: rgb(221, 221, 221) 1px solid;
+    border-radius: 5px;
+    background-color: rgb(221, 221, 221);
+}
+
+.anyMin {
+    width: 42px;
+    height: 34px;
+    border: rgb(221, 221, 221) 1px solid;
+    border-radius: 5px;
+    background-color: rgb(221, 221, 221);
+}
+
+.min-max {
+    width: 75px;
+    height: 34px;
+    border: #000 1px solid;
+    border-radius: 5px;
+}
+
+.min-max-filter {
+    width: 55px;
+    height: 30px;
+    border: none;
+}
+
+.min-max-filter:focus {
+    outline: none;
+}
+
+.money-sign {
+    width: 20px;
+    height: 34px;
+}
+
+.bet-filter-any {
+    width: 264.54px;
+}
+
+.noBet {
+    width: 75px;
+    height: 34px;
+    border: rgb(221, 221, 221) 1px solid;
+    border-radius: 5px;
+    background-color: rgb(221, 221, 221);
+}
+
+.crypto-input {
+    width: 150px;
+    height: 34px;
+    border: #000 1px solid;
+    border-radius: 5px;
+}
+
+.crypto-input:focus {
+    outline: none;
+}

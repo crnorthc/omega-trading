@@ -37,20 +37,10 @@ class CreateGame(APIView):
             commission = float(commission[1:])
 
         if endOn == 'date':
-            month = int(date['month'])
-            day = int(date['day'])
-            year = int(date['year'])
-            hour = int(date['hour'])
-            min = int(date['min'])
-            type = date['type']
-
-            if type == 'PM': 
-                hour += 12
-
-            time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
+            time = date_to_UNIX(date)
 
             game = Game(
-            start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=str(time), name=name, public=public, options=options)
+            start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=time, name=name, public=public, options=options)
         else:
             days = int(date['days'])
             hours = int(date['hours'])
@@ -85,7 +75,7 @@ class LoadGame(APIView):
         current_time = time.time()
 
         if game.end_time != '':
-            if int(game.end_time) <= current_time:
+            if game.end_time <= current_time:
                 return game_over(game)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
@@ -104,18 +94,7 @@ class EditGame(APIView):
         duration = Duration.objects.filter(id=game.duration_id)
 
         if endOn == 'date':
-            month = int(date['month'])
-            day = int(date['day'])
-            year = int(date['year'])
-            hour = int(date['hour'])
-            min = int(date['min'])
-            type = date['type']
-
-            if type == 'PM': 
-                hour += 12
-
-            time = int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
-            game.end_time = str(time)
+            game.end_time = date_to_UNIX(date)
             
             if duration.exists():
                 duration = duration[0]
@@ -229,6 +208,7 @@ class StartGame(APIView):
 
         game.start_time = start_time
         game.end_time = end_time
+        game.active = True
 
         current_day = time.localtime()
         current_day = (current_day[0], current_day[1], current_day[2], 1,
@@ -520,110 +500,45 @@ class GameInfo(APIView):
             'players': get_players(game)
         }
 
-        if game.is_contract: 
-            contract = get_contract_info(game)
-            game_info['contract'] = contract.bet
-
         return Response({'game': game_info}, status=status.HTTP_200_OK)
             
 
 class SearchGames(APIView):
 
     def post(self, request, format=None):
-        amount_floor = request.data['metrics']['amount']['from']
-        amount_ceil = request.data['metrics']['amount']['to']
-        bet_floor = request.data['metrics']['bet']['from']
-        bet_ceil = request.data['metrics']['bet']['to']
-        positions_floor = request.data['metrics']['positions']['from']
-        positions_ceil = request.data['metrics']['positions']['to']
-        days_floor = request.data['metrics']['days']['from']
-        days_ceil = request.data['metrics']['days']['to']
-        hours_floor = request.data['metrics']['hours']['from']
-        hours_ceil = request.data['metrics']['hours']['to']
-        mins_floor = request.data['metrics']['mins']['from']
-        mins_ceil = request.data['metrics']['mins']['to']
-        contract = request.data['metrics']['smart-bet']
+        duration = request.data['metrics']['duration']
 
-        if contract:
-            query = 'SELECT * FROM \
-                        (\
-                            SELECT * FROM \
-                                (\
-                                SELECT * FROM game_game \
-                                WHERE is_contract = TRUE AND public=TRUE\
-                                ) \
-                            FULL JOIN game_contract ON game_game.id=game_contract=game_id \
-                            WHERE game_contract.bet >= {floor} AND game_contract.bet <= {ceil} \
-                        ) \
-                        FULL JOIN game_duration ON game_game.duration_id=game_duration.id \
-                        WHERE '.format(floor=bet_floor, ceil=bet_ceil)
-        else:
-            query = 'SELECT * FROM \
-                        game_game FULL JOIN game_duration ON game_game.duration_id=game_duration.id \
-                    WHERE is_contract = FALSE AND public=TRUE AND '
-
-        if bet_ceil != 0:
-            query = query + 'bet >= {floor} AND bet <= {ceil} AND '.format(floor=bet_floor, ceil=bet_ceil)
-
-        if amount_ceil != 0:
-            query = query + 'start_amount >= {floor} AND start_amount <= {ceil} AND '.format(floor=amount_floor, ceil=amount_ceil)
-
-        if positions_ceil != 0:
-            query = query + 'positions >= {floor} AND positions <= {ceil} AND '.format(floor=positions_floor, ceil=positions_ceil)
-
-        if positions_ceil != 0:
-            query = query + 'positions >= {floor} AND positions <= {ceil} AND '.format(floor=positions_floor, ceil=positions_ceil)
-
-        query = query[:-5]
+        query = formulate_query(request)
 
         games = Game.objects.raw(query)
 
-        games_data = []
-        
-        for game in games:
-            days = game.days
-            hours = game.hours
-            mins = game.minutes
-            duration = False
-            game_info = {}
-        
-            if not days > days_floor and days < days_ceil:
-                if days_floor == days_ceil:
-                    if not hours > hours_floor and hours < hours_ceil:
-                        if hours_ceil == hours_floor:
-                            if mins >= mins_floor and mins <= mins_ceil:
-                                duration = True
-            else:
-                duration = True
-
-            if duration:
-                game_info ={
-                    'room_code': game.room_code,
-                    'name': game.name
-                }
-
-                games_data.append(game_info)
-
-        return Response({'search': games_data}, status=status.HTTP_200_OK)
+        return Response({'search': get_results(games, duration)}, status=status.HTTP_200_OK)
 
 
-class SearchBasic(APIView):
+class Populate(APIView):
     
     def post(self, request, format=None):
-        room_code = request.data['code']
-        name = request.data['name']
+        games = Game.objects.filter(active=False)[:50]
 
-        if room_code == '':
-            games = Game.objects.filter(name=name).values()
-        else:
-            games = Game.objects.filter(room_code=room_code).values()
+        results = []
 
-        games_info = []
+        for game in games:
+            players = Player.objects.filter(game_id=game.id).count()
 
-        for _, game in enumerate(games):
-            games_info.append({
-                'room_code': game['room_code'],
-                'name': game['name']
-            })
+            info = {
+                'room_code': game.room_code,
+                'name': game.name,
+                'size': players,
+                'status': game.start_time != '',
+                'host': get_host_username(game),
+                'eBet': game.e_bet
+            }
 
-        return Response({'search': games_info}, status=status.HTTP_200_OK)
+            if game.duration == None:
+                info['end'] = get_end_time(int(game.end_time))
+            else:
+                info['duration'] = get_duration(game)
+
+            results.append(info)
+
+        return Response({'search': results}, status=status.HTTP_200_OK)

@@ -14,6 +14,7 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
 import './custom.scss'
 import './variables.scss'
 import NewGame from './components/layouts/Game/NewGame.js'
+import Game from './components/layouts/Game/Game.js'
 
 
 function App() {
@@ -26,7 +27,7 @@ function App() {
                     <Route exact path="/chart" component={Symbol} />                                                        
                     <Route exact path="/reset-password" component={ResetPassword} />
                     <Route exact path="/account" component={Account} />
-                    <Route exact path="/game" component={NewGame} />
+                    <Route exact path="/game" component={Game} />
                     <Route exact path="/games" component={CurrentGames} />
                     <Route exact path="/join" component={NewGame} />                    
                 </Switch>                                        

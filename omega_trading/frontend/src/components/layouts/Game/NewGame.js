@@ -9,7 +9,7 @@ import './Game.scss'
 
 function NewGame() {
 
-    const [type, setType] = useState('create')
+    const [type, setType] = useState('join')
 
     const style = {
         'border-bottom': '#fff 1px solid'
@@ -30,9 +30,12 @@ function NewGame() {
                     </button>
                 </div>            
             </div>
-            <div className="smx hmt">            
-                {type == 'create' ? <CreateGame/> : type == 'code' ? <CodeJoin /> : <SearchGame />}
-            </div>
+            {type == 'join' ? <SearchGame /> :
+                <div className="smx hmt">            
+                    {type == 'create' ? <CreateGame/> : <CodeJoin />}
+                </div>            
+            }
+            
         </div>
     )
 }

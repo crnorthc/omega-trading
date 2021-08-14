@@ -10,6 +10,7 @@ import string
 import math
 import time
 import requests
+import datetime
 
 Invites = apps.get_model('users', 'Invites')
 SECONDS_IN_DAY = 24 * 60 * 60
@@ -140,7 +141,7 @@ def get_players_info(game, player):
         if 'address' in player:
             players[username]['address'] = player['address']
 
-        if game.start_time != "":
+        if game.start_time != 0:
             players[username]['path'], players[username]['periods'], players[username]['worth'] = load_portfolio(
                 player, game)
             players[username]['cash'] = player['cash']
@@ -247,7 +248,7 @@ def get_game_info(game, user):
     }
 
     if game.duration_id == None:
-        info['time'] = get_end_time(int(game.end_time))
+        info['time'] = get_end_time(game.end_time)
     else:
         info['duration'] = get_duration(game)
 
@@ -666,3 +667,193 @@ def format_duration(game_value):
         'hours': game_value['hours'],
         'mins': game_value['minutes']
     }
+
+def formulate_query(request):
+    amounts = request.data['metrics']['amounts']
+    commissions = request.data['metrics']['commission']
+    ebet = request.data['metrics']['ebet']
+    date = request.data['metrics']['date']
+    duration = request.data['metrics']['duration']
+    options = request.data['metrics']['options']
+
+    if options:
+        options = 'TRUE'
+    else:
+        options = 'FALSE'
+
+    date_query = get_date_query(date)
+
+    duration_query = ''
+    if duration != None:
+        duration_query = 'FULL JOIN game_duration ON game.duration_id=game_duration.id'
+
+    crypto_query = ebet_query(ebet, options)
+
+    amount = amounts_query(amounts)
+    commission = commissions_query(commissions)
+
+    return 'SELECT * FROM ' \
+            '({crypto}) AS game ' \
+            '{duration} ' \
+            'WHERE {date}{amount}{commission}'.format(duration=duration_query, crypto=crypto_query, date=date_query, amount=amount, commission=commission)
+
+def matching_duration(game, duration):
+    days = game.days
+    hours = game.hours
+    mins = game.minutes
+
+    if duration != None:
+        day = duration['days']
+        hour = duration['hours']
+        min = duration['mins']
+
+        if day != 'any':
+            if hour != 'any':
+                if min != 'any':
+                    if day == days and hours == hour and mins == min:
+                        return True
+                else:
+                    if day == days and hours == hour:
+                        return True
+            else:
+                if day == days:
+                    return True
+        else:
+            return True
+    else:
+        return True
+
+    return False
+
+def get_results(games, duration):
+    results = []
+
+    for _, game in enumerate(games):
+            duration_match = matching_duration(game, duration)
+
+            if duration_match:
+                players = Player.objects.filter(game_id=game.id).count()
+
+                info = {
+                'room_code': game.room_code,
+                'name': game.name,
+                'size': players,
+                'status': game.start_time != '',
+                'host': get_host_username(game),
+                'eBet': game.e_bet
+                }
+
+                if game.duration == None:
+                    info['end'] = get_end_time(int(game.end_time))
+                else:
+                    info['duration'] = get_duration(game)
+
+                results.append(info)
+
+    return results
+
+def date_to_UNIX(date):
+    month = int(date['month'])
+    day = int(date['day'])
+    year = int(date['year'])
+    hour = int(date['hour'])
+    min = int(date['min'])
+    type = date['type']
+
+    if type == 'PM': 
+        hour += 12
+
+    return int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
+
+def UNIX_range(date):
+
+    if date['year'] == 'any':
+        return 'any'
+    else:
+        month = int(date['month'])
+        day = int(date['day'])
+        year = int(date['year'])
+
+
+        if date['hour'] == 'any':            
+            return {
+                'min': int(datetime.datetime(year, month, day, 0).timestamp()),
+                'max': int(datetime.datetime(year, month, day, 23).timestamp())
+                }
+        else:
+            hour = int(date['hour'])
+            min = int(date['min'])
+            type = date['type']
+
+            if type == 'PM': 
+                hour += 12
+
+            return {'value': int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())}
+
+def get_date_query(date):
+    if date != None:
+        range = UNIX_range(date)
+        if range == 'any':
+            return 'game.end_time!=0'
+        else:
+            if 'min' in range:
+                return 'game.end_time>={floor} AND game.end_time<={ceil}'.format(floor=range['min'], ceil=range['max'])
+            else:
+                return 'game.end_time={time}'.format(time=range['value'])
+    else:
+        return 'game.end_time=0'
+
+def ebet_query(ebet, options):
+    if ebet != None:
+        crypto_query = '1=1'
+        if ebet['crypto'] != 'any':
+            crypto_query = 'crypto=' + ebet['crypto']
+
+        if ebet['amount'] == 'any':
+            return 'SELECT * FROM ' \
+                    '('\
+                        'SELECT * FROM game_game ' \
+                        'WHERE public=TRUE AND options={options} AND active=FALSE '\
+                    ') AS game'\
+                    'FULL JOIN game_ebet ON game.id=game_ebet ' \
+                    'WHERE {crypto}'.format(options=options, crypto=crypto_query)
+        else:
+            return 'SELECT * FROM '\
+                    '('\
+                        'SELECT * FROM game_game ' \
+                        'WHERE public=TRUE AND options={options} AND active=FALSE'\
+                    ') AS game' \
+                    'FULL JOIN game_ebet ON game.id=game_ebet ' \
+                    'WHERE {crypto} AND game_ebet.bet >= {floor} AND game_ebet.bet <= {ceil}'.format(floor=ebet['min'], ceil=ebet['max'], crypto=crypto_query, options=options)
+    else:
+        return 'SELECT * FROM game_game ' \
+                'WHERE public=TRUE AND options={options} AND active=FALSE'.format(options=options)
+
+def amounts_query(amounts):
+    query = ''
+
+    if amounts == 'any':
+        return query
+    
+    for amount in amounts:
+        amount = amount[1:].replace(',','')
+
+        query += ' AND game_game.start_amount={amount}'.format(amount=amount)
+
+    return query
+
+def commissions_query(commissions):
+    query = ''
+    
+    if commissions == 'any':
+        return query
+
+    for commission in commissions:
+        commission = float(commission[1:])
+
+        query += ' AND game.commission={commission}'.format(commission=commission)
+
+    return query
+
+
+

@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.deletion import SET_NULL
+from django.db.models.fields.related import ForeignKey
 
 class Duration(models.Model):
     days = models.IntegerField(default=0)
@@ -11,14 +13,20 @@ class Game(models.Model):
     name = models.CharField(max_length=20)
     start_amount = models.FloatField(default=10000)
     room_code = models.CharField(max_length=8)
-    start_time = models.CharField(max_length=10)
-    end_time = models.CharField(max_length=10)
+    start_time = models.IntegerField(default=0)
+    end_time = models.IntegerField(default=0)
     commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
     e_bet = models.BooleanField(default=False)
     public = models.BooleanField(default=True)
     options = models.BooleanField(default=True)
     duration = models.ForeignKey(Duration, on_delete=models.SET_NULL, null=True)
+
+
+class Ebet(models.Model):
+    bet = models.DecimalField(max_digits=25, decimal_places=10)
+    crypto = models.CharField(max_length=10)
+    game = ForeignKey(Game, on_delete=models.CASCADE)
 
 
 class Player(models.Model):

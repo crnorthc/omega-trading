@@ -214,7 +214,6 @@ function CreateGame(props) {
                 </div>
             </div>
         )
-        
     }
 
     if (date !== null) {

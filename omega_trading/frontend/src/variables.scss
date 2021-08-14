@@ -17,6 +17,10 @@
     justify-content: end;
 }
 
+.jc-st {
+    justify-content: flex-start;
+}
+
 .jc-a {
     justify-content: space-around;
 }
@@ -218,14 +222,9 @@
     margin-top: 24px;
 }
 
-// Medium Padding Bottom
-.mpb {
-    padding-bottom: 24px;
-}
-
-// Medium Padding Top
-.mpt {
-    padding-top: 24px;
+// Medium Margin Bottom 
+.mmb {
+    margin-bottom: 24px;
 }
 
 // Medium Margin Left
@@ -320,6 +319,16 @@
 }
 
 
+
+// Medium Padding Bottom
+.mpb {
+    padding-bottom: 24px;
+}
+
+// Medium Padding Top
+.mpt {
+    padding-top: 24px;
+}
 
 // Medium Padding T/B
 .mpy {
