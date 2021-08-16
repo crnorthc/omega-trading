@@ -17,6 +17,10 @@
     justify-content: end;
 }
 
+.jc-st {
+    justify-content: flex-start;
+}
+
 .jc-a {
     justify-content: space-around;
 }
@@ -152,64 +156,75 @@
     height: 63px;
 }
 
-// Small Margin Top
-.smmt {
-    margin-top: 12px;
+//------------ Margin ------------
+
+// Teeny Tiny Margin R/L
+.ttmx {
+    margin-right: 3px;
+    margin-left: 3px;
 }
 
-// Medium Margin Top
-.mmt {
-    margin-top: 24px;
+// Tiny Margin Left
+.tml {
+    margin-left: 6px;
 }
 
-// Huge Margin Top
-.hmt {
-    margin-top: 72px;
+// Tiny Margin Right
+.tmr {
+    margin-right: 6px;
 }
 
-// Medium Padding Bottom
-.mpb {
-    padding-bottom: 24px;
+//Tiny Margin T/B
+.tmy {
+    margin-top: 6px;
+    margin-bottom: 6px;
 }
 
-// Medium Padding Top
-.mpt {
-    padding-top: 24px;
+// Tiny Margin R/L
+.tmx {
+    margin-right: 6px;
+    margin-left: 6px;
 }
 
-// Large Margin Top 
-.lmt {
-    margin-top: 36px;
-}
 
-// Large Padding Left
-.lpl {
-    padding-left: 36px;
-}
-
-// Tiny Padding Bottom
-.tpb {
-    padding-bottom: 6px;
-}
-
-// Small Padding Left
-.spl {
-    padding-left: 12px;
-}
-
-// Small Padding Right
-.spr {
-    padding-right: 12px;
-}
 
 // Small Margin Left
 .sml {
     margin-left: 12px;
 }
 
+// Small Margin Top
+.smmt {
+    margin-top: 12px;
+}
+
 // Small Margin Bottom
 .smb {
     margin-bottom: 12px;
+}
+
+// Small Margin R/L
+.smx {
+    margin-right: 12px;
+    margin-left: 12px;
+}
+
+// Small Margin T/B
+.smy {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+
+
+// Medium Margin Top
+.mmt {
+    margin-top: 24px;
+}
+
+// Medium Margin Bottom 
+.mmb {
+    margin-bottom: 24px;
 }
 
 // Medium Margin Left
@@ -222,46 +237,10 @@
     margin-right: 24px;
 }
 
-// Tiny Margin R/L
-.tmx {
-    margin-right: 6px;
-    margin-left: 6px;
-}
-
-// Small Margin R/L
-.smx {
-    margin-right: 12px;
-    margin-left: 12px;
-}
-
-// Large Margin R/L
-.lmx {
-    margin-right: 48px;
-    margin-left: 48px;
-}
-
 // Medium Margin R/L
 .mmx {
     margin-right: 24px;
     margin-left: 24px;
-}
-
-// Teeny Tiny Margin R/L
-.ttmx {
-    margin-right: 3px;
-    margin-left: 3px;
-}
-
-//Tiny Margin T/B
-.tmy {
-    margin-top: 6px;
-    margin-bottom: 6px;
-}
-
-// Small Margin T/B
-.smy {
-    margin-top: 12px;
-    margin-bottom: 12px;
 }
 
 // Medium Margin T/B
@@ -270,10 +249,85 @@
     margin-bottom: 24px;
 }
 
+
+
+// Large Margin Top 
+.lmt {
+    margin-top: 36px;
+}
+
+// Large Margin R/L
+.lmx {
+    margin-right: 48px;
+    margin-left: 48px;
+}
+
 // Large Margin T/B
 .lmy {
     margin-top: 48px;
     margin-bottom: 48px;
+}
+
+
+
+// Huge Margin Top
+.hmt {
+    margin-top: 72px;
+}
+
+//----------- Padding -----------
+
+// Tiny Padding Bottom
+.tpb {
+    padding-bottom: 6px;
+}
+
+.tpy {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+// Tiny Padding
+.tp {
+    padding: 3px 3px;
+}
+
+// Small Padding Left
+.spl {
+    padding-left: 12px;
+}
+
+// Small Padding Right
+.spr {
+    padding-right: 12px;
+}
+
+// Small Padding R/L
+.spx {
+    padding-right: 6px;
+    padding-left: 6px;
+}
+
+// Small Padding T/B
+.spy {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.sp {
+    padding: 6px 6px;
+}
+
+
+
+// Medium Padding Bottom
+.mpb {
+    padding-bottom: 24px;
+}
+
+// Medium Padding Top
+.mpt {
+    padding-top: 24px;
 }
 
 // Medium Padding T/B
@@ -282,17 +336,47 @@
     padding-bottom: 24px;
 }
 
-// Tiny Padding
-.tp {
-    padding: 3px 3px;
+
+
+// Large Padding Left
+.lpl {
+    padding-left: 36px;
 }
 
-// Tiny Margin Left
-.tml {
-    margin-left: 6px;
+
+
+
+//--------------------------------
+//----------- Buttons ------------
+//--------------------------------
+
+.editButton {
+    width: 114px;
+    height: 36px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    background-color: #fff;
 }
 
-// Tiny Margin Right
-.tmr {
-    margin-right: 6px;
+.editButton:hover {
+    background-color: rgb(202, 202, 202);
+}
+
+.editButtonHidden {
+    width: 114px;
+    height: 36px;
+    border: #727272 1px solid;
+    border-radius: 5px;
+    background-color: #dfdfdf;
+    color: #727272;
+    cursor: default !important;
+}
+
+.editButtonDisabled {
+    width: 114px;
+    height: 36px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: default !important;
 }

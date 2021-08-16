@@ -98,17 +98,19 @@ export default function (state = initialState, action) {
     case MAKING_SEARCH: 
         return {
             ...state,
-            search_made: false
+            search_made: false,
+            making_search: true
         }
     case SEARCH_LOADED:
         var searched_games = action.payload
         if (searched_games.length == 0) {
-            searched_games = null
+            searched_games = 'empty'
         }
         return {
             ...state,
             search: searched_games,
-            search_made: true
+            search_made: true,
+            making_search: false
         }
     case GAMES_LOADED:
         var game_list = action.payload

@@ -10,7 +10,8 @@ import {
     CHECK_SUCCESS,
     ACTION_FAILED,
     VERIFY_EMAIL,
-    VERIFYING_EMAIL
+    VERIFYING_EMAIL,
+    LOGGING_OUT
 } from './types'
 
 
@@ -136,6 +137,10 @@ export const logout = () => dispatch => {
             'Authorization': 'Token ' + getCookie()
         }
     }
+
+    dispatch({
+        type: LOGGING_OUT
+    })
 
     const body = JSON.stringify({})
 

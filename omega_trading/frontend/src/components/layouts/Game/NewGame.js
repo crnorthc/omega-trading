@@ -1,58 +1,43 @@
-/* eslint-disable no-unreachable */
 /* eslint-disable react/jsx-key */
-/* eslint-disable react/prop-types */
-import React from 'react'
-import queryString from 'query-string'
-
-// State Stuff
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { loadGame } from '../../../actions/game'
-import Loader from '../Tools/Loader'
-import NewPre from './NewPre'
+import React, { useState } from 'react'
+import CreateGame from './CreateGame'
+import SearchGame from './SearchGame'
+import CodeJoin from './CodeJoin'
+import './Game.scss'
 
 
 
-function NewGame(props) {
+function NewGame() {
 
-    NewGame.propTypes = {
-        loadGame: PropTypes.func.isRequired,
-        selecting_game: PropTypes.bool,
-        game: PropTypes.string
+    const [type, setType] = useState('join')
+
+    const style = {
+        'border-bottom': '#fff 1px solid'
     }
 
-    const values = queryString.parse(props.location.search)
-    const keys = Object.keys(values)
-    if (props.game == null) {
-        if (keys.length != 0) {
-            props.loadGame(values.room_code)
-        }
-    }
-    else {
-        if (props.game.room_code !== values.room_code) {
-            props.loadGame(values.room_code)
-        }
-    }
-
-    if (props.game == null || props.selecting_game) {
-        return <Loader page={true} />
-    }
-    else {
-        if (props.game.active) {
-            return (
-                <div className='title'>Need To create this page</div>
-            )
-        }
-        else {
-            return <NewPre />
-        }
-    }
+    return (
+        <div>
+            <div className='new-game-nav fr jc-c ai-c'>
+                <div className='game-nav-choices fr ai-c jc-s'>
+                    <button style={type == 'create' ? style : null} onClick={() => setType('create')} className='game-nav-choice ai-c'>
+                        <div className='tpy spx'>Create</div>
+                    </button>
+                    <button style={type == 'join' ? style : null} onClick={() => setType('join')} className='game-nav-choice ai-c'>
+                        <div className='tpy spx'>Search</div>
+                    </button>
+                    <button style={type == 'code' ? style : null} onClick={() => setType('code')} className='game-nav-choice ai-c'>
+                        <div className='tpy spx'>Code</div>
+                    </button>
+                </div>            
+            </div>
+            {type == 'join' ? <SearchGame /> :
+                <div className="smx hmt">            
+                    {type == 'create' ? <CreateGame/> : <CodeJoin />}
+                </div>            
+            }
+            
+        </div>
+    )
 }
 
-
-const mapStateToProps = (state) => ({
-    selecting_game: state.game.selecting_game,
-    game: state.game.game
-})
-
-export default connect(mapStateToProps, { loadGame })(NewGame)
+export default (NewGame)

@@ -518,6 +518,28 @@ export const searchGames = (metrics) => (dispatch) => {
     })
 }
 
+export const populateSearch = () => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    var body = JSON.stringify({})
+
+    axios.post('/game/populate', body, config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: SEARCH_LOADED,
+                payload: res.data.search,
+            })
+        }
+    })
+}
+
 export const searchNameCode = (code, name) => (dispatch) => {
     const config = {
         headers: {

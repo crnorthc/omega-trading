@@ -2,10 +2,10 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react'
-import { createGame, editGame, joinGame } from '../../../actions/game'
-import Loader from '../Tools/Loader'
-import Bet from './Bet'
-import ButtonLoader from '../Tools/ButtonLoader'
+import { createGame, editGame, joinGame } from '../../../../actions/game'
+import Loader from '../../Tools/Loader'
+import Bet from '../Bet'
+import ButtonLoader from '../../Tools/ButtonLoader'
 import './Rules.scss'
 
 // State Stuff
@@ -15,34 +15,28 @@ import { connect } from 'react-redux'
 
 
 
-function NewNewRules(props) {
+function NewRules(props) {
 
     const [amount, setAmount] = useState('$50,000')
     const [commission, setCommission] = useState(null)
     const [date, setDate] = useState(null)
     const [current, setCurrent] = useState(null)
-    const [options, setOptions] = useState(true)
-    const [bet, setBet] = useState('no')
-    const [type, setType] = useState('AM')
-    const [max, setMax] = useState(null)
-    const [name, setName] = useState('')
-    const [Public, setPublic] = useState(true)
-    const [show, Show] = useState(false)
-    const [endType, setEndType] = useState('date')
-    // Date
     const [end, setEnd] = useState(null)
     const [hour, setHour] = useState(null)
     const [minDate, setMinDate] = useState(null)
     const [min, setMin] = useState('00')
-    //Duration
-    const [days, setDays] = useState('')
-    const [hours, setHours] = useState('')
-    const [mins, setMins] = useState('')
-    const minutes = [0, 15, 30, 45]
+    const [options, setOptions] = useState(true)
+    const [bet, setBet] = useState('no')
+    const [type, setType] = useState('AM')
+    const [max, setMax] = useState(null)
+    const [zone, setZone] = useState(null)
+    const [name, setName] = useState('')
+    const [Public, setPublic] = useState(true)
+    const [show, Show] = useState(false)
 
     var start_amounts = ['$50,000', '$100,000', '$250,000', '$500,000', '$1,000,000']
 
-    NewNewRules.propTypes = {
+    NewRules.propTypes = {
         createGame: PropTypes.func.isRequired,
         joinGame: PropTypes.func.isRequired,
         editGame: PropTypes.func.isRequired,
@@ -81,8 +75,11 @@ function NewNewRules(props) {
             setType('PM')
         }
 
+        var timezone = new Date().toLocaleTimeString(undefined,{timeZoneName:'short'}).split(' ')[2]
+
         setCurrent((Date.now() / 1000).toFixed(0))
         setHour(Hour)
+        setZone(timezone)
         setMax((year + 1) + '-' + month + '-' + day)
         setMinDate(year + '-' + month + '-' + day)
         setDate(year + '-' + month + '-' + day)
@@ -112,6 +109,7 @@ function NewNewRules(props) {
     }
 
     const handleDate = (date) => {
+        console.log(date)
         var month = Number(date.substring(5, 7))
         var day = Number(date.substring(8))
         var year = Number(date.substring(0,4))
@@ -142,79 +140,20 @@ function NewNewRules(props) {
 
     const create = () => {
         if (name != '') {
-            var comish = commission
-            if (commission == 'Disabled') {
-                comish = null
-            }
+            if (checkDate()) {
+                var comish = commission
+                if (commission == 'Disabled') {
+                    comish = null
+                }
 
-            if (endType == 'date') {
-                if (checkDate()) {
-                    var end_date = {
-                        year: end.year,
-                        month: end.month,
-                        day: end.day,
-                        hour: Number(hour),
-                        min: Number(min),
-                        type: type
-                    }
+                const end_time = {
+                    hour: Number(hour),
+                    min: Number(min),
+                    type: type
                 }
+                props.createGame(amount, bet, comish, end, end_time, name, Public, options)
             }
-            else {
-                end_date = {
-                    days: Number(days),
-                    hours: Number(hours),
-                    mins: Number(mins)
-                }
-            }
-                
-            props.createGame(amount, bet, comish, end_date, endType, name, Public, options)
-            
         }
-    }
-
-    const endDate = () => {
-        return (     
-            <div className='fr'>
-                <input onChange={((e) => handleDate(e.target.value))} type="date" className="date-input" value={date} min={minDate} max={max}/>
-                <div className='time-choice'>
-                    <select className='time-input' value={hour} onChange={(e) => setHour(e.target.value)}>
-                        {choices([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])}
-                    </select>
-                    <select className='time-input' value={min} onChange={(e) => setMin(e.target.value)}>
-                        {choices(['00', '15', '30', '45'])}
-                    </select>
-                    <select className='time-input' value={type} onChange={(e) => setType(e.target.value)}>
-                        {choices(['AM', 'PM'])}
-                    </select>
-                </div>                     
-            </div>                                                     
-        )
-    }
-
-    const Duration = () => {
-        return (
-            <div className='fr ai-c jc-c'>
-                <div className='fc ai-st'>
-                    <div className='duration'>Days</div>
-                    <input onChange={(e) => setDays(e.target.value)} className='duration-input' placeholder="0" type='number' />                    
-                </div>
-                <div className='fc ai-c smx'>
-                    <div className='duration'>Hours</div>
-                    <input onChange={(e) => setHours(e.target.value)} className='duration-input' placeholder="0" type='number' />                    
-                </div>
-                <div className='fc ai-e'>
-                    <div className='duration'>Mins</div>
-                    <select className='min-input' placeholder="0" onChange={(e) => setMins(e.target.value)}>
-                        {
-                            minutes.map(min => {
-                                return <option className='min-option' value={min}>{min}</option>
-                            })
-                        }
-                    </select>                    
-                </div>
-            </div>
-        )
-        
     }
 
     if (date !== null) {
@@ -239,33 +178,39 @@ function NewNewRules(props) {
                                 {choices(start_amounts)}
                             </select>
                         </div>
+                        <div className='parameter'>      
+                            <div className='rule-name-right'>End Date: {zone}</div>
+                            <div className='fr'>
+                                <input onChange={((e) => handleDate(e.target.value))} type="date" className="date-input" value={date} min={minDate} max={max}/>
+                                <div className='time-choice'>
+                                    <select className='time-input' value={hour} onChange={(e) => setHour(e.target.value)}>
+                                        {choices([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])}
+                                    </select>
+                                    <select className='time-input' value={min} onChange={(e) => setMin(e.target.value)}>
+                                        {choices(['00', '15', '30', '45'])}
+                                    </select>
+                                    <select className='time-input' value={type} onChange={(e) => setType(e.target.value)}>
+                                        {choices(['AM', 'PM'])}
+                                    </select>
+                                </div>                     
+                            </div>                                        
+                        </div>               
+                    </div>
+                    <div className='rules-row'>
                         <div className='parameter'>
-                            <div className='fr jc-c tpb'>Options</div>
+                            <div className='rule-name-left'>Commision</div>
+                            <select className='start-input' placeholder="0" onChange={(e) => setCommission(e.target.value)}>
+                                {choices(commissions())}
+                            </select>
+                        </div>
+                        <div className='parameter'>
+                            <div className='rule-name-right'>Options</div>
                             <div className='yesnoCont fr jc-s'>
                                 <button style={options ? selected : not} onClick={() => setOptions(true)} className='yes'>Yes</button>
                                 <button style={!options ? selected : not} onClick={() => setOptions(false)} className='no'>No</button>
                             </div>
                         </div>
-                        <div className='parameter'>
-                            <div className='rule-name-right'>Commision</div>
-                            <select className='start-input' placeholder="0" onChange={(e) => setCommission(e.target.value)}>
-                                {choices(commissions())}
-                            </select>
-                        </div>                        
                     </div>
-                    <div className='rules-row'>
-                        <div className='parameter'> 
-                            <div className='rule-name-left'>End On</div>
-                            <div className='yesnoCont fr jc-s'>
-                                <button style={endType == 'date' ? selected : not} onClick={() => setEndType('date')} className='yes'>Date</button>
-                                <button style={endType == 'duration' ? selected : not} onClick={() => setEndType('duration')} className='no'>Timer</button>
-                            </div>    
-                        </div>  
-                        <div className='parameter'>
-                            {endType == 'date' ? endDate() : Duration()}
-                        </div>                                                                         
-                    </div>
-                                
                     <div className='rules-row'>
                         <div className='parameter'>
                             <div className='rule-name-left'>E-Bet</div>
@@ -275,7 +220,7 @@ function NewNewRules(props) {
                             </div>
                         </div>
                         <div className='parameter'>
-                            {bet =='yes' ? <button onClick={() => Show(true)} className='ruleButton'>Define</button> : <button className='ruleButton-hidden'>Define</button>}
+                            {bet =='yes' ? <button onClick={() => Show(true)} className='ruleButton'>Define</button> : null}
                         </div>
                     </div>
                 </div>  
@@ -299,4 +244,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game
 })
 
-export default connect(mapStateToProps, { createGame, editGame, joinGame })(NewNewRules)
+export default connect(mapStateToProps, { createGame, editGame, joinGame })(NewRules)

@@ -14,15 +14,14 @@ function Auth(props) {
     Auth.propTypes = {
         loadUser: PropTypes.func.isRequired,
         user: PropTypes.object,
-        user_loaded: PropTypes.bool,
-        logged_out: PropTypes.bool,
+        user_loaded: PropTypes.bool
     }
 
 
     if (!props.user_loaded && props.user == null) {
         props.loadUser()
-        // return <Redirect to='/' />
     }
+
     
     return (
         <div className='pageContainer'>
@@ -35,7 +34,6 @@ function Auth(props) {
 const mapStateToProps = (state) => ({
     user: state.user.user,
     user_loaded: state.user.user_loaded,
-    logged_out: state.auth.logged_out
 })
 
 export default connect(mapStateToProps, { loadUser })(Auth)

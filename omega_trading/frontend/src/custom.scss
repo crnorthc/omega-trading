@@ -34,7 +34,11 @@ h4,
 
 a {
     text-decoration: none !important;
-    color: #000 !important;
+    color: inherit;
+}
+
+a:hover {
+    color: inherit;
 }
 
 body {
@@ -441,16 +445,6 @@ body {
     color: #727272;
 }
 
-.editButtonHidden {
-    width: 114px;
-    height: 36px;
-    border: #727272 1px solid;
-    border-radius: 5px;
-    background-color: #dfdfdf;
-    color: #727272;
-    cursor: default !important;
-}
-
 .startup-pregame {
     width: 711px;
     margin: 0px 24px 0px 0px;
@@ -587,18 +581,6 @@ body {
 .editProfile {
     height: 72px;
     width: 114px;
-}
-
-.editButton {
-    width: 114px;
-    height: 36px;
-    border: #000 1px solid;
-    border-radius: 5px;
-    background-color: #fff;
-}
-
-.editButton:hover {
-    background-color: rgb(202, 202, 202);
 }
 
 .friends {
@@ -984,125 +966,6 @@ input[type="number"] {
 .message {
     width: 245px;
     font-size: 14px;
-}
-
-/******* NavBar *******/
-
-.symbolSearch {
-    display: inline;
-    margin-left: 50px;
-}
-
-.searchIcon {
-    width: 25px;
-    height: 25px;
-    padding-right: 5px;
-    padding-left: 2px;
-    padding-bottom: 2px;
-}
-
-.searchInput {
-    border: none;
-    outline: none;
-    width: 300px;
-}
-
-.dropdown-nav {
-    position: fixed;
-    background-color: #fff;
-    width: 325px;
-    border-style: solid;
-    border-width: 0px 1px 1px 1px;
-    border-color: rgb(122, 122, 122);
-}
-
-.symbol-link {
-    display: block;
-    text-decoration: none;
-    cursor: pointer;
-    padding-left: 20px;
-    padding-top: 10px;
-}
-
-.symbol-link:hover,
-.logout:hover {
-    background-color: rgb(218, 218, 218);
-}
-
-.company-symbol {
-    display: inline;
-    padding-right: 10px;
-    color: #000;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.company {
-    display: inline;
-    color: rgb(58, 58, 58);
-    font-size: 12px;
-}
-
-.NavBar {
-    position: relative;
-    width: 1070px;
-    display: flex;
-    margin: auto;
-    align-items: center;
-    background-color: rgb(255, 255, 255);
-    margin-bottom: 30px;
-    padding-top: 1rem;
-    padding-bottom: 0.5rem;
-    padding-left: 30px;
-    padding-right: 30px;
-    justify-content: space-between;
-}
-
-.nav-brand {
-    padding-top: 0.3125rem;
-    padding-bottom: 0.3125rem;
-    margin-right: 1rem;
-    font-size: 1.25rem;
-    text-decoration: none;
-    white-space: nowrap;
-}
-
-#home-link {
-    left: 30px;
-}
-
-.loaderContainer {
-    height: 10em;
-}
-
-.navLoginSignup {
-    height: 40px;
-    border: #000 1px solid;
-    border-radius: 5px;
-    margin-left: 342px;
-}
-
-.accountButtons {
-    height: 40px;
-    margin-left: 60px;
-}
-
-.accountLink {
-    margin-right: 48px;
-    padding: 7px 0px;
-}
-
-.accountLink:hover {
-    border-bottom: rgb(66, 66, 66) 1px solid;
-}
-
-.logout {
-    padding: 7px 12px;
-}
-
-.navLogin,
-.navSignup {
-    padding: 0 12px;
 }
 
 /******* Loader *******/

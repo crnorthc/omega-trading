@@ -11,7 +11,8 @@ import {
     ACTION_FAILED,
     VERIFY_EMAIL,
     VERIFYING_EMAIL,
-    USER_LOADED
+    USER_LOADED,
+    LOGGING_OUT
 } from '../actions/types'
 
 const initialState = {
@@ -24,7 +25,8 @@ const initialState = {
     passwordReset: false,
     logging_in: false,
     creating_user: false,
-    verifying_emaill: false
+    verifying_emaill: false,
+    logging_out: false
 }
 
 export default function (state = initialState, action) {
@@ -50,6 +52,11 @@ export default function (state = initialState, action) {
             ...state,
             creating_user: false,
             emailSent: true
+        }
+    case LOGGING_OUT:
+        return {
+            ...state,
+            logging_out: true
         }
     case ACTION_FAILED:
         return {
