@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, Redirect } from 'react-router-dom'
 import './nav.scss'
 
 // State Stuff
@@ -51,8 +51,6 @@ function MyNavbar(props) {
         <div>Loading...</div>
     )
     
-
-
     return (
         <div className='header'>
             <div className='navbar'>

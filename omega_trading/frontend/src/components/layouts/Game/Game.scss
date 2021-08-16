@@ -186,3 +186,12 @@
 .crypto-input:focus {
     outline: none;
 }
+
+//--------------------------------
+//------------ RESULTS -----------
+//--------------------------------
+
+.results {
+    max-height: 700px;
+    overflow-y: auto;
+}

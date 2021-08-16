@@ -74,7 +74,7 @@ class LoadGame(APIView):
 
         current_time = time.time()
 
-        if game.end_time != '':
+        if game.end_time != 0:
             if game.end_time <= current_time:
                 return game_over(game)
 
@@ -507,10 +507,12 @@ class SearchGames(APIView):
 
     def post(self, request, format=None):
         duration = request.data['metrics']['duration']
-
+        game = Game.objects.filter(id=22)
+        game = game[0]
         query = formulate_query(request)
 
         games = Game.objects.raw(query)
+
 
         return Response({'search': get_results(games, duration)}, status=status.HTTP_200_OK)
 
@@ -529,7 +531,7 @@ class Populate(APIView):
                 'room_code': game.room_code,
                 'name': game.name,
                 'size': players,
-                'status': game.start_time != '',
+                'status': game.start_time != 0,
                 'host': get_host_username(game),
                 'eBet': game.e_bet
             }

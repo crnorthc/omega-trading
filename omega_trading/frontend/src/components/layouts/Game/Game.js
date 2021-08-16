@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import { loadGame } from '../../../actions/game'
 import Loader from '../Tools/Loader'
 import Pregame from './Pregame'
+import Preview from './Preview'
 
 
 
@@ -18,7 +19,8 @@ function NewGame(props) {
     NewGame.propTypes = {
         loadGame: PropTypes.func.isRequired,
         selecting_game: PropTypes.bool,
-        game: PropTypes.string
+        game: PropTypes.string,
+        user: PropTypes.object
     }
 
     const values = queryString.parse(props.location.search)
@@ -44,7 +46,12 @@ function NewGame(props) {
             )
         }
         else {
-            return <Pregame />
+            if (props.user.username in props.game.players) {
+                return <Pregame />
+            }         
+            else {
+                return <Preview />
+            }   
         }
     }
 }
@@ -52,7 +59,8 @@ function NewGame(props) {
 
 const mapStateToProps = (state) => ({
     selecting_game: state.game.selecting_game,
-    game: state.game.game
+    game: state.game.game,
+    user: state.user.user
 })
 
 export default connect(mapStateToProps, { loadGame })(NewGame)

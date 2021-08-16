@@ -44,7 +44,7 @@ function NewHome(props) {
 
 const mapStateToProps = state => ({
     logged_in: state.auth.logged_in,
-    games: state.games.games
+    games: state.game.games
 })
 
 export default connect(mapStateToProps, { currentGames })(NewHome)
