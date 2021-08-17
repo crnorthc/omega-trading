@@ -28,6 +28,7 @@ function MyNavbar(props) {
     const [symbol, setSymbol] = useState()
     const [show, setShow] = useState(false)
     const [selected, setSelected] = useState(null)
+    const [code, setCode] = useState(null)
     let [isOpen, setIsOpen] = useState(false)
 
     function closeModal() {
@@ -61,13 +62,18 @@ function MyNavbar(props) {
         props.currentGames()
     }
 
+
     if (selected !== null) {
+        if (props.games[selected].room_code !== code) {
+            setCode(props.games[selected].room_code)
+        }
+		
         if (props.game == null) {
             props.loadGame(props.games[selected].room_code)
             return <Redirect to={'/game?room_code=' + props.games[selected].room_code} />
         }
         else {
-            if (props.games[selected].room_code !== props.game.room_code) {
+            if (props.games[selected].room_code !== props.game.room_code && props.games[selected].room_code != code) {
                 return <Redirect to={'/game?room_code=' + props.games[selected].room_code} />
             }
         }
