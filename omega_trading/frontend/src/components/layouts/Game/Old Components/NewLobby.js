@@ -25,7 +25,7 @@ function Lobby(props) {
             return <Redirect to='/games' />
         }
         else {
-            return <Redirect to='/join' />
+            return <Redirect to='/new-game' />
         }
     }
 }
