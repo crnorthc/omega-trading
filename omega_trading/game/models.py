@@ -37,7 +37,7 @@ class Player(models.Model):
     is_host = models.BooleanField(default=False)
     payed = models.BooleanField(default=False)
     ready = models.BooleanField(default=False)
-    cash = models.DecimalField(max_digits=25, decimal_places=4)
+    cash = models.DecimalField(max_digits=25, decimal_places=4, null=True)
 
 
 class Transactions(models.Model):

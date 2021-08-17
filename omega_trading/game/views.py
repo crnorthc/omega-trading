@@ -14,8 +14,9 @@ import requests
 import datetime
 import json
 
+Invites = apps.get_model('users', 'Invites')
 
-class CreateGame(APIView):
+class Create(APIView):
 
     def post(self, request, format=None):
         amount = int(request.data['amount'][1:].replace(',',''))
@@ -61,7 +62,7 @@ class CreateGame(APIView):
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
-class LoadGame(APIView):
+class Load(APIView):
 
     def post(self, request, format=None):
         code = request.data['room_code']
@@ -74,14 +75,14 @@ class LoadGame(APIView):
 
         current_time = time.time()
 
-        if game.end_time != 0:
+        if game.active:
             if game.end_time <= current_time:
                 return game_over(game)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
-class EditGame(APIView):
+class Edit(APIView):
 
     def post(self, request, format=None):
         date = request.data['date']
@@ -134,11 +135,11 @@ class EditGame(APIView):
 class ChangeType(APIView):
 
     def post(self, request, format=None):
-        code = request.data['code']
+        code = request.data['room_code']
         game = Game.objects.filter(room_code=code)
         game = game[0]
 
-        game.public = request.data['type']
+        game.public = not game.public
         game.save()
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
@@ -150,72 +151,93 @@ class SendInvite(APIView):
         username = request.data['username']
         room_code = request.data['room_code']
 
-        if request.data['unadd']:
-            return Response({'game': uninvite(username, room_code)},
-                            status=status.HTTP_200_OK)
-
         receiever_user = User.objects.filter(username=username)
         receiever_user = receiever_user[0]
         game = get_game(room_code)
-        invites = get_invites(game)
 
-        if username in invites:
-            return Response({'Error': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        invite = Invites.objects.filter(game_id=game.id)
+
+        if invite.exists():
+            return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
         current_time = round(time.time(), 5)
 
-        invite = Invites(time=current_time, game_id=game.id, sender=request.user, receiver=receiever_user)
+        invite = Invites(time=current_time, game=game, sender=request.user, receiver=receiever_user)
 
         invite.save()
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
-# Remove username from action params
-class JoinGame(APIView):
+
+class Join(APIView):
 
     def post(self, request, format=None):
-        room_code = request.data['room_code']
+        game = get_game(request.data['room_code'])
+        player = Player(user=request.user, game=game)
+        player.save()
 
-        if request.data['unadd']:
-            return remove_player(request)
-        else:
-            uninvite(request.user.username, room_code)
+        invite = Invites.objects.filter(receiver_id=request.user.id, game_id=game.id)
 
-        game = get_game(room_code)
+        if invite.exists():
+            invite = invite[0]
+            invite.delete()
 
-        if request.data['accepted'] and not player_in_game(request.user.username):
-            player = Player(user=request.user, tournament=game)
-            player.save()
-        else:
-            return Response({"Error", "Player already in Game"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        return Response({'game': get_game_info(game, request.user), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+
+
+class Decline(APIView):
+
+    def post(self, request, format=None):
+        game = get_game(request.data['room_code'])
+        invite = Invites.objects.filter(receiver_id=request.user.id, game_id=game.id)
+        invite = invite[0]
+        invite.delete()
+
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+
+
+class Leave(APIView):
+
+    def post(self, request, format=None):
+        game = get_game(request.data['room_code'])
+        player = Player.objects.filter(user_id=request.user.id, game_id=game.id)
+        player.delete()
+
+
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+
+
+class Remove(APIView):
+
+    def post(self, request, format=None):
+        game = get_game(request.data['room_code'])
+        user = User.objects.filter(username=request.data['username'])
+        user = user[0]
+        player = Player.objects.filter(user_id=user.id, game_id=game.id)
+        player.delete()
+
+
+        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
 class StartGame(APIView):
     def post(self, request, format=None):
         game = get_game(request.user)
         start_time = math.floor(time.time())
-        end_time = start_time
-        duration = get_duration(game)
 
-        if duration['days'] != None:
-            end_time += (duration['days'] * SECONDS_IN_DAY)
-        if duration['hours'] != None:
-            end_time += (duration['hours'] * SECONDS_IN_HOUR)
-        if duration['mins'] != None:
+        if game.end_time == 0:
+            end_time = start_time
+            duration = get_duration(game)
+            end_time += (duration['days'] * SECONDS_IN_DAY)       
+            end_time += (duration['hours'] * SECONDS_IN_HOUR)  
             end_time += (duration['mins'] * SECONDS_IN_MINUTE)
+            game.end_time = end_time
 
-        game.start_time = start_time
-        game.end_time = end_time
+        game.start_time = start_time        
         game.active = True
 
-        current_day = time.localtime()
-        current_day = (current_day[0], current_day[1], current_day[2], 1,
-                       00, 00, current_day[6], current_day[7], current_day[8])
-        current_day = math.floor(time.mktime(current_day)) - SECONDS_IN_DAY
-
-        initial_transactions(game)
+        initialize_players(game)
 
         game.save()
 

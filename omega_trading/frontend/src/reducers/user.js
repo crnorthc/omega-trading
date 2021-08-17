@@ -54,6 +54,8 @@ export default function (state = initialState, action) {
             user: null
         }
     case USERS_LOADED:
+        console.log('here')
+        console.log(action.payload.Success)
         return {
             ...state,
             users: action.payload.Success,

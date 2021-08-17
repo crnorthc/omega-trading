@@ -22,8 +22,7 @@ function App() {
         <Router>
             <MyNavbar />
             <Auth>
-                <Switch>
-                    <Route exact path="/" component={NewHome} />
+                <Switch>                    
                     <Route exact path="/chart" component={Symbol} />                                                        
                     <Route exact path="/reset-password" component={ResetPassword} />
                     <Route exact path="/account" component={Account} />
@@ -33,6 +32,7 @@ function App() {
                 </Switch>                                        
             </Auth>           
             <Switch>
+                <Route exact path="/" component={NewHome} />
                 <Route exact path="/forgot-password" component={ForgotPassword} />
                 <Route exact path="/login" component={Login} />
                 <Route exact path="/sign-up" component={SignUp} />

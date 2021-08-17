@@ -343,7 +343,17 @@
     padding-left: 36px;
 }
 
+// Large Padding T/B
+.lpy {
+    padding-top: 48px;
+    padding-bottom: 48px;
+}
 
+// Large Padding R/L 
+.lpx {
+    padding-right: 48px;
+    padding-left: 48px;
+}
 
 
 //--------------------------------
@@ -378,5 +388,39 @@
     border: #000 1px solid;
     border-radius: 5px;
     background-color: #fff;
+    cursor: default !important;
+}
+
+.editButtonSmall {
+    width: 57px;
+    height: 36px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.editButtonSmall:hover {
+    background-color: rgb(202, 202, 202);
+}
+
+.editButtonMedium {
+    width: 76px;
+    height: 36px;
+    border: #000 1px solid;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.editButtonMedium:hover {
+    background-color: rgb(202, 202, 202);
+}
+
+.editButtonMediumHidden {
+    width: 76px;
+    height: 36px;
+    border: #727272 1px solid;
+    border-radius: 5px;
+    background-color: #dfdfdf;
+    color: #727272;
     cursor: default !important;
 }

@@ -22,7 +22,7 @@ function NewHome(props) {
         if (props.games == null) {
             props.currentGames()
         }
-        if (props.games) {
+        if (props.games == null) {
             return <Loader poage={true} />
         } else {
             if (props.games == false) {

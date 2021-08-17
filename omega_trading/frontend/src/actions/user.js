@@ -60,7 +60,7 @@ export const loadUser = () => (dispatch) => {
     })
 }
 
-export const acceptInvite = (username, accepted, unadd) => (dispatch) => {
+export const acceptInvite = (username, accepted) => (dispatch) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ export const acceptInvite = (username, accepted, unadd) => (dispatch) => {
         },
     }
 
-    const body = JSON.stringify({ username, accepted, unadd })
+    const body = JSON.stringify({ username, accepted })
 
     axios.post('/users/accept', body, config).then((res) => {
         if (res.data.Error) {
@@ -93,6 +93,28 @@ export const sendInvite = (username, unsend) => (dispatch) => {
     const body = JSON.stringify({ username, unsend })
 
     axios.post('/users/invite', body, config).then((res) => {
+        if (res.data.Error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: UPDATE_USER,
+                payload: res.data,
+            })
+        }
+    })
+}
+
+export const removeFriend = (username) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ username })
+
+    axios.post('/users/remove-friend', body, config).then((res) => {
         if (res.data.Error) {
             console.log('oops')
         } else {
@@ -130,6 +152,28 @@ export const saveHistory = () => (dispatch) => {
     getCookie()
     dispatch({
         type: HISTORY_SAVED,
+    })
+}
+
+export const joinGame = (room_code) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ room_code })
+
+    axios.post('/users/join-game', body, config).then((res) => {
+        if (res.data.Error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: USER_LOADED,
+                payload: res.data,
+            })
+        }
     })
 }
 

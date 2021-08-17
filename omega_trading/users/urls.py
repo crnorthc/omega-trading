@@ -5,6 +5,8 @@ urlpatterns = [
     path('create', CreateUser.as_view()),
     path('login', Login.as_view()),
     path('logout', Logout.as_view()),
+    path('remove-friend', RemoveFriend.as_view()),
+    path('join-game', JoinGame.as_view()),
     path('update', UpdateUsername.as_view()),
     path('verify-email', VerifyEmail.as_view()),
     path('forgot-password', ForgotPassword.as_view()),

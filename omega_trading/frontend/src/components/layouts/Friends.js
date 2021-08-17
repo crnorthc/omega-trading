@@ -5,8 +5,8 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import profilePic from '../../static/profilePic.png'
-import { loadUsers, hideResults, sendInvite, acceptInvite } from '../../actions/user.js'
-import { joinGame, sendGameInvite } from '../../actions/game'
+import { loadUsers, hideResults, sendInvite, acceptInvite, removeFriend, joinGame  } from '../../actions/user.js'
+import { declineGame } from '../../actions/game'
 
 function Friends(props) {
     const [username, setUsername] = useState(null)
@@ -17,8 +17,9 @@ function Friends(props) {
         acceptInvite: PropTypes.func.isRequired,
         hideResults: PropTypes.func.isRequired,
         sendInvite: PropTypes.func.isRequired,
-        sendGameInvite: PropTypes.func.isRequired,
+        removeFriend: PropTypes.func.isRequired,
         joinGame: PropTypes.func.isRequired,
+        declineGame: PropTypes.func.isRequired,
         user: PropTypes.object,
         game: PropTypes.object,
         users: PropTypes.object,
@@ -27,72 +28,38 @@ function Friends(props) {
 
     const onKeyUp = () => {
         if (username !== '') {
-            props.loadUsers(username, props.friendsOnly)
+            props.loadUsers(username, false)
         } else {
             props.hideResults()
         }
     }
 
-    const handleInvite = (username, accepted, unadd) => {
-        if (props.friendsOnly) {
-            props.joinGame(username, accepted, unadd, props.game.room_code)
-        } else {
-            props.acceptInvite(username, accepted, unadd)
-        }
+    const handleInvite = (username, accepted) => {
+        props.acceptInvite(username, accepted)
     }
 
     const friendsList = () => {
         var friends = []
-        var list = []
-        if (props.friendsOnly) {
-            list = props.game.players
-        } else {
-            list = props.user.friends
-        }
+        var list = props.user.friends
 
         for (const i in list) {
             var temp = (
-                <div className={props.friendsOnly ? 'otherUser-pregame fr ai-c jc-s' : 'otherUser fr ai-c jc-s'}>
+                <div className='otherUser fr ai-c jc-s'>
                     <div className="user-left fr ai-c">
                         <div className="userPic-cont">
                             <img className="userPic" src={profilePic} width={40} />
                         </div>
                         <div className="userNames fr ai-c">
-                            <div
-                                style={
-                                    props.friendsOnly
-                                        ? {
-                                            color: props.game.players[list[i].username].color,
-                                        }
-                                        : null
-                                }
-                                className="fullName-user"
-                            >
+                            <div className="fullName-user">
                                 {list[i].first_name} {list[i].last_name}
                             </div>
                             <div className="userName-user">@{i}</div>
                         </div>
                     </div>
                     <div className="addFriend">
-                        {props.friendsOnly ? (
-                            i == props.game.host.username ? (
-                                <button className="editButton">Host</button>
-                            ) : i == props.user.username ? (
-                                <button onClick={() => handleInvite(i, false, true)} className="editButton">
-                                    Leave
-                                </button>
-                            ) : props.user.username === props.game.host.username ? (
-                                <button onClick={() => handleInvite(i, false, true)} className="editButton">
-                                    Remove
-                                </button>
-                            ) : (
-                                <button className="editButton">Joined</button>
-                            )
-                        ) : (
-                            <button onClick={() => handleInvite(i, false, true)} className="editButton">
+                        <button onClick={() => props.removeFriend(i)} className="editButton">
                                 Remove
-                            </button>
-                        )}
+                        </button>
                     </div>
                 </div>
             )
@@ -102,58 +69,53 @@ function Friends(props) {
     }
 
     const getInvites = (i) => {
-        if (props.friendsOnly) {
-            return (
-                <div className="addFriend">
-                    {props.game.invites[i].sender == props.user.username ? (
-                        <button onClick={() => props.sendGameInvite(i, true, props.game.room_code)} className="editButton">
-                            Uninvite
-                        </button>
-                    ) : (
-                        <button className="editButton">Pending</button>
-                    )}
-                </div>
-            )
-        } else {
-            return (
-                <div className="addFriend">
-                    {props.user.invites[i].sent ? (
-                        <button onClick={() => props.sendInvite(i, true)} className="editButton">
+        return (
+            <div className="addFriend">
+                {props.user.invites[i].sent ? (
+                    <button onClick={() => props.sendInvite(i, true)} className="editButton">
                             Unsend Invite
+                    </button>
+                ) : 'game' in props.user.invites[i] ? (
+                    <div className="acceptButtons">
+                        <button
+                            onClick={() => props.joinGame(i)}
+                            on
+                            className="accept b"
+                        >
+                                Accept
                         </button>
-                    ) : 'game' in props.user.invites[i] ? (
-                        <div className="acceptButtons">
-                            <button
-                                onClick={() => props.joinGame(props.user.username, true, false, props.user.invites[i].game.room_code)}
-                                on
-                                className="accept b"
-                            >
-                                Accept
-                            </button>
-                            <button
-                                onClick={() => props.joinGame(props.user.username, false, false, props.user.invites[i].game.room_code)}
-                                className="decline b"
-                            >
+                        <button
+                            onClick={() => props.declineGame(i)}
+                            className="decline b"
+                        >
                                 Decline
-                            </button>
-                        </div>
-                    ) : (
-                        <div className="acceptButtons">
-                            <button onClick={() => handleInvite(i, true, false)} className="accept b">
+                        </button>
+                    </div>
+                ) : (
+                    <div className="acceptButtons">
+                        <button onClick={() => handleInvite(i, true)} className="accept b">
                                 Accept
-                            </button>
-                            <button onClick={() => handleInvite(i, false, false)} className="decline b">
+                        </button>
+                        <button onClick={() => handleInvite(i, false)} className="decline b">
                                 Decline
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )
-        }
+                        </button>
+                    </div>
+                )}
+            </div>
+        )        
     }
 
     const getSender = (i) => {
-        if (props.friendsOnly) {
+        if ('game' in props.user.invites[i]) {
+            return (
+                <div className="game-user-left fr ai-c">
+                    <div className="userNames fr ai-c">
+                        <div className="fullName-user">{props.user.invites[i].game.name}</div>
+                        <div className="userName-user">{i}</div>
+                    </div>
+                </div>
+            )
+        } else {
             return (
                 <div className="user-left fr ai-c">
                     <div className="userPic-cont">
@@ -161,58 +123,22 @@ function Friends(props) {
                     </div>
                     <div className="userNames fr ai-c">
                         <div className="fullName-user">
-                            {props.game.invites[i].first_name} {props.game.invites[i].last_name}
+                            {props.user.invites[i].first_name} {props.user.invites[i].last_name}
                         </div>
                         <div className="userName-user">@{i}</div>
                     </div>
                 </div>
             )
-        } else {
-            if ('game' in props.user.invites[i]) {
-                return (
-                    <div className="game-user-left fr ai-c">
-                        <div className="userPic-cont">
-                            <img className="userPic" src={profilePic} width={40} />
-                        </div>
-                        <div className="sender">@{props.user.invites[i].sender}</div>
-                        <div className="game-invite">
-                            <div className="friends-start-amount">
-                                Start Amount: ${props.user.invites[i].game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                            </div>
-                            <div className="friends-bet">Bet: ${props.user.invites[i].game.bet.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-                        </div>
-                    </div>
-                )
-            } else {
-                return (
-                    <div className="user-left fr ai-c">
-                        <div className="userPic-cont">
-                            <img className="userPic" src={profilePic} width={40} />
-                        </div>
-                        <div className="userNames fr ai-c">
-                            <div className="fullName-user">
-                                {props.user.invites[i].first_name} {props.user.invites[i].last_name}
-                            </div>
-                            <div className="userName-user">@{i}</div>
-                        </div>
-                    </div>
-                )
-            }
-        }
+        }        
     }
 
     const invitesList = () => {
         var invites = []
-        var list = []
-        if (props.friendsOnly) {
-            list = props.game.invites
-        } else {
-            list = props.user.invites
-        }
-
+        var list = props.user.invites
+        
         for (const i in list) {
             var temp = (
-                <div className={props.friendsOnly ? 'otherUser-pregame fr ai-c jc-s' : 'otherUser fr ai-c jc-s'}>
+                <div className='otherUser fr ai-c jc-s'>
                     {getSender(i)}
                     {getInvites(i)}
                 </div>
@@ -223,70 +149,50 @@ function Friends(props) {
     }
 
     const show_users = (i) => {
-        if (props.friendsOnly) {
-            return (
-                <div className="addFriend">
-                    {i in props.game.invites ? (
-                        props.game.invites[i].sender == props.user.username ? (
-                            <button onClick={() => props.sendGameInvite(i, true, props.game.room_code)} className="editButton">
-                                Uninvite
-                            </button>
-                        ) : (
-                            <button className="editButton">Pending</button>
-                        )
-                    ) : (
-                        <button onClick={() => props.sendGameInvite(i, false, props.game.room_code)} className="editButton">
-                            Invite
-                        </button>
-                    )}
-                </div>
-            )
-        } else {
-            return (
-                <div className="addFriend">
-                    {props.users[i].sent ? (
-                        <div className="acceptButtons">
-                            <button onClick={() => props.acceptInvite(i, true, false)} on className="accept b">
+        return (
+            <div className="addFriend">
+                {props.users[i].sent ? (
+                    <div className="acceptButtons">
+                        <button onClick={() => props.acceptInvite(i, true, false)} on className="accept b">
                                 Accept
-                            </button>
-                            <button onClick={() => props.acceptInvite(i, false, false)} className="decline b">
+                        </button>
+                        <button onClick={() => props.acceptInvite(i, false, false)} className="decline b">
                                 Decline
-                            </button>
-                        </div>
-                    ) : props.user !== null && props.users !== undefined ? (
-                        props.users[i].username in props.user.invites ? (
-                            <button className="editButton">Pending</button>
-                        ) : props.users[i].username in props.user.friends ? (
-                            <button onClick={() => props.acceptInvite(i, false, true)} className="editButton">
+                        </button>
+                    </div>
+                ) : props.user !== null && props.users !== undefined ? (
+                    i in props.user.invites ? (
+                        <button className="editButton">Pending</button>
+                    ) : i in props.user.friends ? (
+                        <button onClick={() => props.acceptInvite(i, false, true)} className="editButton">
                                 Unadd
-                            </button>
-                        ) : (
-                            <button onClick={() => props.sendInvite(props.users[i].username, false)} className="editButton">
+                        </button>
+                    ) : (
+                        <button onClick={() => props.sendInvite(i, false)} className="editButton">
                                 Send Invite
-                            </button>
-                        )
-                    ) : null}
-                </div>
-            )
-        }
+                        </button>
+                    )
+                ) : null}
+            </div>
+        )
     }
 
     const showUsers = () => {
         var users = []
-        if (props.users.length == 0) {
+        if (Object.keys(props.users).length == 0) {
             return (
                 <div className="bb">
-                    <div className="subFriendsHeader">
+                    <div className="subHeader f jc-c">
                         <h4 className="friendsSection bb">Suggested</h4>
                     </div>
-                    <div className="noUsers">No results</div>
+                    <div className="noUsers fr jc-c ai-c mmy f22 lt">No results</div>
                 </div>
             )
         }
 
         for (const i in props.users) {
             var temp = (
-                <div className={props.friendsOnly ? 'otherUser-pregame fr ai-c jc-s' : 'otherUser fr ai-c jc-s'}>
+                <div className='otherUser fr ai-c jc-s'>
                     <div className="user-left fr ai-c">
                         <div className="userPic-cont">
                             <img className="userPic" src={profilePic} width={40} />
@@ -295,7 +201,7 @@ function Friends(props) {
                             <div className="fullName-user">
                                 {props.users[i].first_name} {props.users[i].last_name}
                             </div>
-                            <div className="userName-user">@{props.users[i].username}</div>
+                            <div className="userName-user">@{i}</div>
                         </div>
                     </div>
                     {show_users(i)}
@@ -335,25 +241,17 @@ function Friends(props) {
                 <h4 className="friendsSection bb">Invites</h4>
             </div>
             <div className="bb fc ai-c">
-                {props.friendsOnly ? (
-                    Object.keys(props.game.invites).length > 0 ? (
-                        invitesList()
-                    ) : (
-                        <div className="noList">Invite friends to start a game</div>
-                    )
-                ) : Object.keys(props.user.invites).length > 0 ? (
+                {Object.keys(props.user.invites).length > 0 ? (
                     invitesList()
                 ) : (
                     <div className="noList">You have no invites at this time</div>
                 )}
             </div>
             <div className="subHeader f jc-c">
-                <h4 className="friendsSection bb">{props.friendsOnly ? 'Players' : 'Your Friends'}</h4>
+                <h4 className="friendsSection bb">Your Friends</h4>
             </div>
             <div className="fc f ai-c jc-c">
-                {props.friendsOnly ? (
-                    friendsList()
-                ) : Object.keys(props.user.friends).length > 0 ? (
+                {Object.keys(props.user.friends).length > 0 ? (
                     friendsList()
                 ) : (
                     <div className="noList">Connect with friends!</div>
@@ -371,10 +269,11 @@ const mapStateToProps = (state) => ({
 })
 
 export default connect(mapStateToProps, {
-    sendGameInvite,
+    removeFriend,
     joinGame,
     loadUsers,
     hideResults,
     sendInvite,
     acceptInvite,
+    declineGame
 })(Friends)

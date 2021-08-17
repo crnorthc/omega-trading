@@ -38,29 +38,6 @@ def get_user(id):
 
     return user[0]
 
-def uninvite(username, room_code):
-    user = User.objects.filter(username=username)
-    user = user[0]
-    game = get_game(room_code)
-    invite = Invites.objects.filter(receiever=user, game=game)
-    invite = invite[0]
-
-    invite.delete()
-
-    return get_game_info(game, user)
-
-def remove_player(request):
-    username = request.data['username']
-    user = User.objects.filter(username=username)
-    user = user[0]
-    player = get_player(user)
-    room_code = request.data['room_code']
-    game = get_game(room_code)
-
-    player.delete()
-
-    return Response({'game': get_game_info(game, user), 'user': load_user(username=request.user.username)}, status=status.HTTP_200_OK)
-
 def get_host_username(game):
     host = Player.objects.filter(is_host=True, game_id=game.id)
     host = host[0]
@@ -175,7 +152,7 @@ def get_invites(game):
     if invites.exists():
         for _, invite in enumerate(invites.values()):
             sender = get_user(invite['sender_id'])
-            receiever = get_user(invite['receiever_id'])
+            receiever = get_user(invite['receiver_id'])
             formatted_invites[receiever.username] = {
                 'sender': sender.username,
                 'first_name': receiever.first_name,
@@ -571,7 +548,7 @@ def ready_to_start(game):
 
     return True
 
-def initial_transactions(game):
+def initialize_players(game):
     current_day = time.localtime()
     current_day = (current_day[0], current_day[1], current_day[2], 1,
                     00, 00, current_day[6], current_day[7], current_day[8])
@@ -581,17 +558,15 @@ def initial_transactions(game):
     for username, player in players.items():
         user = User.objects.filter(username=username)
         user = user[0]
-        transaction = Transactions(player=get_player(user), bought=True, symbol='', quantity='', price=0, time=round((time.time() - SECONDS_IN_DAY), 5), cash=game.start_amount, total_quantity=0)
+        player = get_player(user)
+        player.cash = game.start_amount
+        player.save()
+        transaction = Transactions(player=player, bought=True, symbol='', quantity='', price=0, time=round((time.time() - SECONDS_IN_DAY), 5), cash=game.start_amount, total_quantity=0)
         transaction.save()
 
-def get_game(user):
-    player = get_player(user)
-    if player.exists():
-        player = player[0]
-        game = Game.objects.filter(id=player.game_id)
-        return game
-    else:
-        return player
+def get_game(room_code):
+    game = Game.objects.filter(room_code=room_code)
+    return game[0]
 
 def save_game_history(game):
     duration = get_duration(game)

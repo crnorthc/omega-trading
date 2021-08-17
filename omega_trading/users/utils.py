@@ -19,7 +19,7 @@ SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
 SECONDS_IN_MINUTE = 60
 
-Tournament = apps.get_model('game', 'Game')
+Game = apps.get_model('game', 'Game')
 
 def generate_token():
     token = binascii.hexlify(os.urandom(20)).decode()
@@ -36,24 +36,22 @@ def load_user_invites(id):
     invites_receieved = Invites.objects.filter(receiver_id=id).values()
     invites = {}
 
-
-
     for _, value in enumerate(invites_sent):
-        receiever = User.objects.filter(id=value['id'])
+        receiever = User.objects.filter(id=value['receiver_id'])
         receiever = receiever[0]
         
         invites[receiever.username] = {'time': value['time'], 'first_name': receiever.first_name, 'last_name': receiever.last_name, 'sent': True}
 
     for _, value in enumerate(invites_receieved):
-        sender = User.objects.filter(id=value['id'])
+        sender = User.objects.filter(id=value['sender_id'])
         sender = sender[0]
 
         if value['game_id'] != None:
-            game = Tournament.objects.filter(id=value['game_id'])
+            game = Game.objects.filter(id=value['game_id'])
             game = game[0]
             game_info = {
                 'start_amount': game.start_amount,
-                'bet': game.bet
+                'name': game.name
             }
             invites[game.room_code] = {'sender': sender.username, 'game': game_info, 'sent': False}
         else:
@@ -92,12 +90,9 @@ def load_user(user=None, request=None, username=None):
         "email": user.email,
     }
 
-    if request != None:
-        response['invites'] = load_user_invites(user.id)
-        response['friends'] = load_user_friends(user.id)
-    else:
-        response['invites'] = {}
-        response['friends'] = {}
+
+    response['invites'] = load_user_invites(user.id)
+    response['friends'] = load_user_friends(user.id)
 
     return response
 
@@ -198,20 +193,32 @@ def send_email_verification(email, username, key):
     message.attach(part2)
     send_email(message, email)
 
-def get_friends(id):
+def get_friends(id, search):
     friends = Friends.objects.filter(Q(friend_id=id) | Q(user_id=id)).values()
     friends_usernames = []
 
     for _, c in enumerate(friends):
         if c['user_id'] == id:
-            user = User.objects.filter(id=c['friend_id'])
+            user = User.objects.filter(Q(username__istartswith=search, id=c['friend_id']) | Q(first_name__istartswith=search, id=c['friend_id']) | Q(last_name__istartswith=search, id=c['friend_id']))
         else:
-            user = User.objects.filter(id=c['user_id'])
+            user = User.objects.filter(Q(username__istartswith=search, id=c['user_id']) | Q(first_name__istartswith=search, id=c['user_id']) | Q(last_name__istartswith=search, id=c['user_id']))
 
-        user = user[0]
-        friends_usernames.append(user.username)
+        if user.exists():
+            user = user[0]
+            friends_usernames.append({
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+                })
 
     return friends_usernames
+
+def get_users(search):
+    return User.objects.filter(Q(username__istartswith=search) | Q(first_name__istartswith=search) | Q(last_name__istartswith=search)).values('username', 'first_name', 'last_name')
+
+def get_game(room_code):
+    game = Game.objects.filter(room_code=room_code)
+    return game[0]
 
 def login(user):
     token = Token.objects.filter(user_id=user.id)

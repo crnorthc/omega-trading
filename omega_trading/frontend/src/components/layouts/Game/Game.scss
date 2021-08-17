@@ -2,9 +2,14 @@
     width: 986px;
 }
 
-.game_rules {
+.rules_container {
     width: 1010px;
     height: 400px;
+}
+
+.game_rules {
+    width: 912px;
+    height: 388px;
 }
 
 .nt {
@@ -13,7 +18,7 @@
 }
 
 .new-game-nav {
-    position: fixed;
+    position: absolute;
     top: 56px;
     left: 0;
     width: 100%;
@@ -34,15 +39,30 @@
     border: #fff 1px solid
 }
 
+.invite-search {
+    position: absolute;
+    left: calc(50% - 520px);
+    top: 150px;
+    width: 300px;
+    background-color: #fff;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+.inivite-input {
+    width: 200px;
+}
+
 //--------------------------------
 //--------- SEARCH GAMES ---------
 //--------------------------------
 
 .search-cont {
-    position: fixed;
+    position: absolute;
     top: 150px;
     left: 50%;
     transform: translate(-50%, 0);
+    overflow-y: scroll;
 }
 
 .search-games {

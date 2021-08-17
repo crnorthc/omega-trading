@@ -6,7 +6,7 @@ import Friends from './Friends'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import profilePic from '../../static/profilePic.png'
-import { loadUser, saveHistory } from '../../actions/user.js'
+import { loadUser } from '../../actions/user.js'
 
 
 function Account(props) {
@@ -16,13 +16,8 @@ function Account(props) {
 
     Account.propTypes = {
         loadUser: PropTypes.func.isRequired,
-        saveHistory: PropTypes.func.isRequired,
         user: PropTypes.object,
     }
-
-    useEffect(() => {
-        props.saveHistory()
-    }, [])
 
     if (props.user !== null) {
         return (
@@ -54,6 +49,7 @@ function Account(props) {
         )
     }
     else {
+        props.loadUser()
         return <div>User Loading</div>
     }
 
@@ -66,4 +62,4 @@ const mapStateToProps = (state) => ({
     user: state.user.user
 })
 
-export default connect(mapStateToProps, { saveHistory, loadUser })(Account)
+export default connect(mapStateToProps, { loadUser })(Account)

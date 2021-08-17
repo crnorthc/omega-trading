@@ -135,7 +135,7 @@ export const loadGame = (room_code) => (dispatch) => {
     })
 }
 
-export const joinGame = (username, accepted, unadd, room_code) => (dispatch) => {
+export const joinGame = (room_code) => (dispatch) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -143,20 +143,81 @@ export const joinGame = (username, accepted, unadd, room_code) => (dispatch) => 
         },
     }
 
-    const body = JSON.stringify({ username, accepted, unadd, room_code })
+    const body = JSON.stringify({ room_code })
 
     axios.post('/game/join', body, config).then((res) => {
         if (res.data.Error) {
             console.log('oops')
         } else {
-            var response = {
-                game: res.data.game,
-                user: res.data.user,
-                unadd: unadd,
-            }
             dispatch({
-                type: GAME_JOINED,
-                payload: response,
+                type: GAME_SELECTED,
+                payload: res.data.game,
+            })
+        }
+    })
+}
+
+export const declineGame = (room_code) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ room_code })
+
+    axios.post('/game/decline', body, config).then((res) => {
+        if (res.data.Error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAME_SELECTED,
+                payload: res.data.game,
+            })
+        }
+    })
+}
+
+export const leaveGame = (room_code) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ room_code })
+
+    axios.post('/game/leave', body, config).then((res) => {
+        if (res.data.Error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAME_SELECTED,
+                payload: res.data.game,
+            })
+        }
+    })
+}
+
+export const removePlayer = (username, room_code) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ username, room_code })
+
+    axios.post('/game/remove', body, config).then((res) => {
+        if (res.data.Error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAME_SELECTED,
+                payload: res.data.game,
             })
         }
     })
@@ -562,23 +623,15 @@ export const searchNameCode = (code, name) => (dispatch) => {
     })
 }
 
-export const changeType = (type, game) => (dispatch) => {
+export const changeType = (room_code) => (dispatch) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
             Authorization: 'Token ' + getCookie(),
         },
     }
-    game.type = type
 
-    dispatch({
-        type: TYPE_CHANGING,
-        payload: game
-    })
-
-    var code = game.room_code
-
-    var body = JSON.stringify({ type, code })
+    var body = JSON.stringify({ room_code })
 
     axios.post('/game/type', body, config).then((res) => {
         if (res.data.error) {
@@ -592,3 +645,24 @@ export const changeType = (type, game) => (dispatch) => {
     })
 }
 
+export const invite = (username, room_code) => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    var body = JSON.stringify({ username, room_code })
+
+    axios.post('/game/invite', body, config).then((res) => {
+        if (res.data.error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: GAME_SELECTED,
+                payload: res.data.game,
+            })
+        }
+    })
+}

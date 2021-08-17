@@ -1,6 +1,7 @@
 from rest_framework import status
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
+from django.db.models import Q
 from .models import *
 from .TopSecret import *
 from .serializers import *
@@ -9,6 +10,7 @@ from .utils import *
 from rest_framework.permissions import AllowAny
 import time
 
+Player = apps.get_model('game', 'Player')
 
 class CreateUser(APIView):
     permission_classes = [AllowAny]
@@ -160,19 +162,37 @@ class SearchUsers(APIView):
     def post(self, request, format=None):
         username = request.data['username']
         query = {}
-        users = User.objects.all().values('username')
+
+        if request.data['friends']:
+            users = get_friends(request.user.id, username)
+        else:
+            users = get_users(username)
 
         for i in users:
-            if username in i['username'].lower() and not i['username'] == request.user.username:
-                if request.data['friends']:
-                    friends = get_friends(request.user.id)
-                    if i['username'] in friends:
-                        query[i['username']] = load_user(
-                            username=i['username'])
-                else:
-                    query[i['username']] = load_user(username=i['username'])
+            if i['username'] != request.user.username:
+                query[i['username']] = {
+                    'first_name': i['first_name'],
+                    'last_name': i['last_name']
+                }
 
         return Response({"Success": query}, status=status.HTTP_200_OK)
+
+
+class JoinGame(APIView):
+
+    def post(self, request, format=None):
+        game = get_game(request.data['room_code'])
+        player = Player(user=request.user, game=game)
+        player.save()
+
+        invite = Invites.objects.filter(receiver_id=request.user.id, game_id=game.id)
+
+        if invite.exists():
+            invite = invite[0]
+            invite.delete()
+
+
+        return Response({"Success": load_user(request=request)}, status=status.HTTP_200_OK)
 
 
 class SendInvite(APIView):
@@ -193,11 +213,11 @@ class SendInvite(APIView):
             if invite.exists():
                 return Response({"Success": "Invite Already Sent"}, status=status.HTTP_200_OK)
             else:
-                invite = Invites(receiver=receiever, sender=sender.id, time=current_time)
+                invite = Invites(receiver=receiever, sender=sender, time=current_time)
 
         invite.save()
 
-        return Response({"Success": load_user(request)}, status=status.HTTP_200_OK)
+        return Response({"Success": load_user(request=request)}, status=status.HTTP_200_OK)
 
 
 class AcceptInvite(APIView):
@@ -205,21 +225,35 @@ class AcceptInvite(APIView):
     def post(self, request, format=None):
         username = request.data['username']
         accepted = request.data['accepted']
-        unadd = request.data['unadd']
-        sender = request.user
-        receiever = User.objects.filter(username=username)
-        receiever = receiever[0]
+        receiever = request.user
+        sender = User.objects.filter(username=username)
+        sender = sender[0]
         current_time = round(time.time(), 5)
-        invite = Invites.objects.filter(room_code='', receiver=receiever, sender=sender)
+        invite = Invites.objects.filter(game_id=None, receiver_id=receiever.id, sender_id=sender.id)
         invite = invite[0]
 
-        if not unadd:
-            if accepted:
-                friend = Friends(time=current_time, user=sender, friend=receiever)
-                friend.save()
+        if accepted:
+            friend = Friends(time=current_time, user=sender, friend=receiever)
+            friend.save()
         
         invite.delete()
 
-        return Response({"Success": load_user(request)}, status=status.HTTP_200_OK)
+        return Response({"Success": load_user(request=request)}, status=status.HTTP_200_OK)
+
+
+class RemoveFriend(APIView):
+
+    def post(self, request, format=None):
+        username = request.data['username']
+        friend = User.objects.filter(username=username)
+        friend = friend[0]
+
+        friend = Friends.objects.filter(Q(friend_id=friend.id, user_id=request.user.id) | Q(friend_id=request.user.id, user_id=friend.id))
+        friend = friend[0]
+
+        friend.delete()
+
+        return Response({"Success": load_user(request=request)}, status=status.HTTP_200_OK)
+
 
 

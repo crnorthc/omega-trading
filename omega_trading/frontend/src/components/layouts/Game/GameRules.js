@@ -13,7 +13,8 @@ function GameRules(props) {
 
     GameRules.propTypes = {
         editGame: PropTypes.func.isRequired,
-        game: PropTypes.object
+        game: PropTypes.object,
+        user: PropTypes.object
     }
 
     if (zone == null) {
@@ -56,7 +57,11 @@ function GameRules(props) {
     }
 
     return (
-        <div className="game_rules fc jc-s">
+        <div className="game_rules fc jc-a">
+            <div className='fr jc-c ai-c'>
+                <div className='f24 bld'>Room Code:</div>
+                <div className='f24 lt sml'>{props.game.room_code}</div>
+            </div>
             <div className='rules-row'>
                 <div className='fc jc-c ai-s'>
                     <div className='f22 bld'>Start Amount</div>
@@ -79,9 +84,13 @@ function GameRules(props) {
                     <div className='f22'>{props.game.options ? 'Enabled' : 'Disabled'}</div>
                 </div>
             </div>
-            <div className='fr jc-c mmy'>
-                <button onClick={() => props.edit(true)} className='editButton'>Edit</button>
-            </div>              
+            {props.user.username == props.game.host.username ? 
+                <div className='fr jc-c'>
+                    <button onClick={() => props.edit(true)} className='editButton'>Edit</button>
+                </div> 
+                :
+                null
+            }                         
         </div>
     )
     
@@ -89,7 +98,8 @@ function GameRules(props) {
 
 
 const mapStateToProps = (state) => ({
-    game: state.game.game
+    game: state.game.game,
+    user: state.user.user
 })
 
 export default connect(mapStateToProps, {})(GameRules)

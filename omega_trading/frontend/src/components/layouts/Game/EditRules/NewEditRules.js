@@ -157,15 +157,15 @@ function NewEditRules(props) {
         return (
             <div className='fr ai-c jc-c'>
                 <div className='fc ai-st'>
-                    <div className='duration'>Days</div>
+                    <div className='duration tpb'>Days</div>
                     <input onChange={(e) => changeDays(e.target.value)} className='duration-input' placeholder={days} type='number' />                    
                 </div>
                 <div className='fc ai-c smx'>
-                    <div className='duration'>Hours</div>
+                    <div className='duration tpb'>Hours</div>
                     <input onChange={(e) => changeHours(e.target.value)} className='duration-input' placeholder={hours} type='number' />                    
                 </div>
                 <div className='fc ai-e'>
-                    <div className='duration'>Mins</div>
+                    <div className='duration tpb'>Mins</div>
                     <select className='min-input' placeholder={mins} onChange={(e) => changeMins(e.target.value)}>
                         {
                             minutes.map(min => {
@@ -181,27 +181,10 @@ function NewEditRules(props) {
 
     if (date !== null) {
         return (
-            <div className="game_rules fc jc-s">
-                <div className='rules-row'>
-                    <div className='parameter'>
-                        <div className='rule-name-left'>Start Amount</div>
-                        <select className='start-input' placeholder="0" value={amount} onChange={(e) => setAmount(e.target.value)}>
-                            {choices(start_amounts)}
-                        </select>
-                    </div>
-                    <div className='parameter'>
-                        <div className='rule-name-right'>Options</div>
-                        <div className='yesnoCont fr jc-s'>
-                            <button style={options ? selected : not} onClick={() => setOptions(true)} className='yes'>Yes</button>
-                            <button style={!options ? selected : not} onClick={() => setOptions(false)} className='no'>No</button>
-                        </div>
-                    </div>
-                    <div className='parameter'>
-                        <div className='rule-name-left'>Commision</div>
-                        <select className='start-input' placeholder="0" value={commission} onChange={(e) => setCommission(e.target.value)}>
-                            {choices(commissions())}
-                        </select>
-                    </div>
+            <div className="game_rules fc jc-a">
+                <div className='fr jc-c ai-c'>
+                    <div className='f24 bld'>Room Code:</div>
+                    <div className='f24 lt sml'>{props.game.room_code}</div>
                 </div>
                 <div className='rules-row'>
                     <div className='parameter'> 
@@ -215,11 +198,32 @@ function NewEditRules(props) {
                         {endType == 'date' ? endDate() : getDuration()}
                     </div>                                                                         
                 </div>
-                <div className='fr jc-s mmy lmx'>
+                <div className='rules-row'>
+                    <div className='parameter'>
+                        <div className='rule-name-left'>Commision</div>
+                        <select className='start-input' placeholder="0" value={commission} onChange={(e) => setCommission(e.target.value)}>
+                            {choices(commissions())}
+                        </select>
+                    </div>
+                    <div className='parameter'>
+                        <div className='fr jc-c tpb'>Start Amount</div>
+                        <select className='start-input' placeholder="0" value={amount} onChange={(e) => setAmount(e.target.value)}>
+                            {choices(start_amounts)}
+                        </select>
+                    </div>
+                    <div className='parameter'>
+                        <div className='rule-name-right'>Options</div>
+                        <div className='yesnoCont fr jc-s'>
+                            <button style={options ? selected : not} onClick={() => setOptions(true)} className='yes'>Yes</button>
+                            <button style={!options ? selected : not} onClick={() => setOptions(false)} className='no'>No</button>
+                        </div>
+                    </div>
+                </div>                
+                <div className='fr jc-s'>
                     <button onClick={() => props.edit(false)} className='editButton'>Cancel</button>
                     <button onClick={() => editRules()} className='editButton'>{props.making_edit ? <ButtonLoader /> : 'Confirm'}</button>                    
                 </div>
-                <div className='fr jc-c f16' style={{'color': 'red'}}>{error}</div>             
+                {error == '' ? null : <div className='fr jc-c f16' style={{'color': 'red'}}>{error}</div> }            
             </div>
         )
     }
