@@ -25,11 +25,11 @@ function NewHome(props) {
         if (props.games == null) {
             return <Loader poage={true} />
         } else {
-            if (props.games == false) {
+            if (props.games !== false) {
                 return <Redirect to='/games' />
             }
             else {
-                return <Redirect to='/join' />
+                return <Redirect to='/new-game' />
             }
         }
     }

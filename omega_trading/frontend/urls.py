@@ -17,5 +17,5 @@ urlpatterns = [
     path('create-game', index),
     path('game', index),
     path('games', index),
-    path('rules', index)
+    path('search', index)
 ]

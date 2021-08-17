@@ -78,7 +78,7 @@ function Pregame(props) {
     )
 
     return (
-        <div className='fc lmt jc-s'>
+        <div className='fc text-main-text lmt jc-s'>
             <div>
                 <div className='fr mmx ai-b jc-s'>
                     <button onClick={() => setShow(!showInvite)} className='editButton'>Invite</button>
@@ -90,11 +90,11 @@ function Pregame(props) {
                         <button onClick={() => props.leaveGame(props.game.room_code)} className='editButton'>Leave</button>
                     }                    
                 </div>
-                <div className="rules_container fr jc-c ai-c mmt b">
+                <div className="rules_container bg-main-nav fr jc-c ai-c mmt b">
                     {edit ? <NewEditRules edit={handleEdit} /> : <GameRules edit={handleEdit} /> }
                 </div>
             </div>
-            <div className="fc mmy b">
+            <div className="fc mmy bg-main-nav b">
                 <div>
                     <Players />
                 </div>                

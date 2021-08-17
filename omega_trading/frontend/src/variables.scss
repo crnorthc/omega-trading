@@ -1,4 +1,24 @@
 //--------------------------------
+//----------- Colors -------------
+//--------------------------------
+$background: #131440;
+$nav: #32335c;
+$area: #31323f;
+
+
+//--------------------------------
+//----- Important Elements -------
+//--------------------------------
+.pageContainer {
+    width: 1070px;
+    margin: auto;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 72px;
+    padding-top: 88px;
+}
+
+//--------------------------------
 //-------- FLEX OPTIONS ----------
 //--------------------------------
 .ai-c {
@@ -58,20 +78,20 @@
 //-------- BORDER OPTIONS --------
 //--------------------------------
 .b {
-    border: #000 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
 }
 
 .bb {
-    border-bottom: #000 1px solid;
+    border-bottom: #f3b629 1px solid;
 }
 
 .br {
-    border-right: #000 1px solid;
+    border-right: #f3b629 1px solid;
 }
 
 .bt {
-    border-top: #000 1px solid;
+    border-top: #f3b629 1px solid;
 }
 //--------------------------------
 //--------- FONT OPTIONS ---------

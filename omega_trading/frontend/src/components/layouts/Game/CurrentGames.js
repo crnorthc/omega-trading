@@ -110,8 +110,8 @@ function CurrentGame(props) {
         return <Loader page={false} />
     } else {
         return (
-            <div className='b bg-gray-500 smx'>
-                <div className='h63 fr bb ai-c jc-c st'>Current Games</div>
+            <div className='b bg-main-dark smx'>
+                <div className='h63 fr text-main-text ai-c jc-c st'>Current Games</div>
                 {props.games != false ? getGames() :
                     (
                         <div className='no-history'>You do not have any active games.</div>

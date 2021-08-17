@@ -16,9 +16,9 @@ import NewGame from './components/layouts/Game/NewGame.js'
 import CreateGame from './components/layouts/Game/CreateGame.js'
 import JoinGame from './components/layouts/Game/JoinGame'
 import Game from './components/layouts/Game/Game.js'
+import SearchGame from './components/layouts/Game/SearchGame.js'
 
-// import './variables.scss'
-// import './custom.scss'
+import './variables.scss'
 
 function App() {
     return (
@@ -27,6 +27,7 @@ function App() {
             <Auth>
                 <Switch>                    
                     <Route exact path='/chart' component={Symbol} />
+                    <Route exact path='/search' component={SearchGame} />
                     <Route exact path='/reset-password' component={ResetPassword} />
                     <Route exact path='/account' component={Account} />
                     <Route exact path='/game' component={Game} />

@@ -85,7 +85,7 @@ function MyNavbar(props) {
 
     return (
         <div className=''>
-            <div className='bg-gray-800 h-16 fixed w-full z-20'>
+            <div className='bg-main-dark h-16 fixed w-full z-20'>
                 {props.user !== null ? (
                     <div className='flex items-center h-full justify-center sm:justify-between shadow-sm'>
                         <div className='flex items-center justify-center px-7 sm:px-5'>
@@ -99,7 +99,7 @@ function MyNavbar(props) {
                                     <div className='rounded-lg shadow-md'>
                                         <div
                                             className={`
-                    ${selected === people[0] ? 'bg-gray-900' : 'bg-green-100 '} 
+                    ${selected === people[0] ? 'bg-main-light' : 'bg-green-100 '} 
                       relative flex items-center w-full py-2 pl-3 pr-10 text-left  rounded-lg  cursor-pointer focus:outline-none  sm:text-sm
                   `}
                                         >
@@ -118,7 +118,7 @@ function MyNavbar(props) {
                                             </a>
 
                                             <Listbox.Button className=''>
-                                                <span className='absolute inset-y-0 right-0 flex items-center pl-2 pr-2 cursor-pointer border-l-2 border-gray-400 bg-gray-900 rounded-r-lg'>
+                                                <span className='absolute inset-y-0 right-0 flex items-center pl-2 pr-2 cursor-pointer border-l-2 border-gray-400 bg-main-background rounded-r-lg'>
                                                     <SelectorIcon
                                                         className='w-5 h-5 text-gray-400'
                                                         aria-hidden='true'
@@ -183,27 +183,18 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                             </div>
                         </div>
                         <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
-                            <Link
-                                to='/games'
-                                className='text-sm text-gray-500 hover:text-gray-600'
-                            >
-                My Games
+                            <Link to='/games' className='text-sm text-main-text hover:text-gray-600'>
+                                    My Games
                             </Link>
-                            <Link
-                                to='/new-game'
-                                className='text-sm text-gray-500 hover:text-gray-600'
-                            >
-                New Game
+                            <Link to='/new-game' className='text-sm text-main-text hover:text-gray-600'>
+                                New Game
                             </Link>
-
                             <div className='relative  flex items-center justify-center'>
-                                <button
-                                    type='button'
-                                    onClick={openModal}
-                                    className='transition duration-500 ease-in-out transform hover:scale-110 px-2 py-1 text-sm  text-gray-500 bg-white border rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75'
+                                <button type='button' onClick={openModal}
+                                    className='transition duration-500 ease-in-out transform hover:scale-110 px-2 py-1 text-sm  text-gray-400 bg-white border rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75'
                                 >
                                     <SearchIcon
-                                        className='relative h-5 w-5 pr-1 inline-block text-gray-500'
+                                        className='relative h-5 w-5 pr-1 inline-block text-gray-400'
                                         aria-hidden='true'
                                     />
                   Search
@@ -212,7 +203,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
 
                             <Link
                                 to='/account'
-                                className=' text-gray-500 hover:text-gray-600'
+                                className=' text-main-text hover:text-gray-600'
                             >
                                 <UserCircleIcon className='h-6 w-6 ' aria-hidden='true' />
                             </Link>
@@ -336,47 +327,6 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
         </div>
     )
 }
-
-/*
-    return (
-        <div bg="light" variant="dark" className="NavBar">
-            <div className='fr jc-s ai-c'>
-                <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark " to="/">Omega Trading</Link></div>
-                <form className="symbolSearch b">
-                    <div className="search-nav">
-                        <img className="searchIcon" src='../../../static/search.png' />
-                        <input type="text"
-                            placeholder="Search"
-                            className="searchInput"
-                            value={symbol}
-                            onFocus={() => setShow(true)}
-                            onChange={e => setSymbol(e.target.value)}
-                            onKeyUp={onKeyUp} />
-                    </div>
-                    <div className="results-nav">
-                        {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
-                    </div>
-                </form>
-            </div>
-            <div>
-                {props.user !== null ?
-                    <div className="accountButtons fr ai-c">
-                        <Link to='/games' className="accountLink">Games</Link>
-                        <Link to='/join' className="accountLink">Join</Link>
-                        <Link to='/account' className="accountLink">Account</Link>
-                        <button onClick={() => props.logout()} className="logout b">Logout</button>
-                    </div>
-                    :
-                    <div className="navLoginSignup fr ai-c jc-c">
-                        <Link to="/login" className="navLogin">Login</Link>
-                        <Link to="/sign-up" className="navSignup">Signup</Link>
-                    </div>
-                }
-            </div>            
-        </div>
-    )
-}
-*/
 
 // --------------------------------
 
