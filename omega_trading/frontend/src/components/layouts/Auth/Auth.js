@@ -27,8 +27,6 @@ function Auth(props) {
         return <Redirect to='/' />
     }
 
-    console.log('here')
-
     return (
         <div className='pageContainer'>
             {props.children}
