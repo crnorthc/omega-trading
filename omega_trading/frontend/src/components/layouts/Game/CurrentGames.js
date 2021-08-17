@@ -7,6 +7,9 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 
+import '../../../variables.scss'
+import '../../../custom.scss'
+
 function CurrentGame(props) {
 
     CurrentGame.propTypes = {
@@ -63,7 +66,7 @@ function CurrentGame(props) {
 
             games.push(
                 <Link to={'/game?room_code=' + props.games[game].room_code} className='toGame'>
-                    <div className='fr mmx mmy ai-c jc-s'>
+                    <div className='fr text-gray-50 mmx mmy ai-c jc-s'>
                         <div className='fr'>
                             <div className='fc jc-c mmr'>
                                 {status}
@@ -107,7 +110,7 @@ function CurrentGame(props) {
         return <Loader page={false} />
     } else {
         return (
-            <div className='b smx'>
+            <div className='b bg-gray-500 smx'>
                 <div className='h63 fr bb ai-c jc-c st'>Current Games</div>
                 {props.games != false ? getGames() :
                     (

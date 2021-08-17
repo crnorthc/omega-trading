@@ -91,9 +91,8 @@ function MyNavbar(props) {
                         <div className='flex items-center justify-center px-7 sm:px-5'>
                             <Link
                                 to={'/new-game'}
-                                className='text-yellow-500 font-bold hover:text-gray-600'
-                            >
-                Cryptobet
+                                className='text-yellow-500 font-bold hover:text-gray-600'>
+                                Cryptobet
                             </Link>
                             <div className='w-40 sm:w-52 ml-5'>
                                 <Listbox value={selected} onChange={setSelected}>
