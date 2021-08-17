@@ -47,9 +47,11 @@ function NewGame(props) {
         }
         else {
             if (props.user.username in props.game.players) {
+                console.log('here1')
                 return <Pregame />
             }         
             else {
+                console.log('here2')
                 return <Preview />
             }   
         }
