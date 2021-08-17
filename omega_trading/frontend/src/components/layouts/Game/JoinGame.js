@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 import React, { useEffect, useState } from 'react'
-import NewRules from './NewRules'
+//import NewRules from './NewRules'
 
 // State Stuff
 import PropTypes from 'prop-types'
@@ -11,7 +11,7 @@ import { searchGames, searchNameCode } from '../../../actions/game'
 
 function CreateGame(props) {
 
-    const [type, setType] = useState('create')
+    //const [type, setType] = useState('create')
     const [code, setCode] = useState('')
     const [name, setName] = useState('')
     const [join, setJoin] = useState('code')
@@ -367,8 +367,8 @@ function CreateGame(props) {
         //     {type == 'create' ? <NewRules edit={false} /> : join_game}
         // </div>
         <>
-        <h1 className="font-mono font-medium mx-auto text-center text-5xl sm:text-6xl pt-16 ">New Game</h1>
-        <div className="z-0 absolute top-16 right-0 bottom-0 left-0 flex flex-col sm:flex-row items-center justify-center sm:justify-evenly"><button className="m-3 w-40 h-40 sm:w-64 sm:h-64 bg-red-200 rounded-lg shadow-xl font-medium text-2xl text-red-900 transition duration-150 ease-in-out transform hover:scale-105">Create Game</button> <button className="m-3 w-40 h-40 sm:w-64 sm:h-64 bg-green-200 rounded-lg shadow-xl font-medium text-2xl text-green-900 transition duration-150 ease-in-out transform hover:scale-105">Join Game</button></div>
+            <h1 className="font-mono font-medium mx-auto text-center text-5xl sm:text-6xl pt-16 ">New Game</h1>
+            <div className="z-0 absolute top-16 right-0 bottom-0 left-0 flex flex-col sm:flex-row items-center justify-center sm:justify-evenly"><button className="m-3 w-40 h-40 sm:w-64 sm:h-64 bg-red-200 rounded-lg shadow-xl font-medium text-2xl text-red-900 transition duration-150 ease-in-out transform hover:scale-105">Create Game</button> <button className="m-3 w-40 h-40 sm:w-64 sm:h-64 bg-green-200 rounded-lg shadow-xl font-medium text-2xl text-green-900 transition duration-150 ease-in-out transform hover:scale-105">Join Game</button></div>
         </>
     )
 }

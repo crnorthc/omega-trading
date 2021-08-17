@@ -2,89 +2,89 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
-import React, { useState, Fragment } from "react";
-import { createGame, editGame, joinGame } from "../../../actions/game";
-import Loader from "../Tools/Loader";
-import { Link } from "react-router-dom";
-import Bet from "./Bet";
-import ButtonLoader from "../Tools/ButtonLoader";
+import React, { useState, Fragment } from 'react'
+import { createGame, editGame, joinGame } from '../../../actions/game'
+import Loader from '../Tools/Loader'
+import { Link } from 'react-router-dom'
+import Bet from './Bet'
+import ButtonLoader from '../Tools/ButtonLoader'
 import {
   Tab,
   Switch,
   RadioGroup,
   Listbox,
   Transition,
-} from "@headlessui/react";
+} from '@headlessui/react'
 import {
   CheckIcon,
   SelectorIcon,
   ArrowSmRightIcon,
-} from "@heroicons/react/solid";
+} from '@heroicons/react/solid'
 
 // import './Rules.scss'
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 
 const startAmounts = [
-  { insert: "$10,000", value: 10000 },
-  { insert: "$100,000", value: 100000 },
-  { insert: "$500,000", value: 500000 },
-  { insert: "$1,000,000", value: 1000000 },
-];
+  { insert: '$10,000', value: 10000 },
+  { insert: '$100,000', value: 100000 },
+  { insert: '$500,000', value: 500000 },
+  { insert: '$1,000,000', value: 1000000 },
+]
 
 const commisionAmounts = [
-  { insert: "$1.99", value: 1.99 },
-  { insert: "$10,000", value: 10000 },
-  { insert: "$10,000", value: 10000 },
-];
+  { insert: '$1.99', value: 1.99 },
+  { insert: '$10,000', value: 10000 },
+  { insert: '$10,000', value: 10000 },
+]
 
 const hours = [
-  { insert: "0", value: 0 },
-  { insert: "1", value: 1 },
-  { insert: "2", value: 2 },
-  { insert: "3", value: 3 },
-  { insert: "4", value: 4 },
-  { insert: "5", value: 5 },
-  { insert: "6", value: 6 },
-  { insert: "7", value: 7 },
-  { insert: "8", value: 8 },
-  { insert: "9", value: 9 },
-  { insert: "10", value: 10 },
-  { insert: "11", value: 11 },
-  { insert: "12", value: 12 },
-  { insert: "13", value: 13 },
-  { insert: "14", value: 14 },
-  { insert: "15", value: 15 },
-  { insert: "16", value: 16 },
-  { insert: "17", value: 17 },
-  { insert: "18", value: 18 },
-  { insert: "19", value: 19 },
-  { insert: "20", value: 20 },
-  { insert: "21", value: 21 },
-  { insert: "22", value: 22 },
-  { insert: "23", value: 23 },
-  { insert: "24", value: 24 },
-];
+  { insert: '0', value: 0 },
+  { insert: '1', value: 1 },
+  { insert: '2', value: 2 },
+  { insert: '3', value: 3 },
+  { insert: '4', value: 4 },
+  { insert: '5', value: 5 },
+  { insert: '6', value: 6 },
+  { insert: '7', value: 7 },
+  { insert: '8', value: 8 },
+  { insert: '9', value: 9 },
+  { insert: '10', value: 10 },
+  { insert: '11', value: 11 },
+  { insert: '12', value: 12 },
+  { insert: '13', value: 13 },
+  { insert: '14', value: 14 },
+  { insert: '15', value: 15 },
+  { insert: '16', value: 16 },
+  { insert: '17', value: 17 },
+  { insert: '18', value: 18 },
+  { insert: '19', value: 19 },
+  { insert: '20', value: 20 },
+  { insert: '21', value: 21 },
+  { insert: '22', value: 22 },
+  { insert: '23', value: 23 },
+  { insert: '24', value: 24 },
+]
 const minutes = [
-  { insert: "0", value: 0 },
-  { insert: "15", value: 15 },
-  { insert: "30", value: 30 },
-  { insert: "45", value: 45 },
-];
+  { insert: '0', value: 0 },
+  { insert: '15', value: 15 },
+  { insert: '30', value: 30 },
+  { insert: '45', value: 45 },
+]
 
-const cryptoCurrencies = ["ETH"];
+const cryptoCurrencies = ['ETH']
 function JoinGame(props) {
-  const [name, setName] = useState("");
-  const [Public, setPublic] = useState(true);
-  const [options, setOptions] = useState(true);
-  const [show, Show] = useState(false);
-  const [startAmount, setStartAmount] = useState(startAmounts[0]);
-  const [cryptoCurrency, setCryptoCurrency] = useState(cryptoCurrencies[0]);
+  const [name, setName] = useState('')
+  const [Public, setPublic] = useState(true)
+  const [options, setOptions] = useState(true)
+  const [show, Show] = useState(false)
+  const [startAmount, setStartAmount] = useState(startAmounts[0])
+  const [cryptoCurrency, setCryptoCurrency] = useState(cryptoCurrencies[0])
   // const [day, setDay] = useState(days[0])
-  const [hour, setHour] = useState(hours[0]);
-  const [minute, setMinute] = useState(minutes[0]);
+  const [hour, setHour] = useState(hours[0])
+  const [minute, setMinute] = useState(minutes[0])
 
   JoinGame.propTypes = {
     createGame: PropTypes.func.isRequired,
@@ -94,7 +94,7 @@ function JoinGame(props) {
     game_created: PropTypes.bool,
     user: PropTypes.object,
     game: PropTypes.object,
-  };
+  }
 
   //    if (date !== null) {
   return (
@@ -123,21 +123,21 @@ function JoinGame(props) {
               <div className='col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col'>
                 <Switch.Group>
                   <Switch.Label className='block font-medium' htmlFor=''>
-                    {Public ? "Public" : "Private"}
+                    {Public ? 'Public' : 'Private'}
                   </Switch.Label>
 
                   <Switch
                     checked={Public}
                     onChange={setPublic}
                     className={`${
-                      Public ? "bg-green-500" : "bg-red-500"
+                      Public ? 'bg-green-500' : 'bg-red-500'
                     } shadow-md
 relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                   >
                     <span className='sr-only'>Use setting</span>
                     <span
                       aria-hidden='true'
-                      className={`${Public ? "translate-x-10" : "translate-x-0"}
+                      className={`${Public ? 'translate-x-10' : 'translate-x-0'}
 pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
                     />
                   </Switch>
@@ -146,14 +146,14 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
               <div className='col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col'>
                 <Switch.Group>
                   <Switch.Label className='block font-medium' htmlFor=''>
-                    {options ? "Options" : "No Options"}
+                    {options ? 'Options' : 'No Options'}
                   </Switch.Label>
 
                   <Switch
                     checked={options}
                     onChange={setOptions}
                     className={`${
-                      options ? "bg-green-500" : "bg-red-500"
+                      options ? 'bg-green-500' : 'bg-red-500'
                     } shadow-md
 relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                   >
@@ -161,7 +161,7 @@ relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded
                     <span
                       aria-hidden='true'
                       className={`${
-                        options ? "translate-x-10" : "translate-x-0"
+                        options ? 'translate-x-10' : 'translate-x-0'
                       }
 pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
                     />
@@ -198,8 +198,8 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
                             className={({ active }) =>
                               `${
                                 active
-                                  ? "text-green-900 bg-green-100"
-                                  : "text-gray-900"
+                                  ? 'text-green-900 bg-green-100'
+                                  : 'text-gray-900'
                               }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
                             }
@@ -209,7 +209,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                               <>
                                 <span
                                   className={`${
-                                    selected ? "font-medium" : "font-normal"
+                                    selected ? 'font-medium' : 'font-normal'
                                   } block truncate`}
                                 >
                                   {startAmount.insert}
@@ -218,8 +218,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                   <span
                                     className={`${
                                       active
-                                        ? "text-amber-600"
-                                        : "text-amber-600"
+                                        ? 'text-amber-600'
+                                        : 'text-amber-600'
                                     }
 absolute inset-y-0 left-0 flex items-center pl-3`}
                                   >
@@ -317,8 +317,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? 'bg-white text-gray-900'
+                              : ' text-red-900'
                           }
     p-2 rounded-l-lg`
                         }
@@ -329,8 +329,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? 'bg-white text-gray-900'
+                              : ' text-red-900'
                           }
     p-2 rounded-r-lg`
                         }
@@ -385,8 +385,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                     className={({ active }) =>
                                       `${
                                         active
-                                          ? "text-green-900 bg-green-100"
-                                          : "text-gray-900"
+                                          ? 'text-green-900 bg-green-100'
+                                          : 'text-gray-900'
                                       }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
                                     }
@@ -397,8 +397,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                         <span
                                           className={`${
                                             selected
-                                              ? "font-medium"
-                                              : "font-normal"
+                                              ? 'font-medium'
+                                              : 'font-normal'
                                           } block truncate`}
                                         >
                                           {theHour.insert}
@@ -407,8 +407,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                           <span
                                             className={`${
                                               active
-                                                ? "text-amber-600"
-                                                : "text-amber-600"
+                                                ? 'text-amber-600'
+                                                : 'text-amber-600'
                                             }
 absolute inset-y-0 left-0 flex items-center pl-3`}
                                           >
@@ -457,8 +457,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                     className={({ active }) =>
                                       `${
                                         active
-                                          ? "text-green-900 bg-green-100"
-                                          : "text-gray-900"
+                                          ? 'text-green-900 bg-green-100'
+                                          : 'text-gray-900'
                                       }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
                                     }
@@ -469,8 +469,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                         <span
                                           className={`${
                                             selected
-                                              ? "font-medium"
-                                              : "font-normal"
+                                              ? 'font-medium'
+                                              : 'font-normal'
                                           } block truncate`}
                                         >
                                           {theMinute.insert}
@@ -479,8 +479,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                           <span
                                             className={`${
                                               active
-                                                ? "text-amber-600"
-                                                : "text-amber-600"
+                                                ? 'text-amber-600'
+                                                : 'text-amber-600'
                                             }
 absolute inset-y-0 left-0 flex items-center pl-3`}
                                           >
@@ -514,8 +514,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? 'bg-white text-gray-900'
+                              : ' text-red-900'
                           }
     p-2 rounded-l-lg`
                         }
@@ -526,8 +526,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? 'bg-white text-gray-900'
+                              : ' text-red-900'
                           }
     p-2 rounded-r-lg`
                         }
@@ -581,8 +581,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                           className={({ active }) =>
                                             `${
                                               active
-                                                ? "text-green-900 bg-green-100"
-                                                : "text-gray-900"
+                                                ? 'text-green-900 bg-green-100'
+                                                : 'text-gray-900'
                                             }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
                                           }
@@ -593,8 +593,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                               <span
                                                 className={`${
                                                   selected
-                                                    ? "font-medium"
-                                                    : "font-normal"
+                                                    ? 'font-medium'
+                                                    : 'font-normal'
                                                 } block truncate`}
                                               >
                                                 {crypto}
@@ -603,8 +603,8 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                                                 <span
                                                   className={`${
                                                     active
-                                                      ? "text-amber-600"
-                                                      : "text-amber-600"
+                                                      ? 'text-amber-600'
+                                                      : 'text-amber-600'
                                                   }
 absolute inset-y-0 left-0 flex items-center pl-3`}
                                                 >
@@ -657,26 +657,14 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
         </div>
       </div>
     </>
-  );
+  )
 }
 
 const mapStateToProps = (state) => ({
-<<<<<<< HEAD
     creating_game: state.game.creating_game,
     game_created: state.game.game_created,
     user: state.user.user,
     game: state.game.game
 })
 
-export default connect(mapStateToProps, { createGame, editGame, joinGame })(CreateGame)
-=======
-  creating_game: state.game.creating_game,
-  game_created: state.game.game_created,
-  user: state.user.user,
-  game: state.game.game,
-});
-
-export default connect(mapStateToProps, { createGame, editGame, joinGame })(
-  JoinGame
-);
->>>>>>> stylinit
+export default connect(mapStateToProps, { createGame, editGame, joinGame })(JoinGame)

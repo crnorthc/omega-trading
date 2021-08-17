@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import React from 'react'
-import queryString from 'query-string'
+//import queryString from 'query-string'
 import { Link } from 'react-router-dom'
 
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loadGame } from '../../../actions/game'
-import Loader from '../Tools/Loader'
-import NewPre from './NewPre'
+//import Loader from '../Tools/Loader'
+//import NewPre from './NewPre'
 
 function NewGame(props) {
     NewGame.propTypes = {

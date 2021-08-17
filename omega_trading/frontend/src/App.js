@@ -11,7 +11,7 @@ import NewHome from './components/layouts/NewHome.js'
 import Auth from './components/layouts/Auth/Auth'
 import React from 'react'
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom'
-import NewRules from './components/layouts/Game/NewRules.js'
+//import NewRules from './components/layouts/Game/NewRules.js'
 import NewGame from './components/layouts/Game/NewGame.js'
 import CreateGame from './components/layouts/Game/CreateGame.js'
 import JoinGame from './components/layouts/Game/JoinGame'
@@ -38,7 +38,7 @@ function App() {
                 </Switch>
             </Auth>
             <Switch>
-                <Route exact path='/rules' component={NewRules} />
+                
                 <Route exact path='/forgot-password' component={ForgotPassword} />
                 <Route exact path='/login' component={Login} />
                 <Route exact path='/sign-up' component={SignUp} />
