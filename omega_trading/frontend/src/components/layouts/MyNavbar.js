@@ -107,10 +107,10 @@ function MyNavbar(props) {
                         className={`
                     ${
                       selected === people[0]
-                        ? "bg-gray-900 cursor-none"
-                        : "bg-gray-50 hover:bg-gray-300 cursor-pointer"
+                        ? "bg-gray-900 cursor-none border-r-2 border-white"
+                        : "bg-yellow-200 hover:bg-yellow-300 cursor-pointer border-transparent"
                     } 
-                      flex-1 flex items-center py-2 pl-3 pr-10 text-left rounded-l-lg   focus:outline-none  sm:text-sm
+                      flex-1 flex items-center py-2 pl-3 pr-10 text-left rounded-l-lg   focus:outline-none  sm:text-sm 
                   `}
                       >
                         <a
@@ -119,7 +119,7 @@ function MyNavbar(props) {
                     ${
                       selected === people[0]
                         ? "text-gray-50 hover:text-gray-50 cursor-default"
-                        : "text-gray-800 hover:text-gray-900 cursor-pointer"
+                        : "text-yellow-800 hover:text-yellow-900 cursor-pointer"
                     }  
                   `}
                         >
@@ -127,9 +127,9 @@ function MyNavbar(props) {
                         </a>
                       </div>
                       <Listbox.Button className='relative'>
-                        <span className='flex h-full items-center pl-2 pr-2 cursor-pointer border-l-2 border-white bg-gray-900 rounded-r-lg'>
+                        <span className='flex h-full items-center pl-2 pr-2 cursor-pointer bg-gray-900 rounded-r-lg'>
                           <SelectorIcon
-                            className='w-5 h-5 text-gray-400'
+                            className='w-5 h-5 text-gray-50 hover:text-gray-300'
                             aria-hidden='true'
                           />
                         </span>
@@ -148,7 +148,7 @@ function MyNavbar(props) {
                             className={({ active }) =>
                               `${
                                 active && personIdx !== 0
-                                  ? "text-green-900 bg-green-100"
+                                  ? "text-yellow-900 bg-yellow-200"
                                   : active && personIdx === 0
                                   ? "text-gray-800 bg-gray-200"
                                   : "text-gray-900"
@@ -194,13 +194,13 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
             <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
               <Link
                 to='/games'
-                className='text-sm text-gray-500 hover:text-gray-600'
+                className='text-sm text-gray-50 hover:text-gray-300'
               >
                 My Games
               </Link>
               <Link
                 to='/new-game'
-                className='text-sm text-gray-500 hover:text-gray-600'
+                className='text-sm text-gray-50 hover:text-gray-300'
               >
                 New Game
               </Link>
@@ -209,7 +209,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                 <button
                   type='button'
                   onClick={openModal}
-                  className='transition duration-500 ease-in-out transform hover:scale-110 px-2 py-1 text-sm  text-gray-500 bg-white border rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75'
+                  className='transition duration-500 ease-in-out transform hover:scale-110 pl-2 pr-3 py-1 text-sm  text-gray-500 bg-white border rounded-3xl focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75'
                 >
                   <SearchIcon
                     className='relative h-5 w-5 pr-1 inline-block text-gray-500'
@@ -219,10 +219,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                 </button>
               </div>
 
-              <Link
-                to='/account'
-                className=' text-gray-500 hover:text-gray-600'
-              >
+              <Link to='/account' className=' text-gray-50 hover:text-gray-200'>
                 <UserCircleIcon className='h-6 w-6 ' aria-hidden='true' />
               </Link>
             </div>
@@ -255,21 +252,21 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
         )}
       </div>
       <div className='shadow-xl'>
-        <div className='z-20 fixed w-full bg-white h-16 bottom-0 block sm:hidden'>
+        <div className='z-20 fixed w-full bg-gray-800 h-16 bottom-0 block sm:hidden'>
           <div className='flex w-full items-center h-full justify-between px-10'>
-            <button class='text-gray-500 hover:text-green-500'>
+            <button class='text-yellow-500 hover:text-yellow-600'>
               <StarIcon className='h-6 w-6 ' aria-hidden='true' />
             </button>
-            <button className='text-gray-500 hover:text-green-500'>
+            <button className='text-gray-500 hover:text-yellow-500'>
               <SearchIcon className='h-6 w-6' aria-hidden='true' />
             </button>
-            <button className='text-gray-500 hover:text-green-500'>
+            <button className='text-gray-500 hover:text-yellow-500'>
               <ViewListIcon className='h-6 w-6' aria-hidden='true' />
             </button>
-            <button className='text-gray-500 hover:text-green-500'>
+            <button className='text-gray-500 hover:text-yellow-500'>
               <SparklesIcon className='h-6 w-6' aria-hidden='true' />
             </button>
-            <button className='text-gray-500 hover:text-green-500'>
+            <button className='text-gray-500 hover:text-yellow-500'>
               <UserCircleIcon className='h-6 w-6' aria-hidden='true' />
             </button>
           </div>
