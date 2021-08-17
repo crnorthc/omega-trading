@@ -14,9 +14,9 @@ import Preview from './Preview'
 
 
 
-function NewGame(props) {
+function Game(props) {
 
-    NewGame.propTypes = {
+    Game.propTypes = {
         loadGame: PropTypes.func.isRequired,
         selecting_game: PropTypes.bool,
         game: PropTypes.string,
@@ -47,9 +47,11 @@ function NewGame(props) {
         }
         else {
             if (props.user.username in props.game.players) {
+                console.log('here1')
                 return <Pregame />
             }         
             else {
+                console.log('here2')
                 return <Preview />
             }   
         }
@@ -63,4 +65,4 @@ const mapStateToProps = (state) => ({
     user: state.user.user
 })
 
-export default connect(mapStateToProps, { loadGame })(NewGame)
+export default connect(mapStateToProps, { loadGame })(Game)

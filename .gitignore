@@ -7,6 +7,8 @@ omega_trading/users/__pycache__/
 
 omega_trading/frontend/__pycache__/
 omega_trading/frontend/node_modules
+omega_trading/frontend/__pycache__
+
 
 omega_trading/securities/TopSecret.py
 omega_trading/securities/__pycache__/

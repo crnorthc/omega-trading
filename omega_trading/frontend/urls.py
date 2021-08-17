@@ -12,7 +12,9 @@ urlpatterns = [
     path('forgot-password', index),
     path('chart', index),
     path('account', index),
-    path('join', index),
+    path('new-game', index),
+    path('join-game', index),
+    path('create-game', index),
     path('game', index),
     path('games', index),
     path('rules', index)
