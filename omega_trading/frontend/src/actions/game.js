@@ -666,3 +666,9 @@ export const invite = (username, room_code) => (dispatch) => {
         }
     })
 }
+
+export const noGame = () => (dispatch) => {
+    dispatch({
+        type: NO_GAME
+    })
+}

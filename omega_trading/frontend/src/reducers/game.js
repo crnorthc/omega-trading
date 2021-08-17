@@ -74,6 +74,7 @@ export default function (state = initialState, action) {
         return {
             ...state,
             selecting_game: true,
+            no_game: false
         }
     case GAME_SELECTED:
         return {
@@ -145,6 +146,7 @@ export default function (state = initialState, action) {
             game_loading: false,
             no_game: true,
             game_loaded: true,
+            game: null
         }
     case HISTORY_LOADING:
         return {
