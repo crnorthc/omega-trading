@@ -95,7 +95,7 @@ function MyNavbar(props) {
               >
                 Starbet
               </Link>
-              <div className='w-40 sm:w-52 ml-5'>
+              <div className='w-52 ml-5'>
                 <Listbox value={selected} onChange={setSelected}>
                   <div
                     className={`
@@ -251,25 +251,24 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
           </div>
         )}
       </div>
-      <div className='shadow-xl'>
-        <div className='z-20 fixed w-full bg-gray-800 h-16 bottom-0 block sm:hidden'>
-          <div className='flex w-full items-center h-full justify-between px-10'>
-            <button class='text-yellow-500 hover:text-yellow-600'>
-              <StarIcon className='h-6 w-6 ' aria-hidden='true' />
-            </button>
-            <button className='text-gray-500 hover:text-yellow-500'>
-              <SearchIcon className='h-6 w-6' aria-hidden='true' />
-            </button>
-            <button className='text-gray-500 hover:text-yellow-500'>
-              <ViewListIcon className='h-6 w-6' aria-hidden='true' />
-            </button>
-            <button className='text-gray-500 hover:text-yellow-500'>
-              <SparklesIcon className='h-6 w-6' aria-hidden='true' />
-            </button>
-            <button className='text-gray-500 hover:text-yellow-500'>
-              <UserCircleIcon className='h-6 w-6' aria-hidden='true' />
-            </button>
-          </div>
+
+      <div className='z-20 fixed w-full bg-gray-800 h-16 bottom-0 block sm:hidden shadow-xl'>
+        <div className='flex w-full items-center h-full justify-between px-10 shadow-xl'>
+          <button class='text-yellow-500 hover:text-yellow-600'>
+            <StarIcon className='h-6 w-6 ' aria-hidden='true' />
+          </button>
+          <button className='text-gray-500 hover:text-yellow-500'>
+            <SearchIcon className='h-6 w-6' aria-hidden='true' />
+          </button>
+          <button className='text-gray-500 hover:text-yellow-500'>
+            <ViewListIcon className='h-6 w-6' aria-hidden='true' />
+          </button>
+          <button className='text-gray-500 hover:text-yellow-500'>
+            <SparklesIcon className='h-6 w-6' aria-hidden='true' />
+          </button>
+          <button className='text-gray-500 hover:text-yellow-500'>
+            <UserCircleIcon className='h-6 w-6' aria-hidden='true' />
+          </button>
         </div>
       </div>
 
@@ -342,6 +341,49 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
     </div>
   );
 }
+
+/*
+    return (
+        <div bg="light" variant="dark" className="NavBar">
+            <div className='fr jc-s ai-c'>
+                <div className="nav-brand"><Link id="home-link" className="text-decoration-none text-dark " to="/">Omega Trading</Link></div>
+                <form className="symbolSearch b">
+                    <div className="search-nav">
+                        <img className="searchIcon" src='../../../static/search.png' />
+                        <input type="text"
+                            placeholder="Search"
+                            className="searchInput"
+                            value={symbol}
+                            onFocus={() => setShow(true)}
+                            onChange={e => setSymbol(e.target.value)}
+                            onKeyUp={onKeyUp} />
+                    </div>
+                    <div className="results-nav">
+                        {props.noSearch || !show ? noSearch : [(props.listLoading ? loading : dropDown())]}
+                    </div>
+                </form>
+            </div>
+            <div>
+                {props.user !== null ?
+                    <div className="accountButtons fr ai-c">
+                        <Link to='/games' className="accountLink">Games</Link>
+                        <Link to='/join' className="accountLink">Join</Link>
+                        <Link to='/account' className="accountLink">Account</Link>
+                        <button onClick={() => props.logout()} className="logout b">Logout</button>
+                    </div>
+                    :
+                    <div className="navLoginSignup fr ai-c jc-c">
+                        <Link to="/login" className="navLogin">Login</Link>
+                        <Link to="/sign-up" className="navSignup">Signup</Link>
+                    </div>
+                }
+            </div>            
+        </div>
+    )
+}
+*/
+
+// --------------------------------
 
 const mapStateToProps = (state) => ({
   results: state.securities.results,
