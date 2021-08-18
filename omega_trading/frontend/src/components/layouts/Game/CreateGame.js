@@ -35,9 +35,26 @@ const startAmounts = [
 ];
 
 const commisionAmounts = [
+  { insert: "$0.00", value: 0 },
   { insert: "$1.99", value: 1.99 },
-  { insert: "$10,000", value: 10000 },
-  { insert: "$10,000", value: 10000 },
+  { insert: "$2.99", value: 2.99 },
+  { insert: "$3.99", value: 3.99 },
+  { insert: "$4.99", value: 4.99 },
+  { insert: "$5.99", value: 5.99 },
+  { insert: "$6.99", value: 6.99 },
+  { insert: "$7.99", value: 7.99 },
+  { insert: "$8.99", value: 8.99 },
+  { insert: "$9.99", value: 9.99 },
+  { insert: "$10.99", value: 10.99 },
+  { insert: "$11.99", value: 11.99 },
+  { insert: "$12.99", value: 12.99 },
+  { insert: "$13.99", value: 13.99 },
+  { insert: "$14.99", value: 14.99 },
+  { insert: "$15.99", value: 15.99 },
+  { insert: "$16.99", value: 16.99 },
+  { insert: "$17.99", value: 17.99 },
+  { insert: "$18.99", value: 18.99 },
+  { insert: "$19.99", value: 19.99 },
 ];
 
 const hours = [
@@ -81,6 +98,7 @@ function JoinGame(props) {
   const [options, setOptions] = useState(true);
   const [show, Show] = useState(false);
   const [startAmount, setStartAmount] = useState(startAmounts[0]);
+  const [commisionAmount, setCommisionAmount] = useState(commisionAmounts[0]);
   const [cryptoCurrency, setCryptoCurrency] = useState(cryptoCurrencies[0]);
   // const [day, setDay] = useState(days[0])
   const [hour, setHour] = useState(hours[0]);
@@ -99,22 +117,25 @@ function JoinGame(props) {
   //    if (date !== null) {
   return (
     <>
-      <div className='z-10 absolute top-16 right-0 bottom-2/3 left-0 flex items-center justify-center'>
-        <h1 className='font-mono font-medium text-red-700 text-center text-4xl sm:text-6xl '>
+      <div className='z-10 absolute top-16 right-0 bottom-3/4 sm:bottom-2/3 left-0 flex items-end sm:items-center justify-center'>
+        <h1 className='font-mono font-medium text-white text-center text-5xl sm:text-6xl  '>
           Create Game
         </h1>
       </div>
 
       <div className='z-10 absolute top-1/3 right-0 bottom-0 left-0 flex items-start justify-center '>
         <div className='mx-2 w-full sm:w-4/5 '>
-          <div className='mx-auto max-w-4xl rounded-xl bg-red-200 p-4'>
+          <div className='mx-auto max-w-4xl rounded-xl bg-gray-800 p-4'>
             <div className='grid grid-cols-12 gap-x-4 gap-y-5 sm:gap-y-10 '>
               <div className='col-span-12 sm:col-span-8'>
-                <label className='block font-medium' htmlFor=''>
+                <label
+                  className='block text-lg font-medium text-white'
+                  htmlFor=''
+                >
                   Name
                 </label>
                 <input
-                  className='block w-full text-sm shadow-sm h-10 px-2 border-transparent focus:outline-none focus:ring focus:ring-red-300'
+                  className='h-10 w-full text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-yellow-300'
                   placeholder="ex: Sabean's Tatties"
                   onChange={(e) => setName(e.target.value)}
                   type='text'
@@ -122,7 +143,10 @@ function JoinGame(props) {
               </div>
               <div className='col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col'>
                 <Switch.Group>
-                  <Switch.Label className='block font-medium' htmlFor=''>
+                  <Switch.Label
+                    className='block font-medium text-white text-lg'
+                    htmlFor=''
+                  >
                     {Public ? "Public" : "Private"}
                   </Switch.Label>
 
@@ -145,7 +169,10 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
               </div>
               <div className='col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col'>
                 <Switch.Group>
-                  <Switch.Label className='block font-medium' htmlFor=''>
+                  <Switch.Label
+                    className='block font-medium text-white text-lg'
+                    htmlFor=''
+                  >
                     {options ? "Options" : "No Options"}
                   </Switch.Label>
 
@@ -169,7 +196,10 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
                 </Switch.Group>
               </div>
               <div className='col-span-12 sm:col-span-6'>
-                <label className='block font-medium' htmlFor=''>
+                <label
+                  className='block font-medium text-white text-lg'
+                  htmlFor=''
+                >
                   Start Amount
                 </label>
                 <Listbox value={startAmount} onChange={setStartAmount}>
@@ -198,7 +228,7 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
                             className={({ active }) =>
                               `${
                                 active
-                                  ? "text-green-900 bg-green-100"
+                                  ? "text-yellow-700 bg-yellow-100"
                                   : "text-gray-900"
                               }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
@@ -239,13 +269,18 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                 </Listbox>
               </div>
               <div className='col-span-12 sm:col-span-6'>
-                <label className='block font-medium' htmlFor=''>
+                <label
+                  className='block font-medium text-white text-lg'
+                  htmlFor=''
+                >
                   Commision
                 </label>
-                {/* <Listbox value={selected} onChange={setSelected2}>
+                <Listbox value={commisionAmount} onChange={setCommisionAmount}>
                   <div className='relative mt-1'>
                     <Listbox.Button className='relative w-full h-10 py-2 pl-3 pr-10 text-left bg-white rounded-md shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm'>
-                      <span className='block truncate'>{selected.name}</span>
+                      <span className='block truncate'>
+                        {commisionAmount.insert}
+                      </span>
                       <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
                         <SelectorIcon
                           className='w-5 h-5 text-gray-400'
@@ -260,55 +295,60 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                       leaveTo='opacity-0'
                     >
                       <Listbox.Options className='z-10 absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
-                        {people.map((person, personIdx) => (
-                          <Listbox.Option
-                            key={personIdx}
-                            className={({ active }) =>
-                              `${
-                                active
-                                  ? "text-green-900 bg-green-100"
-                                  : "text-gray-900"
-                              }
+                        {commisionAmounts.map(
+                          (commisionAmount, commisionAmountIdx) => (
+                            <Listbox.Option
+                              key={commisionAmountIdx}
+                              className={({ active }) =>
+                                `${
+                                  active
+                                    ? "text-yellow-700 bg-yellow-100"
+                                    : "text-gray-900"
+                                }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
-                            }
-                            value={person}
-                          >
-                            {({ selected, active }) => (
-                              <>
-                                <span
-                                  className={`${
-                                    selected ? "font-medium" : "font-normal"
-                                  } block truncate`}
-                                >
-                                  {person.name}
-                                </span>
-                                {selected ? (
+                              }
+                              value={commisionAmount}
+                            >
+                              {({ selected, active }) => (
+                                <>
                                   <span
                                     className={`${
-                                      active
-                                        ? "text-amber-600"
-                                        : "text-amber-600"
-                                    }
-absolute inset-y-0 left-0 flex items-center pl-3`}
+                                      selected ? "font-medium" : "font-normal"
+                                    } block truncate`}
                                   >
-                                    <CheckIcon
-                                      className='w-5 h-5'
-                                      aria-hidden='true'
-                                    />
+                                    {commisionAmount.insert}
                                   </span>
-                                ) : null}
-                              </>
-                            )}
-                          </Listbox.Option>
-                        ))}
+                                  {selected ? (
+                                    <span
+                                      className={`${
+                                        active
+                                          ? "text-amber-600"
+                                          : "text-amber-600"
+                                      }
+absolute inset-y-0 left-0 flex items-center pl-3`}
+                                    >
+                                      <CheckIcon
+                                        className='w-5 h-5'
+                                        aria-hidden='true'
+                                      />
+                                    </span>
+                                  ) : null}
+                                </>
+                              )}
+                            </Listbox.Option>
+                          )
+                        )}
                       </Listbox.Options>
                     </Transition>
                   </div>
-                </Listbox> */}
+                </Listbox>
               </div>
               <div className='col-span-12 sm:col-span-6'>
                 <Tab.Group>
-                  <label className='block font-medium pb-2' htmlFor=''>
+                  <label
+                    className='block font-medium pb-2 text-white text-lg'
+                    htmlFor=''
+                  >
                     Duration
                   </label>
                   <Tab.List className='flex items-start justify-start pb-2'>
@@ -317,8 +357,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? "bg-white text-md text-gray-900"
+                              : " text-gray-500 text-md"
                           }
     p-2 rounded-l-lg`
                         }
@@ -329,8 +369,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? "bg-white text-md text-gray-900"
+                              : " text-gray-500 text-md"
                           }
     p-2 rounded-r-lg`
                         }
@@ -344,11 +384,11 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                     <Tab.Panel>
                       <div className='flex flex-row items-center justify-start space-x-2'>
                         <input
-                          className='flex-1 h-10 text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-red-300'
+                          className='flex-1 h-10 text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-yellow-300'
                           type='date'
                         ></input>
                         <input
-                          className='flex-1 h-10 text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-red-300'
+                          className='flex-1 h-10 text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-yellow-300'
                           type='time'
                         ></input>
                       </div>
@@ -385,7 +425,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                     className={({ active }) =>
                                       `${
                                         active
-                                          ? "text-green-900 bg-green-100"
+                                          ? "text-yellow-700 bg-yellow-100"
                                           : "text-gray-900"
                                       }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
@@ -457,7 +497,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                     className={({ active }) =>
                                       `${
                                         active
-                                          ? "text-green-900 bg-green-100"
+                                          ? "text-yellow-700 bg-yellow-100"
                                           : "text-gray-900"
                                       }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
@@ -505,7 +545,10 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
               </div>
               <div className='col-span-12 sm:col-span-6'>
                 <Tab.Group>
-                  <label className='block font-medium pb-2' htmlFor=''>
+                  <label
+                    className='block font-medium pb-2 text-white text-lg'
+                    htmlFor=''
+                  >
                     Crypto Bet
                   </label>
                   <Tab.List className='flex items-start justify-start pb-2'>
@@ -514,8 +557,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? "bg-white text-md text-gray-900"
+                              : " text-gray-500 text-md"
                           }
     p-2 rounded-l-lg`
                         }
@@ -526,8 +569,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                         className={({ selected }) =>
                           `${
                             selected
-                              ? "bg-white text-gray-900"
-                              : " text-red-900"
+                              ? "bg-white text-md text-gray-900"
+                              : " text-gray-500 text-md"
                           }
     p-2 rounded-r-lg`
                         }
@@ -544,11 +587,14 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                             type='number'
                             name='price'
                             id='price'
-                            className='h-10 text-sm border-transparent focus:outline-none focus:ring focus:ring-red-300 block w-full pl-2 pr-12 sm:text-sm  rounded-md'
+                            className='h-10 text-sm border-transparent focus:outline-none focus:ring focus:ring-yellow-300 block w-full pl-2 pr-12 sm:text-sm  rounded-md'
                             placeholder='0.000'
                           />
                           <div className='absolute inset-y-0 right-0 flex items-center'>
-                            <label htmlFor='currency' className='sr-only'>
+                            <label
+                              htmlFor='currency'
+                              className='sr-only text-white text-lg'
+                            >
                               Currency
                             </label>
                             <Listbox
@@ -581,7 +627,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                           className={({ active }) =>
                                             `${
                                               active
-                                                ? "text-green-900 bg-green-100"
+                                                ? "text-yellow-900 bg-yellow-100"
                                                 : "text-gray-900"
                                             }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
@@ -626,7 +672,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                           </div>
                         </div>
                         <ArrowSmRightIcon
-                          className='w-5 h-5 text-red-900'
+                          className='w-5 h-5 text-yellow-500'
                           aria-hidden='true'
                         />
                         <div className='relative rounded-md shadow-sm'>
@@ -638,7 +684,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                             name='price'
                             id='price'
                             disabled
-                            className='h-10 border-transparent focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 block w-20 pl-7 pr-2 rounded-md text-sm  bg-white'
+                            className='h-10 border-transparent focus:outline-none block w-20 pl-7 pr-2 rounded-md text-sm  bg-white'
                             placeholder='0.00'
                           />
                         </div>
@@ -650,7 +696,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
             </div>
           </div>
           <div className='flex items-center justify-center'>
-            <button className='block bg-red-700 text-white text-xl sm:text-2xl py-4 px-7 mt-10 mb-32 rounded-lg shadow-md'>
+            <button className='block bg-yellow-500 text-gray-900 text-xl sm:text-2xl py-4 px-7 mt-10 mb-32 rounded-lg shadow-md'>
               Create Game
             </button>
           </div>
