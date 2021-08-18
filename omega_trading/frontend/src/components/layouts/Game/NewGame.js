@@ -18,32 +18,6 @@ function NewGame(props) {
     game: PropTypes.string,
   };
 
-  // const values = queryString.parse(props.location.search)
-  // const keys = Object.keys(values)
-  // if (props.game == null) {
-  //     if (keys.length != 0) {
-  //         props.loadGame(values.room_code)
-  //     }
-  // }
-  // else {
-  //     if (props.game.room_code !== values.room_code) {
-  //         props.loadGame(values.room_code)
-  //     }
-  // }
-
-  // if (props.game == null || props.selecting_game) {
-  //     return <Loader page={true} />
-  // }
-  // else {
-  //     if (props.game.active) {
-  //         return (
-  //             <div className='title'>Need To create this page</div>
-  //         )
-  //     }
-  //     else {
-  //         return <NewPre />
-  //     }
-  // }
 
   return (
     <>
@@ -63,7 +37,7 @@ function NewGame(props) {
             Join Game
           </button>
         </Link>
-        <Link to='join-game'>
+        <Link to='search'>
           <button className='m-2 w-40 h-20 sm:w-40 sm:h-40 md:w-56 md:h-56 lg:w-60 lg:h-60 bg-gray-800 rounded-lg shadow-2xl font-medium text-2xl text-yellow-500 transition duration-150 ease-in-out transform hover:scale-105'>
             Search Game
           </button>

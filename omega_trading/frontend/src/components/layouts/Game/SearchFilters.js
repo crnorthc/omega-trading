@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-key */
 import React, { useState } from 'react'
-import './game.scss'
+// import './game.scss'
 
 // State Stuff
 import PropTypes from 'prop-types'

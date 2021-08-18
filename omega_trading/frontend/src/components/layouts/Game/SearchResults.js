@@ -1,7 +1,7 @@
 /* eslint-disable react/jsx-key */
 import React from 'react'
 import { Link } from 'react-router-dom'
-import './game.scss'
+// import './game.scss'
 
 // State Stuff
 import PropTypes from 'prop-types'

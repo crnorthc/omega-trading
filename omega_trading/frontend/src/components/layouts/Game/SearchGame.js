@@ -6,8 +6,8 @@ import './game.scss'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { searchGames, searchNameCode } from '../../../actions/game'
-import SearchFilters from './SearchFilters'
-import SearchResults from './SearchResults'
+import SearchyFilters from './SearchyFilters'
+import SearchyResults from './SearchyResults'
 
 
 
@@ -20,14 +20,12 @@ function SearchGame(props) {
         search: PropTypes.array,
     }
 
-    return (       
-        <div className='search-cont fr jc-c'>
-            <div className='search-games b fr'>
-                <SearchFilters />
-                <SearchResults />
-            </div>
-        </div>        
-    )
+    return (
+      <div className='fixed z-0 top-16 right-0 bottom-3/4 sm:bottom-2/3 left-0flex flex-col justify-center align-items-center'>
+        <SearchyFilters />
+        <SearchyResults />
+      </div>
+    );
     
 }
 

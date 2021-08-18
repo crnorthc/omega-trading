@@ -18,13 +18,12 @@ import JoinGame from './components/layouts/Game/JoinGame'
 import Game from './components/layouts/Game/Game.js'
 import SearchGame from './components/layouts/Game/SearchGame.js'
 
-import './variables.scss'
 
 function App() {
     return (
         <Router>
             <MyNavbar />
-            <Auth>
+            <Auth> 
                 <Switch>                    
                     <Route exact path='/chart' component={Symbol} />
                     <Route exact path='/search' component={SearchGame} />

@@ -75,8 +75,6 @@ class Load(APIView):
 
         current_time = time.time()
 
-        
-
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
 
