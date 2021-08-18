@@ -75,9 +75,7 @@ class Load(APIView):
 
         current_time = time.time()
 
-        if game.active:
-            if game.end_time <= current_time:
-                return game_over(game)
+        
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
