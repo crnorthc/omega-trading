@@ -70,7 +70,7 @@ function SearchResults(props) {
                  duration: props.search[game].duration,
                  date: props.search[game].end,
                  host: props.search[game].host,
-                 members: props.search[game].members
+                 players: props.search[game].size
                 }
             )
         }
@@ -116,13 +116,21 @@ function SearchResults(props) {
                                 {game.roomCode}
                               </div>
                             </td>
-                            <td className='px-6 py-4 whitespace-nowrap'>
-                              <span className='px-2 inline-flex text-xs leading-5 font-semibold  '>
-                                {game.members}
-                              </span>
-                            </td>
-                           
                             
+                            <td className='px-6 py-4 whitespace-nowrap'>
+                              <div className='text-sm text-gray-900'>
+                                {game.players}
+                              </div>
+                              
+                            </td>
+                            <td className='px-6 py-4 whitespace-nowrap'>
+                              <div className='text-sm text-gray-900'>
+                                {game.date}
+                              </div>
+                              <div className='text-sm text-gray-500'>
+                                {game.roomCode}
+                              </div>
+                            </td>
                           </tr>
                         ))}
                       </tbody>
@@ -131,8 +139,6 @@ function SearchResults(props) {
                 </div>
               </div>
             </div>
-
-            
           </div>
         );
     }
