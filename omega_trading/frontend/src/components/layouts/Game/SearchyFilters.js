@@ -4,7 +4,7 @@ import { ChevronUpIcon } from "@heroicons/react/solid";
 
 function SearchyFilters() {
     return (
-      <div className='w-60 h-full overflow-auto hidden sm:block py-4 px-3 bg-gray-800'>
+      <div className='w-60 h-full overflow-auto hidden sm:block py-4 px-3 '>
         <Disclosure as='div' className='border-b-2'>
           {({ open }) => (
             <>

@@ -63,45 +63,78 @@ function SearchResults(props) {
             }
 
             games.push(
-                <Link to={'/game?room_code=' + props.search[game].room_code} className='toGame'>
-                    <div className='fr mmx mmy ai-c jc-s'>
-                        <div className='fr'>
-                            <div className='fc jc-c mmr'>
-                                {status}
-                            </div>
-                            <div className='fc'>
-                                <div className='fr ai-b'>
-                                    <div className='f22 bld'>{props.search[game].name}:</div>
-                                    <div className='f18 sml'>{props.search[game].room_code}</div>
-                                </div>
-                                <div className='fr ai-b'>
-                                    <div className='f18 bld'>Host:</div>
-                                    <div className='f16 sml'>{props.search[game].host}</div>
-                                </div>
-                            </div>
-                        </div>                                        
-                        <div className='fc ai-e'>
-                            {props.search[game].end == undefined ? 
-                                <div className='fr jc-e ai-b'>
-                                    <div className='f22 bld'>Ends:</div>
-                                    <div className='f18 sml'>{formatDuration(props.search[game].duration)}</div>
-                                </div>
-                                :
-                                <div className='fr jc-e ai-b'>
-                                    <div className='f22 bld'>Ends:</div>
-                                    <div className='f18 sml'>{formatDate(props.search[game].end)}</div>
-                                </div>
-                            }                            
-                            <div className='fr jc-e ai-b'>
-                                <div className='f18 bld'>Members:</div>
-                                <div className='f18 sml'>{props.search[game].size}</div>
-                            </div>                        
-                        </div>
-                    </div>
-                </Link>
+
+                {game: props.search[game],
+                 roomCode: props.search[game].room_code,
+                 name: props.search[game].name,
+                 duration: props.search[game].duration,
+                 date: props.search[game].end,
+                 host: props.search[game].host,
+                 members: props.search[game].members
+                }
             )
         }
-        return games
+
+       
+        return (
+          <div className='flex-1 text-white h-full'>
+            <div className='flex flex-col'>
+              <div className='-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
+                <div className='py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8'>
+                  <div className='shadow overflow-hidden border-b border-gray-200 sm:rounded-lg'>
+                    <table className='min-w-full divide-y divide-gray-200'>
+                      <thead className='bg-gray-50'>
+                        <tr>
+                          <th
+                            scope='col'
+                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                          >
+                            Name
+                          </th>
+                          <th
+                            scope='col'
+                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                          >
+                            Players
+                          </th>
+                          <th
+                            scope='col'
+                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                          >
+                            Ends On
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className='bg-white divide-y divide-gray-200'>
+                        {games.map((game) => (
+                          <tr key={game.roomCode}>
+                            <td className='px-6 py-4 whitespace-nowrap'>
+                              <div className='text-sm text-gray-900'>
+                                {game.name}
+                              </div>
+                              <div className='text-sm text-gray-500'>
+                                {game.roomCode}
+                              </div>
+                            </td>
+                            <td className='px-6 py-4 whitespace-nowrap'>
+                              <span className='px-2 inline-flex text-xs leading-5 font-semibold  '>
+                                {game.members}
+                              </span>
+                            </td>
+                           
+                            
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+        );
     }
 
 

@@ -696,7 +696,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
             </div>
           </div>
           <div className='flex items-center justify-center'>
-            <button className='block bg-yellow-500 text-gray-900 text-xl sm:text-2xl py-4 px-7 mt-10 mb-32 rounded-lg shadow-md'>
+            <button className='block bg-yellow-500 text-gray-900 text-xl sm:text-2xl py-4 px-7 mt-10 mb-32 sm:mb-0 rounded-lg shadow-md'>
               Create Game
             </button>
           </div>
