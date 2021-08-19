@@ -17,34 +17,35 @@ import CreateGame from './components/layouts/Game/CreateGame.js'
 import JoinGame from './components/layouts/Game/JoinGame'
 import Game from './components/layouts/Game/Game.js'
 import SearchGame from './components/layouts/Game/SearchGame.js'
+import { searchGames } from './actions/game.js'
 
 
 function App() {
     return (
-        <Router>
-            <MyNavbar />
-            <Auth> 
-                <Switch>                    
-                    <Route exact path='/chart' component={Symbol} />
-                    <Route exact path='/search' component={SearchGame} />
-                    <Route exact path='/reset-password' component={ResetPassword} />
-                    <Route exact path='/account' component={Account} />
-                    <Route exact path='/game' component={Game} />
-                    <Route exact path='/games' component={CurrentGames} />
-                    <Route exact path='/new-game' component={NewGame} />
-                    <Route exact path='/create-game' component={CreateGame} />
-                    <Route exact path='/join-game' component={JoinGame} />
-                </Switch>
-            </Auth>
-            <Switch>
-                <Route exact path='/' component={NewHome} />
-                <Route exact path='/forgot-password' component={ForgotPassword} />
-                <Route exact path='/login' component={Login} />
-                <Route exact path='/sign-up' component={SignUp} />
-                <Route exact path='/verify-account' component={VerifyAccount} />
-            </Switch>
-        </Router>
-    )
+      <Router>
+        <MyNavbar />
+        <Auth>
+          <Switch>
+            <Route exact path='/chart' component={Symbol} />
+            <Route exact path='/search' component={SearchGame} />
+            <Route exact path='/reset-password' component={ResetPassword} />
+            <Route exact path='/account' component={Account} />
+            <Route exact path='/game' component={Game} />
+            <Route exact path='/games' component={CurrentGames} />
+            <Route exact path='/new-game' component={NewGame} />
+            <Route exact path='/create-game' component={CreateGame} />
+            <Route exact path='/join-game' component={JoinGame} />
+          </Switch>
+        </Auth>
+        <Switch>
+          <Route exact path='/' component={SearchGame} />
+          <Route exact path='/forgot-password' component={ForgotPassword} />
+          <Route exact path='/login' component={Login} />
+          <Route exact path='/sign-up' component={SignUp} />
+          <Route exact path='/verify-account' component={VerifyAccount} />
+        </Switch>
+      </Router>
+    );
 }
 //<Route exact path='/rules' component={NewRules} />
 
