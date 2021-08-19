@@ -67,7 +67,7 @@ function SearchResults(props) {
                 {game: props.search[game],
                  roomCode: props.search[game].room_code,
                  name: props.search[game].name,
-                 duration: formatDuration(props.search[game].duration),
+                //  duration: formatDuration(props.search[game].duration),
                  date: formatDate(props.search[game].end),
                  host: props.search[game].host,
                  players: props.search[game].size
@@ -87,28 +87,28 @@ function SearchResults(props) {
                         <tr>
                           <th
                             scope='col'
-                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                            className='px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                           >
                             Name
                           </th>
                           <th
                             scope='col'
-                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                            className='px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                           >
                             Players
                           </th>
                           <th
                             scope='col'
-                            className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
+                            className='px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                           >
-                            Duration
+                            Date
                           </th>
                         </tr>
                       </thead>
                       <tbody className='bg-white divide-y divide-gray-200'>
                         {games.map((game) => (
                           <tr key={game.roomCode}>
-                            <td className='px-6 py-4 whitespace-nowrap'>
+                            <td className='px-2 py-4 whitespace-nowrap'>
                               <div className='text-sm text-gray-900'>
                                 {game.name}
                               </div>
@@ -117,19 +117,21 @@ function SearchResults(props) {
                               </div>
                             </td>
                             
-                            <td className='px-6 py-4 whitespace-nowrap'>
+                            <td className='px-2 py-4 whitespace-nowrap'>
                               <div className='text-sm text-gray-900'>
-                                {game.players}
+                                {game.players} / infinity
                               </div>
                               
                             </td>
-                            <td className='px-6 py-4 whitespace-nowrap'>
+                            <td className='px-2 py-4 whitespace-nowrap'>
                               <div className='text-sm text-gray-900'>
-                                {game.duration}
+                                {game.time}
                               </div>
-                              <div className='text-sm text-gray-500'>
-                                {game.roomCode}
+                               <td className='px-2 py-4 whitespace-nowrap'>
+                              <div className='text-sm text-gray-900'>
+                                {game.date}
                               </div>
+                             
                             </td>
                           </tr>
                         ))}
