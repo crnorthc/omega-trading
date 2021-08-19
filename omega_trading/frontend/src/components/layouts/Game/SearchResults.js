@@ -40,7 +40,7 @@ function SearchResults(props) {
     }
 
     const formatDuration = (duration) => {
-        var day = ' days '
+        var day = ' dayss '
         if (duration.days == 1) {
             day = ' day '
         }
@@ -67,8 +67,8 @@ function SearchResults(props) {
                 {game: props.search[game],
                  roomCode: props.search[game].room_code,
                  name: props.search[game].name,
-                 duration: props.search[game].duration,
-                 date: props.search[game].end,
+                 duration: formatDuration(props.search[game].duration),
+                 date: formatDate(props.search[game].end),
                  host: props.search[game].host,
                  players: props.search[game].size
                 }
@@ -101,7 +101,7 @@ function SearchResults(props) {
                             scope='col'
                             className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'
                           >
-                            Ends On
+                            Duration
                           </th>
                         </tr>
                       </thead>
@@ -125,7 +125,7 @@ function SearchResults(props) {
                             </td>
                             <td className='px-6 py-4 whitespace-nowrap'>
                               <div className='text-sm text-gray-900'>
-                                {game.date}
+                                {game.duration}
                               </div>
                               <div className='text-sm text-gray-500'>
                                 {game.roomCode}
