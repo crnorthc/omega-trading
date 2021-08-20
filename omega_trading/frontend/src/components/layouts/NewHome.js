@@ -26,7 +26,7 @@ function NewHome(props) {
             return <Loader poage={true} />
         } else {
             if (props.games !== false) {
-                return <Redirect to='/games/current' />
+                return <Redirect to='/games/new' />
             }
             else {
                 return <Redirect to='/games/new' />

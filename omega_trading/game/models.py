@@ -15,6 +15,7 @@ def format_time(time):
         'minutes': time.minute
     }
 
+
 class Ebet(models.Model):
     bet = models.DecimalField(max_digits=25, decimal_places=10)
     crypto = models.CharField(max_length=10)
@@ -25,9 +26,26 @@ class Competition(models.Model):
     name = models.CharField(max_length=20)
     code = models.CharField(max_length=8)
     bet = models.ForeignKey(Ebet, on_delete=models.CASCADE, null=True)
-    min_size = models.IntegerField(default=0, null=True)
-    size = models.IntegerField(default=0, null=True)
+    size = models.IntegerField(default=0)
     active = models.BooleanField(default=False)
+
+
+class Tournament(Competition):
+    round = models.CharField(max_length=4, default='day')
+    commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
+    options = models.BooleanField(default=True) 
+
+    def get_info(self):
+        return {
+            'type': 'tournament',
+            'active': self.active,
+            'size': self.size,
+            'code': self.code,
+            'name': self.name,
+            'commission': self.commission,
+            'options': self.options,
+            'round': self.round
+        } 
 
 
 class Game(Competition):
@@ -48,7 +66,6 @@ class ShortGame(Game):
             'start_amount': self.start_amount,
             'active': self.active,
             'size': self.size,
-            'min_size': self.min_size,
             'code': self.code,
             'name': self.name,
         }
@@ -67,7 +84,6 @@ class LongGame(Game):
             'start_amount': self.start_amount,
             'active': self.active,
             'size': self.size,
-            'min_size': self.min_size,
             'code': self.code,
             'name': self.name,
             'commission': self.commission,
@@ -77,9 +93,7 @@ class LongGame(Game):
 
 class Player(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    address = models.CharField(max_length=42, default='')
-    key = models.CharField(max_length=64, default ='')
+    game = models.ForeignKey(Competition, on_delete=models.CASCADE)
     is_host = models.BooleanField(default=False)
     ready = models.BooleanField(default=False)
     cash = models.DecimalField(max_digits=25, decimal_places=4, null=True)

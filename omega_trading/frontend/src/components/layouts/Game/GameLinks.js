@@ -8,6 +8,8 @@ import NewGame from './NewGame'
 import SearchGame from './SearchGame'
 import Short from './Short'
 import Long from './Long'
+import Tournament from './Tournament'
+import NewComp from './NewComp'
 
 function GameLinks() {
     return (
@@ -17,8 +19,10 @@ function GameLinks() {
             <Route exact path='/games/current' component={CurrentGames} />
             <Route exact path='/games/new' component={NewGame} />
             <Route exact path='/games/new/short' component={Short} />
+            <Route exact path='/games/new/competition' component={NewComp} />
+            <Route exact path='/games/new/tournament' component={Tournament} />
             <Route exact path='/games/new/long' component={Long} />
-            <Route exact path='/games/search' component={JoinGame} />      
+            <Route exact path='/games/new/search' component={JoinGame} />      
             <Route exact path='/games/new/create' component={CreateGame} />    
         </Switch>
     )
