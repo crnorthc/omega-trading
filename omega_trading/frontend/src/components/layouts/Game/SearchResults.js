@@ -125,12 +125,9 @@ function SearchResults(props) {
                             </td>
                             <td className='px-2 py-4 whitespace-nowrap'>
                               <div className='text-sm text-gray-900'>
-                                {game.time}
-                              </div>
-                               <td className='px-2 py-4 whitespace-nowrap'>
-                              <div className='text-sm text-gray-900'>
                                 {game.date}
                               </div>
+                              
                              
                             </td>
                           </tr>
