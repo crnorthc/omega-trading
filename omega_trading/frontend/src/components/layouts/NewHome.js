@@ -26,10 +26,10 @@ function NewHome(props) {
             return <Loader poage={true} />
         } else {
             if (props.games !== false) {
-                return <Redirect to='/games' />
+                return <Redirect to='/games/current' />
             }
             else {
-                return <Redirect to='/new-game' />
+                return <Redirect to='/games/new' />
             }
         }
     }

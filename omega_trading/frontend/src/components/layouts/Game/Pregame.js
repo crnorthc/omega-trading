@@ -7,7 +7,7 @@ import './Game.scss'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { loadUsers } from '../../../actions/user'
-import { changeType, leaveGame, invite } from '../../../actions/game'
+import { changeType, leaveGame, invite, startGame } from '../../../actions/game'
 import Players from './Players'
 
 function Pregame(props) {
@@ -21,6 +21,7 @@ function Pregame(props) {
         loadUsers: PropTypes.func.isRequired,
         changeType: PropTypes.func.isRequired,
         leaveGame: PropTypes.func.isRequired,
+        startGame: PropTypes.func.isRequired,
         game: PropTypes.object,
         user: PropTypes.object,
         users: PropTypes.object
@@ -107,7 +108,7 @@ function Pregame(props) {
                     </div>
                 ) : props.game.host.username == props.user.username ? (
                     <div className="work fc ai-c jc-c">
-                        <button className="editButton">Start</button>
+                        <button onClick={() => props.startGame(props.game.room_code)} className="editButton">Start</button>
                         <div className="noAction">{message}</div>
                     </div>
                 ) : (
@@ -128,4 +129,4 @@ const mapStateToProps = (state) => ({
     user: state.user.user,
 })
 
-export default connect(mapStateToProps, { changeType, leaveGame, loadUsers, invite })(Pregame)
+export default connect(mapStateToProps, { changeType, leaveGame, loadUsers, invite, startGame })(Pregame)

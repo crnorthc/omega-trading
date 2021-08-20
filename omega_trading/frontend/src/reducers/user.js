@@ -5,7 +5,6 @@ import {
     LOGIN_SUCCESS,
     HIDE_RESULTS,
     UPDATE_USER,
-    HISTORY_SAVED,
     GAME_JOINED,
     LOADING,
     NO_USER,
@@ -42,10 +41,6 @@ export default function (state = initialState, action) {
             ...state,
             userLoaded: true,
             user: action.payload.Success
-        }
-    case HISTORY_SAVED:
-        return {
-            ...state
         }
     case NO_USER:
         return {

@@ -1,9 +1,7 @@
 //--------------------------------
 //----------- Colors -------------
 //--------------------------------
-$background: #131440;
-$nav: #32335c;
-$area: #31323f;
+
 
 
 //--------------------------------
@@ -383,9 +381,10 @@ $area: #31323f;
 .editButton {
     width: 114px;
     height: 36px;
-    border: #000 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #2a2d49;
+    color: #f3b629;
 }
 
 .editButton:hover {
@@ -395,28 +394,30 @@ $area: #31323f;
 .editButtonHidden {
     width: 114px;
     height: 36px;
-    border: #727272 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
-    background-color: #dfdfdf;
-    color: #727272;
+    background-color: #2a2d49;
+    color: #f3b629;
     cursor: default !important;
 }
 
 .editButtonDisabled {
     width: 114px;
     height: 36px;
-    border: #000 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #2a2d49;
     cursor: default !important;
+    color: #f3b629;
 }
 
 .editButtonSmall {
     width: 57px;
     height: 36px;
-    border: #000 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #2a2d49;
+    color: #f3b629;
 }
 
 .editButtonSmall:hover {
@@ -426,9 +427,9 @@ $area: #31323f;
 .editButtonMedium {
     width: 76px;
     height: 36px;
-    border: #000 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
-    background-color: #fff;
+    background-color: #2a2d49;
 }
 
 .editButtonMedium:hover {
@@ -438,9 +439,9 @@ $area: #31323f;
 .editButtonMediumHidden {
     width: 76px;
     height: 36px;
-    border: #727272 1px solid;
+    border: #f3b629 1px solid;
     border-radius: 5px;
-    background-color: #dfdfdf;
+    background-color: #2a2d49;
     color: #727272;
     cursor: default !important;
 }

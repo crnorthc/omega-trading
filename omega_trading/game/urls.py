@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .player import *
 
 urlpatterns = [
     path('create', Create.as_view()),
@@ -23,5 +24,6 @@ urlpatterns = [
     path('info/<str:room_code>/', GameInfo.as_view()),
     path('search', SearchGames.as_view()),
     path('populate', Populate.as_view()),
-    path('type', ChangeType.as_view())
+    path('type', ChangeType.as_view()),
+    path('play', PlayGame.as_view())
 ]

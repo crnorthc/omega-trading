@@ -14,6 +14,7 @@ function CurrentGame(props) {
 
     CurrentGame.propTypes = {
         currentGames: PropTypes.func.isRequired,
+        selecting_game: PropTypes.bool,
         games: PropTypes.object,
     }
 
@@ -122,6 +123,7 @@ function CurrentGame(props) {
 }
 
 const mapStateToProps = (state) => ({
+    selecting_game: state.game.selecting_game,
     games: state.game.games,
 })
 

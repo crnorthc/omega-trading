@@ -1,4 +1,5 @@
 from django.urls import path
+from django.urls.conf import re_path, path
 from .views import index
 
 app_name = 'frontend'
@@ -17,5 +18,6 @@ urlpatterns = [
     path('create-game', index),
     path('game', index),
     path('games', index),
-    path('search', index)
+    path('search', index),
+    re_path(r'^games/*.', index)
 ]
