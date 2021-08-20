@@ -3,12 +3,10 @@ import {
     GAME_CREATED,
     CREATING_GAME,
     GAME_LOADED,
-    GAME_JOINED,
     GAME_LOADING,
     HISTORY_LOADED,
     GAME_INFO_LOADED,
     HISTORY_LOADING,
-    QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME,
     GAMES_LOADED,
@@ -16,7 +14,6 @@ import {
     MAKING_SEARCH,
     SELECTING_GAME,
     GAME_SELECTED,
-    TYPE_CHANGING,
     MAKING_EDIT
 } from './types'
 
@@ -46,7 +43,7 @@ function getDates(games) {
     return temp
 }
 
-export const createGame = (amount, bet, commission, date, endOn, name, Public, options) => (dispatch) => {
+export const createGame = (type, rules) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })
@@ -58,16 +55,7 @@ export const createGame = (amount, bet, commission, date, endOn, name, Public, o
         },
     }
 
-    var body = JSON.stringify({
-        amount,
-        bet,
-        commission,
-        date,
-        endOn,
-        name, 
-        Public,
-        options
-    })
+    var body = JSON.stringify({ type, rules })
 
     axios.post('/game/create', body, config).then((res) => {
         if (res.data.Error) {
@@ -100,7 +88,7 @@ export const editGame = (amount, date, endOn, commission, options, code) => (dis
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -109,7 +97,7 @@ export const editGame = (amount, date, endOn, commission, options, code) => (dis
 
 export const loadGame = (room_code) => (dispatch) => {
     dispatch({
-        type: SELECTING_GAME,
+        type: GAME_LOADING,
     })
 
     const config = {
@@ -128,7 +116,7 @@ export const loadGame = (room_code) => (dispatch) => {
             })
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -150,7 +138,7 @@ export const joinGame = (room_code) => (dispatch) => {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -172,7 +160,7 @@ export const declineGame = (room_code) => (dispatch) => {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -194,7 +182,7 @@ export const leaveGame = (room_code) => (dispatch) => {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -216,7 +204,7 @@ export const removePlayer = (username, room_code) => (dispatch) => {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -317,7 +305,7 @@ export const gameBuy = (symbol, quantity, dollars, room_code) => (dispatch) => {
     })
 }
 
-export const setColor = (color, room_code) => (dispatch) => {
+export const startGame = (room_code) => (dispatch) => {
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -325,8 +313,9 @@ export const setColor = (color, room_code) => (dispatch) => {
         },
     }
 
-    var body = JSON.stringify({ color, room_code })
-    axios.post('/game/color', body, config).then((res) => {
+    var body = JSON.stringify({ room_code })
+
+    axios.post('/game/start', body, config).then((res) => {
         if (res.data.Error) {
             console.log('oops')
         } else {
@@ -336,41 +325,7 @@ export const setColor = (color, room_code) => (dispatch) => {
             })
         }
     })
-}
 
-export const startGame = (start) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({})
-
-    if (start) {
-        axios.post('/game/start', body, config).then((res) => {
-            if (res.data.Error) {
-                console.log('oops')
-            } else {
-                dispatch({
-                    type: GAME_LOADED,
-                    payload: getData(res.data.game),
-                })
-            }
-        })
-    } else {
-        axios.post('/game/start-bet', body, config).then((res) => {
-            if (res.data.Error) {
-                console.log('oops')
-            } else {
-                dispatch({
-                    type: GAME_LOADED,
-                    payload: res.data.game,
-                })
-            }
-        })
-    }
 }
 
 export const loadHistory = () => (dispatch) => {
@@ -396,116 +351,6 @@ export const loadHistory = () => (dispatch) => {
             dispatch({
                 type: HISTORY_LOADED,
                 payload: getDates(res.data.games),
-            })
-        }
-    })
-}
-
-export const getEtherQuote = (quantity) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ quantity })
-
-    axios.post('/game/quote-ether', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: QUOTE_LOADED,
-                payload: res.data,
-            })
-        }
-    })
-}
-
-export const getGasQuote = () => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({})
-
-    axios.post('/game/quote-gas', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: QUOTE_LOADED,
-                payload: res.data,
-            })
-        }
-    })
-}
-
-export const makeBet = (address, key, room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ address, key, room_code })
-
-    axios.post('/game/make-bet', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
-
-export const defineContract = (address, bet) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ address, bet })
-
-    axios.post('/game/define-contract', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
-
-export const readyUp = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ room_code })
-
-    axios.post('/game/ready-up', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
             })
         }
     })
@@ -638,7 +483,7 @@ export const changeType = (room_code) => (dispatch) => {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }
@@ -660,7 +505,7 @@ export const invite = (username, room_code) => (dispatch) => {
             console.log('oops')
         } else {
             dispatch({
-                type: GAME_SELECTED,
+                type: GAME_LOADED,
                 payload: res.data.game,
             })
         }

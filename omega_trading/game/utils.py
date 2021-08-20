@@ -13,9 +13,109 @@ import requests
 import datetime
 
 Invites = apps.get_model('users', 'Invites')
+SECONDS_IN_MONTH = 30 * 32 * 60 * 60
+SECONDS_IN_WEEK = 7 * 24 * 60 * 60
 SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
 SECONDS_IN_MINUTE = 60
+
+
+def get_code():
+    choices = string.ascii_uppercase + string.digits
+    choices = choices.replace('l', '')
+    choices = choices.replace('I', '')
+
+    while True:
+        room_code = ''.join(
+            random.choice(choices) for i in range(8))
+        queryset = Competition.objects.filter(
+            code=room_code)
+        if not queryset.exists():
+            break
+
+    return room_code
+
+def create_short_game(rules, user):
+    hours = rules['duration']
+    public = rules['public']
+    start_amount = rules['start_amount']
+    name = rules['name']
+    min_players = rules['min_players']
+    bet = rules['bet']
+    code = get_code()
+
+    game = ShortGame(duration=hours, size=1, public=public, name=name, code=code, min_size=min_players, start_amount=start_amount)
+
+    if bet != None:
+        bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
+        game.bet = bet
+
+    game.save()
+
+    player = Player(user=user, game=game, is_host=True)
+
+    player.save()
+
+    return game
+
+def create_long_game(rules, user):
+    dates = rules['dates']
+    public = rules['public']
+    start_amount = rules['start_amount']
+    name = rules['name']
+    min_players = rules['min_players']
+    bet = rules['bet']
+    commission = rules['commission']
+    options = rules['options']
+
+    code = get_code()
+
+    game = LongGame(start_time=dates['start'], size=1, end_time=dates['end'], options=options, commission=commission, public=public, name=name, code=code, min_size=min_players, start_amount=start_amount)
+
+    if bet != None:
+        bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
+        game.bet = bet
+
+    game.save()
+
+    player = Player(user=user, game=game, is_host=True)
+
+    player.save()
+
+    return game
+
+def get_game_info(game, user):
+    info = game.get_info()
+
+    players, host = get_players(game)
+
+    info['host'] = host
+    info['players'] = players
+
+    return info
+
+def get_game(player):
+    game = Competition.objects.filter(id=player['game_id'])
+    game_id = game[0].id
+
+    game = ShortGame.objects.filter(competition_ptr_id=game_id)
+
+    if game.exists():
+        return game[0]
+    else:
+        game = LongGame.objects.filter(competition_ptr_id=game_id)
+        return game[0]
+
+
+
+
+
+
+
+
+
+
+
 
 
 def load_user(request=None, username=None):
@@ -45,21 +145,6 @@ def get_host_username(game):
     host = host[0]
 
     return host.username
-
-def get_room_code():
-    choices = string.ascii_uppercase + string.digits
-    choices = choices.replace('l', '')
-    choices = choices.replace('I', '')
-
-    while True:
-        room_code = ''.join(
-            random.choice(choices) for i in range(8))
-        queryset = Game.objects.filter(
-            room_code=room_code)
-        if not queryset.exists():
-            break
-
-    return room_code
 
 def get_player(user):
     player = Player.objects.filter(user=user)
@@ -98,38 +183,6 @@ def get_holdings(player):
         player_holdings[holding['symbol']] = holding['quantity']
 
     return player_holdings
-
-def get_players_info(game, user):
-    players = {}
-    charts = {}
-    holdings = {}
-
-    players_data, host = get_players(game)
-
-    for username, player in players_data.items():
-        players[username] = {
-            'username': username,
-            'first_name': player['first_name'],
-            'last_name': player['last_name']
-        }
-
-        if 'address' in player:
-            players[username]['address'] = player['address']
-
-        if game.start_time != 0:
-            players[username]['path'], players[username]['periods'], players[username]['worth'] = load_portfolio(
-                player, game)
-            players[username]['cash'] = player['cash']
-
-            if player == user.username:
-                holdings = Holdings.objects.filter(player_id=player.id)
-
-                if holdings.exists():
-                    charts = load_charts(player, game)
-                    holdings = get_holdings(player)
-                
-
-    return players, charts, holdings, host
 
 def contract_players(game):
     players = get_players(game)
@@ -201,10 +254,8 @@ def get_duration(game):
         'mins': duration.minutes
     }
 
-def get_game_info(game, user):
-    host = User.objects.filter(username=user.username)
-    host = host[0]
-    players, charts, holdings, host = get_players_info(game, user)
+def active_game(game, user):
+    players, host = get_players(game)
 
     info = {
         'host': host,
@@ -215,10 +266,8 @@ def get_game_info(game, user):
         'commission': game.commission,
         'options': game.options,
         'players': players,
-        'invites': get_invites(game),
         'active': game.active,
-        'charts': charts,
-        'holdings': holdings
+        'time_left': game.end_time - game.start_time
     }
 
     if game.duration_id == None:
@@ -504,32 +553,6 @@ def game_over(game):
 
     return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
 
-# Will be changed
-def get_address(request, game):
-    profile = Profile.objects.filter(user_id=request.user.id)
-    profile = profile[0]
-    player = Player.objects.filter(profile_id=profile.id)
-    player = player[0]
-    contract = get_contract_info(game)
-
-    if 'save' in request.data:
-        if request.data['save']:
-            player.address = request.data['address']
-            player.save()
-
-    if 'address' in request.data:
-        addy = str(request.data['address'])
-    else:
-        if request.user.username in contract['players']:
-            addy = contract['players'][request.user.username]['address']
-        else:
-            addy = player.address
-
-    if not check_address(addy):
-        return False
-    else:
-        return checkedsummed(addy)
-
 def all_bets_made(game):
     contract = get_contract_info(game)
 
@@ -549,24 +572,14 @@ def ready_to_start(game):
     return True
 
 def initialize_players(game):
-    current_day = time.localtime()
-    current_day = (current_day[0], current_day[1], current_day[2], 1,
-                    00, 00, current_day[6], current_day[7], current_day[8])
-    current_day = math.floor(time.mktime(current_day)) - SECONDS_IN_DAY
-    players = get_players(game)
+    players = Player.objects.filter(game_id=game.id)
 
-    for username, player in players.items():
-        user = User.objects.filter(username=username)
-        user = user[0]
-        player = get_player(user)
+    for i, player in enumerate(players):
+        player = players[i]
         player.cash = game.start_amount
         player.save()
-        transaction = Transactions(player=player, bought=True, symbol='', quantity='', price=0, time=round((time.time() - SECONDS_IN_DAY), 5), cash=game.start_amount, total_quantity=0)
+        transaction = Transactions(player=player, bought=True, symbol='', quantity=0, price=0, time=round((time.time() - SECONDS_IN_DAY), 5), cash=game.start_amount, total_quantity=0)
         transaction.save()
-
-def get_game(room_code):
-    game = Game.objects.filter(room_code=room_code)
-    return game[0]
 
 def save_game_history(game):
     duration = get_duration(game)
@@ -832,6 +845,14 @@ def commissions_query(commissions):
         query += ' AND commission={commission}'.format(commission=commission)
 
     return query
+
+
+
+
+
+
+
+
 
 
 

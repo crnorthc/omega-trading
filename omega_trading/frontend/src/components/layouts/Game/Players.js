@@ -7,11 +7,11 @@ import { connect } from 'react-redux'
 import profilePic from '../../../static/profilePic.png'
 import { removePlayer } from '../../../actions/game'
 
-function Friends(props) {
+function Players(props) {
     const [search, setSearch] = useState(null)
     const [show, setShow] = useState(false)
 
-    Friends.propTypes = {
+    Players.propTypes = {
         removePlayer: PropTypes.func.isRequired,
         user: PropTypes.object,
         game: PropTypes.object,
@@ -38,7 +38,6 @@ function Friends(props) {
                 return false
             }
         }
-
         return true
     }
 
@@ -75,7 +74,12 @@ function Friends(props) {
                 </div>
             )
             if (isMatch(i)) {
-                friends.push(temp)
+                if (i == props.game.host.username) {
+                    friends.unshift(temp)
+                }
+                else {
+                    friends.push(temp)
+                }                
             }
         }
 
@@ -117,4 +121,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game,
 })
 
-export default connect(mapStateToProps, { removePlayer })(Friends)
+export default connect(mapStateToProps, { removePlayer })(Players)

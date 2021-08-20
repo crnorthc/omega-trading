@@ -2,31 +2,78 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.deletion import SET_NULL
 from django.db.models.fields.related import ForeignKey
+from datetime import datetime as dt
 
-class Duration(models.Model):
-    days = models.IntegerField(default=0)
-    hours = models.IntegerField(default=0)
-    minutes = models.IntegerField(default=0)
-
-
-class Game(models.Model):
-    name = models.CharField(max_length=20)
-    start_amount = models.FloatField(default=10000)
-    room_code = models.CharField(max_length=8)
-    start_time = models.IntegerField(default=0)
-    end_time = models.IntegerField(default=0)
-    commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
-    active = models.BooleanField(default=False)
-    e_bet = models.BooleanField(default=False)
-    public = models.BooleanField(default=True)
-    options = models.BooleanField(default=True)
-    duration = models.ForeignKey(Duration, on_delete=models.SET_NULL, null=True)
-
+def format_time(time):
+    time = dt.fromtimestamp(time)
+    
+    return {
+        'year': time.year,
+        'month': time.month,
+        'day': time.day,
+        'hours': time.hour,
+        'minutes': time.minute
+    }
 
 class Ebet(models.Model):
     bet = models.DecimalField(max_digits=25, decimal_places=10)
     crypto = models.CharField(max_length=10)
-    game = ForeignKey(Game, on_delete=models.CASCADE)
+    payout = models.IntegerField(default=0)
+
+
+class Competition(models.Model):
+    name = models.CharField(max_length=20)
+    code = models.CharField(max_length=8)
+    bet = models.ForeignKey(Ebet, on_delete=models.CASCADE, null=True)
+    min_size = models.IntegerField(default=0, null=True)
+    size = models.IntegerField(default=0, null=True)
+    active = models.BooleanField(default=False)
+
+
+class Game(Competition):
+    start_amount = models.FloatField(default=10000)
+    start_time = models.IntegerField(default=0)
+    end_time = models.IntegerField(default=0)    
+    public = models.BooleanField(default=True)  
+
+
+class ShortGame(Game):
+    duration = models.IntegerField(default=0)
+    ready = models.IntegerField(default=0)
+
+    def get_info(self):
+        return {
+            'type': 'short',
+            'duration': self.duration,
+            'public': self.public,
+            'start_amount': self.start_amount,
+            'active': self.active,
+            'size': self.size,
+            'min_size': self.min_size,
+            'code': self.code,
+            'name': self.name,
+        }
+
+
+class LongGame(Game):
+    commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
+    options = models.BooleanField(default=True) 
+
+    def get_info(self):
+        return {
+            'type': 'long',
+            'start_time': format_time(self.start_time),
+            'end_time': format_time(self.end_time),
+            'public': self.public,
+            'start_amount': self.start_amount,
+            'active': self.active,
+            'size': self.size,
+            'min_size': self.min_size,
+            'code': self.code,
+            'name': self.name,
+            'commission': self.commission,
+            'options': self.options,
+        } 
 
 
 class Player(models.Model):
@@ -35,7 +82,6 @@ class Player(models.Model):
     address = models.CharField(max_length=42, default='')
     key = models.CharField(max_length=64, default ='')
     is_host = models.BooleanField(default=False)
-    payed = models.BooleanField(default=False)
     ready = models.BooleanField(default=False)
     cash = models.DecimalField(max_digits=25, decimal_places=4, null=True)
 

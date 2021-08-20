@@ -28,7 +28,6 @@ function MyNavbar(props) {
     const [symbol, setSymbol] = useState()
     const [show, setShow] = useState(false)
     const [selected, setSelected] = useState(null)
-    const [code, setCode] = useState(null)
     let [isOpen, setIsOpen] = useState(false)
 
     function closeModal() {
@@ -62,18 +61,13 @@ function MyNavbar(props) {
         props.currentGames()
     }
 
-
+    /*
     if (selected !== null) {
-        if (props.games[selected].room_code !== code) {
-            setCode(props.games[selected].room_code)
-        }
-		
         if (props.game == null) {
-            props.loadGame(props.games[selected].room_code)
             return <Redirect to={'/game?room_code=' + props.games[selected].room_code} />
         }
         else {
-            if (props.games[selected].room_code !== props.game.room_code && props.games[selected].room_code != code) {
+            if (props.games[selected].room_code !== props.game.room_code) {
                 return <Redirect to={'/game?room_code=' + props.games[selected].room_code} />
             }
         }
@@ -82,7 +76,7 @@ function MyNavbar(props) {
         if (props.game !== null) {
             props.noGame()
         }
-    }
+    }*/
 
     const dropDown = () => {
         return (
@@ -128,22 +122,25 @@ function MyNavbar(props) {
         else {
             var game_list = [no_game]
             for (const game in props.games){
-                game_list.push(
-                    <Listbox.Option key={game} className={({ active }) => `${active ? 'text-yellow-900 bg-yellow-200' : 'text-gray-900'} cursor-pointer select-none relative py-2 pl-10 pr-4`} value={game}>
-                        {({ selected, active }) => (
-                            <>
-                                <span className={`${selected ? 'font-medium' : 'font-normal'} block truncate`}>
-                                    {props.games[game].name}
-                                </span>
-                                {selected ? (
-                                    <span className={`${active ? 'text-amber-600' : 'text-amber-600'} absolute inset-y-0 left-0 flex items-center pl-3`}>
-                                        <CheckIcon className='w-5 h-5' aria-hidden='true'/>
+                if (props.games[game].active) {
+                    game_list.push(
+                        <Listbox.Option key={game} className={({ active }) => `${active ? 'text-yellow-900 bg-yellow-200' : 'text-gray-900'} cursor-pointer select-none relative py-2 pl-10 pr-4`} value={game}>
+                            {({ selected, active }) => (
+                                <>
+                                    <span className={`${selected ? 'font-medium' : 'font-normal'} block truncate`}>
+                                        {props.games[game].name}
                                     </span>
-                                ) : null}
-                            </>
-                        )}
-                    </Listbox.Option>
-                )
+                                    {selected ? (
+                                        <span className={`${active ? 'text-amber-600' : 'text-amber-600'} absolute inset-y-0 left-0 flex items-center pl-3`}>
+                                            <CheckIcon className='w-5 h-5' aria-hidden='true'/>
+                                        </span>
+                                    ) : null}
+                                </>
+                            )}
+                        </Listbox.Option>
+                    )
+                }
+               
             }
             return game_list
         }
@@ -159,7 +156,7 @@ function MyNavbar(props) {
                 {props.user !== null ? (
                     <div className='flex items-center h-full justify-center sm:justify-between shadow-sm'>
                         <div className='flex items-center justify-center px-7 sm:px-5'>
-                            <Link to={'/new-game'} className='text-yellow-500 font-bold hover:text-yellow-600'>
+                            <Link to={'/games/new'} className='text-yellow-500 font-bold hover:text-yellow-600'>
                 				Starbet
                             </Link>
                             <div className='w-40 sm:w-52 ml-5'>
@@ -187,10 +184,10 @@ function MyNavbar(props) {
                             </div>
                         </div>
                         <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
-                            <Link to='/games' className='text-sm text-gray-50 hover:text-gray-300'>
+                            <Link to='/games/current' className='text-sm text-gray-50 hover:text-gray-300'>
                 				My Games
                             </Link>
-                            <Link to='/new-game' className='text-sm text-gray-50 hover:text-gray-300'>
+                            <Link to='/games/new' className='text-sm text-gray-50 hover:text-gray-300'>
                 				New Game
                             </Link>
                             <div className='relative  flex items-center justify-center'>

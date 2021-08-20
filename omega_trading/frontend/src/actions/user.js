@@ -3,7 +3,6 @@ import { USER_LOADED,
     USERS_LOADED, 
     HIDE_RESULTS, 
     UPDATE_USER, 
-    HISTORY_SAVED,
     NO_USER
 } from './types'
 
@@ -145,13 +144,6 @@ export const loadUsers = (username, friends) => (dispatch) => {
                 payload: res.data,
             })
         }
-    })
-}
-
-export const saveHistory = () => (dispatch) => {
-    getCookie()
-    dispatch({
-        type: HISTORY_SAVED,
     })
 }
 

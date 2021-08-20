@@ -8,21 +8,19 @@ import {
     HISTORY_LOADED,
     GAME_INFO_LOADED,
     HISTORY_LOADING,
-    QUOTE_LOADED,
     NO_HISTORY,
     NO_GAME,
     GAMES_LOADED,
     SEARCH_LOADED,
     MAKING_SEARCH,
-    SELECTING_GAME,
-    GAME_SELECTED,
     TYPE_CHANGING,
     MAKING_EDIT
 } from '../actions/types'
 
 const initialState = {
     creating_game: false,
-    selecting_game: false,
+    game_loading: false,
+    game_loaded: false,
     game_created: false,
     no_game: false,
     no_history: false,
@@ -33,7 +31,6 @@ const initialState = {
     preview: null,
     search: null,
     search_made: false,
-    type_changing: true,
     making_edit: false
 }
 
@@ -70,25 +67,12 @@ export default function (state = initialState, action) {
             ...state,
             game_loading: true,
         }
-    case SELECTING_GAME:
-        return {
-            ...state,
-            selecting_game: true,
-            no_game: false
-        }
-    case GAME_SELECTED:
-        return {
-            ...state,
-            selecting_game: false,
-            game: action.payload,
-            type_changing: false,
-            making_edit: false
-        }
     case GAME_LOADED:
         return {
             ...state,
             game_loading: false,
             game_loaded: true,
+            making_edit: false,
             game: action.payload,
         }
     case GAME_INFO_LOADED: 
@@ -165,18 +149,6 @@ export default function (state = initialState, action) {
             history_loading: false,
             no_history: true,
             history_loaded: true,
-        }
-    case QUOTE_LOADED:
-        if ('gasQuote' in action.payload) {
-            return {
-                ...state,
-                gasQuote: action.payload['gasQuote'],
-            }
-        } else {
-            return {
-                ...state,
-                etherQuote: action.payload['etherQuote'],
-            }
         }
     default:
         return state

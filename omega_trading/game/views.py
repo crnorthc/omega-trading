@@ -19,45 +19,13 @@ Invites = apps.get_model('users', 'Invites')
 class Create(APIView):
 
     def post(self, request, format=None):
-        amount = int(request.data['amount'][1:].replace(',',''))
-        bet = request.data['bet']
-        public = request.data['Public']
-        name = request.data['name']
-        date = request.data['date']
-        commission = request.data['commission']
-        options = request.data['options']
-        endOn = request.data['endOn']
-        room_code = get_room_code()
+        rules = request.data['rules']
+        type = request.data['type']
 
-        if bet == 'no':
-            bet = False
+        if type == 'long':
+            game = create_long_game(rules, request.user)
         else:
-            bet = True
-
-        if commission != None:
-            commission = float(commission[1:])
-
-        if endOn == 'date':
-            time = date_to_UNIX(date)
-
-            game = Game(
-            start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, end_time=time, name=name, public=public, options=options)
-        else:
-            days = int(date['days'])
-            hours = int(date['hours'])
-            mins = int(date['mins'])
-
-            duration = Duration(days=days, hours=hours, minutes=mins)
-
-            duration.save()
-    
-            game = Game(
-                start_amount=amount, e_bet=bet, commission=commission, room_code=room_code, duration=duration, name=name, public=public, options=options)
-
-        host = Player(user=request.user, game=game, is_host=True, cash=amount)
-
-        game.save()
-        host.save()
+            game = create_short_game(rules, request.user)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -223,7 +191,8 @@ class Remove(APIView):
 
 class StartGame(APIView):
     def post(self, request, format=None):
-        game = get_game(request.user)
+        game = Game.objects.filter(room_code=request.data['room_code'])
+        game = game[0]
         start_time = math.floor(time.time())
 
         if game.end_time == 0:
@@ -483,24 +452,9 @@ class CurrentGames(APIView):
         games = []
 
         for _, player in enumerate(games_query):
-            game = Game.objects.filter(id=player['game_id'])
-            game = game[0]
+            game = get_game(player)
 
-            players = Player.objects.filter(game_id=player['game_id']).count()
-
-            info = {
-                'room_code': game.room_code,
-                'name': game.name,
-                'size': players,
-                'status': game.start_time != '',
-                'host': get_host_username(game),
-                'eBet': game.e_bet
-            }
-
-            if game.duration == None:
-                info['end'] = get_end_time(int(game.end_time))
-            else:
-                info['duration'] = get_duration(game)
+            info = game.get_info()
 
             games.append(info)
 
@@ -566,3 +520,7 @@ class Populate(APIView):
             results.append(info)
 
         return Response({'search': results}, status=status.HTTP_200_OK)
+
+
+
+        

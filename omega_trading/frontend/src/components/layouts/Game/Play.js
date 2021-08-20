@@ -12,6 +12,7 @@ function Play(props) {
     Play.propTypes = {
         user: PropTypes.object,
         game: PropTypes.object,
+        player: PropTypes.object
     }
 
     const dayStyle = {
@@ -21,7 +22,7 @@ function Play(props) {
     const graph = () => { 
         return(
             <div className='Graph'>
-                {<NewGraph data={props.data} />}
+                {<NewGraph data={{'path': props.player.portfolio[0].path, 'periods': props.player.portfolio[0].periods}} />}
                 <div className='timeSelector f ai-c'>
                     <button style={period == 'day' ? dayStyle : null} onClick={() => setPeriod('day')} className='timePeriod'>1D</button>
                     <button style={period == 'week' ? dayStyle : null} onClick={() => setPeriod('week')} className='timePeriod'>1W</button>
@@ -44,6 +45,7 @@ function Play(props) {
 const mapStateToProps = (state) => ({
     user: state.user.user,
     game: state.game.game,
+    player: state.player
 })
 
 export default connect(mapStateToProps, { })(Play)
