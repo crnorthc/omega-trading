@@ -111,13 +111,6 @@ def get_game(player):
 
 
 
-
-
-
-
-
-
-
 def load_user(request=None, username=None):
     if request == None:
         queryList = User.objects.filter(username=username)

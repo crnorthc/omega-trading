@@ -228,7 +228,6 @@ if (startDate !== null) {
                   <Switch.Label className='block font-medium' htmlFor=''>
                     {Public ? 'Public' : 'Private'}
                   </Switch.Label>
-
                   <Switch
                     checked={Public}
                     onChange={setPublic}

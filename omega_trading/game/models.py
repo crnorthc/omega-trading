@@ -39,7 +39,6 @@ class Game(Competition):
 
 class ShortGame(Game):
     duration = models.IntegerField(default=0)
-    ready = models.IntegerField(default=0)
 
     def get_info(self):
         return {
