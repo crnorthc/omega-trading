@@ -26,7 +26,7 @@ const startAmounts = [
   { insert: '$10,000', value: 10000 },
   { insert: '$100,000', value: 100000 },
   { insert: '$500,000', value: 500000 },
-  { insert: '$1,000,000', value: 1000000 },
+  { insert: '$1,000,000', value: 1000000 }
 ]
 
 const payout = [
