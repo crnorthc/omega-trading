@@ -1,4 +1,7 @@
-import axios from 'axios'
+/* eslint-disable semi */
+/* eslint-disable quotes */
+/* eslint-disable indent */
+import axios from "axios";
 import {
     GAME_CREATED,
     CREATING_GAME,
@@ -18,29 +21,29 @@ import {
 } from './types'
 
 function getCookie() {
-    const value = `; ${document.cookie}`
-    const parts = value.split(`; ${'loggedIn'}=`)
-    var cookie = ''
-    if (parts.length === 2) {
-        cookie = parts.pop().split(';').shift()
-    }
+ const value = `; ${document.cookie}`;
+ const parts = value.split(`; ${"loggedIn"}=`);
+ var cookie = "";
+ if (parts.length === 2) {
+  cookie = parts.pop().split(";").shift();
+ }
 
-    return cookie
+ return cookie;
 }
 
 function getDates(games) {
-    var temp = games
-    for (const game in games) {
-        var date = new Date(games[game].start_time * 1000)
-        temp[game].start_time = {
-            year: date.getFullYear(),
-            month: date.getMonth(),
-            day: date.getDate(),
-            hour: date.getHours(),
-            mins: date.getMinutes(),
-        }
-    }
-    return temp
+ var temp = games;
+ for (const game in games) {
+  var date = new Date(games[game].start_time * 1000);
+  temp[game].start_time = {
+   year: date.getFullYear(),
+   month: date.getMonth(),
+   day: date.getDate(),
+   hour: date.getHours(),
+   mins: date.getMinutes(),
+  };
+ }
+ return temp;
 }
 
 export const create= (type, rules) => (dispatch) => {
@@ -212,98 +215,99 @@ export const removePlayer = (username, room_code) => (dispatch) => {
 }
 
 export const sendGameInvite = (username, unadd, room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    const body = JSON.stringify({ username, unadd, room_code })
+ const body = JSON.stringify({ username, unadd, room_code });
 
-    axios.post('/game/invite', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/invite", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
-export const gameSell = (symbol, quantity, dollars, room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+export const gameSell =
+ (symbol, quantity, dollars, room_code) => (dispatch) => {
+  const config = {
+   headers: {
+    "Content-Type": "application/json",
+    Authorization: "Token " + getCookie(),
+   },
+  };
 
-    var body = JSON.stringify({ symbol })
+  var body = JSON.stringify({ symbol });
 
-    axios.post('/securities/update', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            var quote = res.data
-            var body = JSON.stringify({
-                symbol,
-                quantity,
-                quote,
-                dollars,
-                room_code,
-            })
-            axios.post('/game/sell', body, config).then((res) => {
-                if (res.data.Error) {
-                    console.log('oops')
-                } else {
-                    dispatch({
-                        type: GAME_LOADED,
-                        payload: res.data.game,
-                    })
-                }
-            })
-        }
-    })
-}
+  axios.post("/securities/update", body, config).then((res) => {
+   if (res.data.Error) {
+    console.log("oops");
+   } else {
+    var quote = res.data;
+    var body = JSON.stringify({
+     symbol,
+     quantity,
+     quote,
+     dollars,
+     room_code,
+    });
+    axios.post("/game/sell", body, config).then((res) => {
+     if (res.data.Error) {
+      console.log("oops");
+     } else {
+      dispatch({
+       type: GAME_LOADED,
+       payload: res.data.game,
+      });
+     }
+    });
+   }
+  });
+ };
 
 export const gameBuy = (symbol, quantity, dollars, room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
+
+ var body = JSON.stringify({ symbol });
+
+ axios.post("/securities/update", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   var quote = res.data;
+   var body = JSON.stringify({
+    symbol,
+    quantity,
+    quote,
+    dollars,
+    room_code,
+   });
+   axios.post("/game/buy", body, config).then((res) => {
+    if (res.data.Error) {
+     console.log("oops");
+    } else {
+     dispatch({
+      type: GAME_LOADED,
+      payload: res.data.game,
+     });
     }
-
-    var body = JSON.stringify({ symbol })
-
-    axios.post('/securities/update', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            var quote = res.data
-            var body = JSON.stringify({
-                symbol,
-                quantity,
-                quote,
-                dollars,
-                room_code,
-            })
-            axios.post('/game/buy', body, config).then((res) => {
-                if (res.data.Error) {
-                    console.log('oops')
-                } else {
-                    dispatch({
-                        type: GAME_LOADED,
-                        payload: res.data.game,
-                    })
-                }
-            })
-        }
-    })
-}
+   });
+  }
+ });
+};
 
 export const startGame = (room_code) => (dispatch) => {
     const config = {
@@ -330,143 +334,164 @@ export const startGame = (room_code) => (dispatch) => {
 
 export const loadHistory = () => (dispatch) => {
     dispatch({
-        type: HISTORY_LOADING,
-    })
+     type: GAME_LOADED,
+     payload: getData(res.data.game),
+    });
+   }
+  });
+ } else {
+  axios.post("/game/start-bet", body, config).then((res) => {
+   if (res.data.Error) {
+    console.log("oops");
+   } else {
+    dispatch({
+     type: GAME_LOADED,
+     payload: res.data.game,
+    });
+   }
+  });
+ }
+};
 
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+export const loadHistory = () => (dispatch) => {
+ dispatch({
+  type: HISTORY_LOADING,
+ });
 
-    var body = JSON.stringify({})
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    axios.post('/game/history', body, config).then((res) => {
-        if (res.status == 204) {
-            dispatch({
-                type: NO_HISTORY,
-            })
-        } else {
-            dispatch({
-                type: HISTORY_LOADED,
-                payload: getDates(res.data.games),
-            })
-        }
-    })
-}
+ var body = JSON.stringify({});
+
+ axios.post("/game/history", body, config).then((res) => {
+  if (res.status == 204) {
+   dispatch({
+    type: NO_HISTORY,
+   });
+  } else {
+   dispatch({
+    type: HISTORY_LOADED,
+    payload: getDates(res.data.games),
+   });
+  }
+ });
+};
 
 export const currentGames = () => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    axios.get('/game/games', config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAMES_LOADED,
-                payload: res.data.games,
-            })
-        }
-    })
-}
+ axios.get("/game/games", config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAMES_LOADED,
+    payload: res.data.games,
+   });
+  }
+ });
+};
 
 export const gameInfo = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    const url = '/game/info/' + room_code
+ const url = "/game/info/" + room_code;
 
-    axios.get(url, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_INFO_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.get(url, config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_INFO_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const searchGames = (metrics) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    dispatch({
-        type: MAKING_SEARCH
-    })
+ dispatch({
+  type: MAKING_SEARCH,
+ });
 
-    var body = JSON.stringify({ metrics })
+ var body = JSON.stringify({ metrics });
 
-    axios.post('/game/search', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: SEARCH_LOADED,
-                payload: res.data.search,
-            })
-        }
-    })
-}
+ axios.post("/game/search", body, config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: SEARCH_LOADED,
+    payload: res.data.search,
+   });
+  }
+ });
+};
 
 export const populateSearch = () => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    var body = JSON.stringify({})
+ var body = JSON.stringify({});
 
-    axios.post('/game/populate', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: SEARCH_LOADED,
-                payload: res.data.search,
-            })
-        }
-    })
-}
+ axios.post("/game/populate", body, config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: SEARCH_LOADED,
+    payload: res.data.search,
+   });
+  }
+ });
+};
 
 export const searchNameCode = (code, name) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    var body = JSON.stringify({ code, name })
+ var body = JSON.stringify({ code, name });
 
-    axios.post('/game/search-basic', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: SEARCH_LOADED,
-                payload: res.data.search,
-            })
-        }
-    })
-}
+ axios.post("/game/search-basic", body, config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: SEARCH_LOADED,
+    payload: res.data.search,
+   });
+  }
+ });
+};
 
 export const changeType = (room_code) => (dispatch) => {
     const config = {
