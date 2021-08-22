@@ -15,6 +15,9 @@ import datetime
 import json
 
 Invites = apps.get_model('users', 'Invites')
+Wallet = apps.get_model('users', 'Wallet')
+Address = apps.get_model('users', 'Address')
+Frozen = apps.get_model('users', 'Frozen')
 
 class Create(APIView):
 
@@ -28,6 +31,9 @@ class Create(APIView):
             game = create_short_game(rules, request.user)
         elif type == 'tournament':
             game = create_tournament(rules, request.user)
+
+        if 'Error' in game:
+            return Response(game, status=status.HTTP_403_FORBIDDEN)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -143,6 +149,18 @@ class Join(APIView):
 
     def post(self, request, format=None):
         game = get_game(request.data['room_code'])
+
+        bet = Bet.objects.filter(id=game.bet_id)
+
+        if bet.exists():
+            bet = bet[0]
+            bet = {'coin': bet.coin, 'bet': bet.bet}
+            bet = determine_bet(request.user, bet, game.code)
+
+            if bet == False:
+                return Response(game, status=status.HTTP_403_FORBIDDEN)
+
+
         player = Player(user=request.user, game=game)
         player.save()
 
@@ -172,8 +190,10 @@ class Leave(APIView):
     def post(self, request, format=None):
         game = get_game(request.data['room_code'])
         player = Player.objects.filter(user_id=request.user.id, game_id=game.id)
+        player = player[0]
         player.delete()
 
+        unfreeze_funds(game, request.user)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -187,6 +207,7 @@ class Remove(APIView):
         player = Player.objects.filter(user_id=user.id, game_id=game.id)
         player.delete()
 
+        unfreeze_funds(game, user)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 

@@ -38,6 +38,7 @@ export const SELECTING_GAME = 'SELECTING_GAME'
 export const GAME_SELECTED ='GAME_SELECTED'
 export const TYPE_CHANGING =' TYPE_CHANGING'
 export const MAKING_EDIT = 'MAKING_EDIT'
+export const GAME_ERROR = 'GAME_ERROR'
 
 
 // SECURITIES
@@ -62,6 +63,7 @@ export const CLEAR = 'CLEAR'
 
 // USER
 export const NO_USER = 'NO_USER'
+export const WALLETS_LOADED = 'WALLETS_LOADED'
 
 
 // AUTH

@@ -16,16 +16,16 @@ def format_time(time):
     }
 
 
-class Ebet(models.Model):
+class Bet(models.Model):
     bet = models.DecimalField(max_digits=25, decimal_places=10)
-    crypto = models.CharField(max_length=10)
+    coin = models.CharField(max_length=4)
     payout = models.IntegerField(default=0)
 
 
 class Competition(models.Model):
     name = models.CharField(max_length=20)
     code = models.CharField(max_length=8)
-    bet = models.ForeignKey(Ebet, on_delete=models.CASCADE, null=True)
+    bet = models.ForeignKey(Bet, on_delete=models.CASCADE, null=True)
     size = models.IntegerField(default=0)
     active = models.BooleanField(default=False)
 

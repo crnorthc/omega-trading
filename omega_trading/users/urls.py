@@ -15,4 +15,5 @@ urlpatterns = [
     path('search-user', SearchUsers.as_view()),
     path('invite', SendInvite.as_view()),
     path('accept', AcceptInvite.as_view()),
+    path('wallets', Wallets.as_view()),
 ]

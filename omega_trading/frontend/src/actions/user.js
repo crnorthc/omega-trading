@@ -1,5 +1,7 @@
 import axios from 'axios'
-import { USER_LOADED, 
+import { 
+    WALLETS_LOADED,
+    USER_LOADED, 
     USERS_LOADED, 
     HIDE_RESULTS, 
     UPDATE_USER, 
@@ -164,6 +166,28 @@ export const joinGame = (room_code) => (dispatch) => {
             dispatch({
                 type: USER_LOADED,
                 payload: res.data,
+            })
+        }
+    })
+}
+
+export const loadWallets = () => (dispatch) => {
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Token ' + getCookie(),
+        },
+    }
+
+    const body = JSON.stringify({ })
+
+    axios.post('/users/wallets', body, config).then((res) => {
+        if (res.data.Error) {
+            console.log('oops')
+        } else {
+            dispatch({
+                type: WALLETS_LOADED,
+                payload: res.data.wallets,
             })
         }
     })

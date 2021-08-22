@@ -160,7 +160,8 @@ function Long(props) {
                 } else {
                     gameBet = {
                         bet: bet,
-                        currency: cryptoCurrency,
+                        coin: cryptoCurrency,
+                        type: 1
                     }
                 }
             }

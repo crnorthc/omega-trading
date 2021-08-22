@@ -14,6 +14,7 @@ import {
     SEARCH_LOADED,
     MAKING_SEARCH,
     TYPE_CHANGING,
+    GAME_ERROR,
     MAKING_EDIT
 } from '../actions/types'
 
@@ -31,13 +32,20 @@ const initialState = {
     preview: null,
     search: null,
     search_made: false,
-    making_edit: false
+    making_edit: false,
+    error: null
 }
 
 export default function (state = initialState, action) {
     switch (action.type) {
     case LOGOUT_SUCCESS:
         return initialState
+    case GAME_ERROR:
+        return {
+            ...state,
+            creating_game: false,
+            error: action.payload
+        }
     case CREATING_GAME:
         return {
             ...state,

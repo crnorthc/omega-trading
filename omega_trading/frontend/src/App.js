@@ -5,7 +5,7 @@ import ForgotPassword from './components/layouts/Auth/ForgotPassword.js'
 import ResetPassword from './components/layouts/Auth/ResetPassword.js'
 import Symbol from './components/layouts/Securities/Symbol.js'
 import MyNavbar from './components/layouts/MyNavbar.js'
-import Account from './components/layouts/Account.js'
+import AccountLinks from './components/layouts/Account/AccountLinks'
 import NewHome from './components/layouts/NewHome.js'
 import Auth from './components/layouts/Auth/Auth'
 import React from 'react'
@@ -24,7 +24,7 @@ function App() {
                 <Switch>                    
                     <Route exact path='/chart' component={Symbol} />
                     <Route exact path='/reset-password' component={ResetPassword} />
-                    <Route exact path='/account' component={Account} />
+                    <Route path='/account' component={AccountLinks} />
                     <Route path='/games' component={GameLinks} />                
                 </Switch>
             </Auth>

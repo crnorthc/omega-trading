@@ -2,7 +2,9 @@
 //----------- Colors -------------
 //--------------------------------
 
-
+.text-yel {
+    color: #f3b629;
+}
 
 //--------------------------------
 //----- Important Elements -------
@@ -346,6 +348,12 @@
 // Medium Padding Top
 .mpt {
     padding-top: 24px;
+}
+
+//Medium Padding R/L
+.mpx {
+    padding-right: 24px;
+    padding-left: 24px;
 }
 
 // Medium Padding T/B

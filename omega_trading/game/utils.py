@@ -5,6 +5,7 @@ from .bets import *
 from rest_framework.response import Response
 from rest_framework import status
 from .models import *
+from .wallets import *
 import random
 import string
 import math
@@ -13,12 +14,39 @@ import requests
 import datetime
 
 Invites = apps.get_model('users', 'Invites')
+Wallet = apps.get_model('users', 'Wallet')
+Address = apps.get_model('users', 'Address')
+Frozen = apps.get_model('users', 'Frozen')
+
 SECONDS_IN_MONTH = 30 * 32 * 60 * 60
 SECONDS_IN_WEEK = 7 * 24 * 60 * 60
 SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
 SECONDS_IN_MINUTE = 60
 
+def determine_bet(user, bet, code):
+    wallet = Wallet.objects.filter(user_id=user.id, coin=bet['coin'])
+
+    if not wallet.exists():
+        return False
+    else:
+        address = get_wallet(user.id, bet['coin'])
+        wallet = wallet[0]
+
+    frozen_funds = Frozen.objects.filter(wallet_id=wallet.id)
+    frozen = 0
+
+    for frozen_fund in frozen_funds:
+        frozen += frozen_fund.amount
+    
+    if bet['bet'] > (address['balance']- frozen):
+        return False
+
+    freeze_funds(wallet, bet, code)
+    bet = Bet(bet=bet['bet'], coin=bet['coin'], payout=bet['type'])
+    bet.save()
+
+    return bet
 
 def get_code():
     choices = string.ascii_uppercase + string.digits
@@ -46,14 +74,15 @@ def create_short_game(rules, user):
 
     game = ShortGame(duration=hours, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
 
-    if bet != None:
-        bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
+    bet = determine_bet(user, bet, code)
+
+    if not bet:
+        return {'Error': 'Insufficient Funds'}
+    else:
         game.bet = bet
-
-    game.save()
-
+        
     player = Player(user=user, game=game, is_host=True)
-
+    game.save()
     player.save()
 
     return game
@@ -72,14 +101,15 @@ def create_long_game(rules, user):
 
     game = LongGame(start_time=dates['start'], end_time=dates['end'], options=options, commission=commission, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
 
-    if bet != None:
-        bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
+    bet = determine_bet(user, bet, code)
+
+    if not bet:
+        return {'Error': 'Insufficient Funds'}
+    else:
         game.bet = bet
-
-    game.save()
-
+        
     player = Player(user=user, game=game, is_host=True)
-
+    game.save()
     player.save()
 
     return game
@@ -144,19 +174,31 @@ def create_tournament(rules, user):
 
     tournament = Tournament(name=name, code=code, options=options, commission=commission, size=size, round=rounds)
 
-    if bet != None:
-        bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
+    bet = determine_bet(user, bet, code)
+
+    if not bet:
+        return {'Error': 'Insufficient Funds'}
+    else:
         tournament.bet = bet
-
-    tournament.save()
-
+        
     player = Player(user=user, game=tournament, is_host=True)
-
+    tournament.save()
     player.save()
 
     return tournament
 
+def freeze_funds(wallet, bet, code):
+    frozen = Frozen(wallet=wallet, amount=bet['coin'], code=code)
+    frozen.save()
 
+def unfreeze_funds(game, user):
+    bet = Bet.objects.filter(id=game.bet_id)
+    if bet.exists():
+        wallet = Wallet.objects.filter(coin=bet.coin, user_id=user.id)
+        wallet = wallet[0]
+        frozen = Frozen.objects.filter(wallet_id=wallet.id, code=game.code)
+        frozen = frozen[0]
+        frozen.delete()
 
 
 def load_user(request=None, username=None):

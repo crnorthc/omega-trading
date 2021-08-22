@@ -12,8 +12,7 @@ import {
     GAMES_LOADED,
     SEARCH_LOADED,
     MAKING_SEARCH,
-    SELECTING_GAME,
-    GAME_SELECTED,
+    GAME_ERROR,
     MAKING_EDIT
 } from './types'
 
@@ -43,7 +42,7 @@ function getDates(games) {
     return temp
 }
 
-export const create= (type, rules) => (dispatch) => {
+export const create = (type, rules) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })
@@ -57,16 +56,20 @@ export const create= (type, rules) => (dispatch) => {
 
     var body = JSON.stringify({ type, rules })
 
-    axios.post('/game/create', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
+    axios.post('/game/create', body, config)
+        .then((res) => {
             dispatch({
                 type: GAME_CREATED,
                 payload: res.data.game,
             })
-        }
-    })
+        })
+        .catch(error => {
+            console.log('here')
+            dispatch({
+                type: GAME_ERROR,
+                payload: error.response.data.Error
+            })          
+        })
 }
 
 export const editGame = (amount, date, endOn, commission, options, code) => (dispatch) => {
@@ -133,16 +136,20 @@ export const joinGame = (room_code) => (dispatch) => {
 
     const body = JSON.stringify({ room_code })
 
-    axios.post('/game/join', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
+    axios.post('/game/join', body, config)
+        .then((res) => {
             dispatch({
                 type: GAME_LOADED,
                 payload: res.data.game,
             })
-        }
-    })
+        })
+        .catch(error => {
+            console.log('here')
+            dispatch({
+                type: GAME_ERROR,
+                payload: error.response.data.Error
+            })          
+        })
 }
 
 export const declineGame = (room_code) => (dispatch) => {

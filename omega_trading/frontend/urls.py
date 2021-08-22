@@ -19,5 +19,6 @@ urlpatterns = [
     path('game', index),
     path('games', index),
     path('search', index),
-    re_path(r'^games/*.', index)
+    re_path(r'^games/*.', index),
+    re_path(r'^account/*.', index)
 ]

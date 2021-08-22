@@ -1,13 +1,14 @@
-from rest_framework import status
-from rest_framework.views import APIView
-from django.contrib.auth.models import User
-from django.db.models import Q
-from .models import *
-from .TopSecret import *
-from .serializers import *
-from rest_framework.response import Response
-from .utils import *
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from rest_framework.views import APIView
+from rest_framework import status
+from django.db.models import Q
+from .serializers import *
+from .TopSecret import *
+from .wallets import *
+from .models import *
+from .utils import *
 import time
 
 Player = apps.get_model('game', 'Player')
@@ -254,6 +255,20 @@ class RemoveFriend(APIView):
         friend.delete()
 
         return Response({"Success": load_user(request=request)}, status=status.HTTP_200_OK)
+
+
+class Wallets(APIView):
+
+    def post(self, request, format=None):
+
+        return Response({"wallets": get_wallets(request.user)}, status=status.HTTP_200_OK)
+
+
+
+
+
+
+
 
 
 

@@ -1,4 +1,5 @@
 import {
+    WALLETS_LOADED,
     USER_LOADED,
     USERS_LOADED,
     LOGOUT_SUCCESS,
@@ -19,7 +20,8 @@ const initialState = {
     users_loaded: false,
     invites_sent: null,
     loading: false,
-    leaderboard: null
+    leaderboard: null,
+    wallets: null
 }
 
 export default function (state = initialState, action) {
@@ -30,6 +32,11 @@ export default function (state = initialState, action) {
         return {
             ...state,
             user: action.payload
+        }
+    case WALLETS_LOADED:
+        return {
+            ...state,
+            wallets: action.payload
         }
     case LOADING:
         return {

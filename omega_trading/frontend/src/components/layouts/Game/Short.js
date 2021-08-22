@@ -64,7 +64,7 @@ const hours = [
 ]
 
 
-const cryptoCurrencies = ['ETH', 'BTC', 'DOGE', 'TITS']
+const cryptoCurrencies = ['ETH', 'BTC', 'LTC', 'BNB']
 function Short(props) {
   const [name, setName] = useState('')
   const [Public, setPublic] = useState(true)
@@ -95,9 +95,9 @@ const create = () => {
 			}
 			else {
 				gameBet = {
-				bet: bet,
-				currency: cryptoCurrency,
-        type: null
+				bet: Number(bet),
+				coin: cryptoCurrency,
+        type: 1
 				}
 			}
 		}
@@ -435,7 +435,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                   leaveFrom='opacity-100'
                                   leaveTo='opacity-0'
                                 >
-                                  <Listbox.Options className='z-10 absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
+                                  <Listbox.Options className='z-10 absolute w-full py-1 mt-1 text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
                                     {cryptoCurrencies.map(
                                       (crypto, cryptoIndex) => (
                                         <Listbox.Option

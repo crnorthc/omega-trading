@@ -86,8 +86,8 @@ function Tournament(props) {
                 } else {
                     gameBet = {
                         bet: bet,
-                        currency: cryptoCurrency,
-                        type: null,
+                        coin: cryptoCurrency,
+                        type: 1,
                     }
                 }
             }
