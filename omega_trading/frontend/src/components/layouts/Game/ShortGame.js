@@ -1,20 +1,7 @@
 /* eslint-disable indent */
-/* eslint-disable no-unreachable */
-/* eslint-disable react/jsx-key */
-/* eslint-disable react/prop-types */
 import React, { useState, Fragment } from "react";
-import { createGame, editGame, joinGame } from "../../../actions/game";
-import Loader from "../Tools/Loader";
-import { Link } from "react-router-dom";
-import Bet from "./Bet";
-import ButtonLoader from "../Tools/ButtonLoader";
-import {
- Tab,
- Switch,
- RadioGroup,
- Listbox,
- Transition,
-} from "@headlessui/react";
+import { create, editGame, joinGame } from "../../../actions/game";
+import { Tab, Switch, Listbox, Transition } from "@headlessui/react";
 import {
  CheckIcon,
  SelectorIcon,
@@ -34,78 +21,54 @@ const startAmounts = [
  { insert: "$1,000,000", value: 1000000 },
 ];
 
-const commisionAmounts = [
- { insert: "$0.00", value: 0 },
- { insert: "$1.99", value: 1.99 },
- { insert: "$2.99", value: 2.99 },
- { insert: "$3.99", value: 3.99 },
- { insert: "$4.99", value: 4.99 },
- { insert: "$5.99", value: 5.99 },
- { insert: "$6.99", value: 6.99 },
- { insert: "$7.99", value: 7.99 },
- { insert: "$8.99", value: 8.99 },
- { insert: "$9.99", value: 9.99 },
- { insert: "$10.99", value: 10.99 },
- { insert: "$11.99", value: 11.99 },
- { insert: "$12.99", value: 12.99 },
- { insert: "$13.99", value: 13.99 },
- { insert: "$14.99", value: 14.99 },
- { insert: "$15.99", value: 15.99 },
- { insert: "$16.99", value: 16.99 },
- { insert: "$17.99", value: 17.99 },
- { insert: "$18.99", value: 18.99 },
- { insert: "$19.99", value: 19.99 },
+const payout = [
+ { insert: "Winner Takes All", value: 1 }, // Always an option
+ { insert: "Top 3", value: 2 }, // Games with min of 10
+ { insert: "10% Split", value: 3 }, // Games with min of 50
+ { insert: "10% Ranked", value: 4 }, // Games with min of 50
+];
+
+const minPlayers = [
+ { insert: "2", value: 2 },
+ { insert: "10", value: 10 },
+ { insert: "25", value: 25 },
+ { insert: "50", value: 50 },
+ { insert: "100", value: 100 },
+ { insert: "250", value: 250 },
+ { insert: "500", value: 500 },
+ { insert: "1000", value: 1000 },
 ];
 
 const hours = [
- { insert: "0", value: 0 },
  { insert: "1", value: 1 },
  { insert: "2", value: 2 },
  { insert: "3", value: 3 },
  { insert: "4", value: 4 },
  { insert: "5", value: 5 },
  { insert: "6", value: 6 },
- { insert: "7", value: 7 },
- { insert: "8", value: 8 },
- { insert: "9", value: 9 },
- { insert: "10", value: 10 },
- { insert: "11", value: 11 },
  { insert: "12", value: 12 },
- { insert: "13", value: 13 },
- { insert: "14", value: 14 },
- { insert: "15", value: 15 },
- { insert: "16", value: 16 },
- { insert: "17", value: 17 },
  { insert: "18", value: 18 },
- { insert: "19", value: 19 },
- { insert: "20", value: 20 },
- { insert: "21", value: 21 },
- { insert: "22", value: 22 },
- { insert: "23", value: 23 },
  { insert: "24", value: 24 },
-];
-const minutes = [
- { insert: "0", value: 0 },
- { insert: "15", value: 15 },
  { insert: "30", value: 30 },
- { insert: "45", value: 45 },
+ { insert: "36", value: 36 },
+ { insert: "42", value: 42 },
+ { insert: "48", value: 48 },
 ];
 
-const cryptoCurrencies = ["ETH"];
+const cryptoCurrencies = ["ETH", "BTC", "DOGE", "TITS"];
+
 function ShortGame(props) {
  const [name, setName] = useState("");
  const [Public, setPublic] = useState(true);
- const [options, setOptions] = useState(true);
- const [show, Show] = useState(false);
+ const [min, setMin] = useState(minPlayers[0]);
  const [startAmount, setStartAmount] = useState(startAmounts[0]);
- const [commisionAmount, setCommisionAmount] = useState(commisionAmounts[0]);
+ const [isBet, setIsBet] = useState(true);
+ const [bet, setBet] = useState(null);
  const [cryptoCurrency, setCryptoCurrency] = useState(cryptoCurrencies[0]);
- // const [day, setDay] = useState(days[0])
  const [hour, setHour] = useState(hours[0]);
- const [minute, setMinute] = useState(minutes[0]);
 
  ShortGame.propTypes = {
-  createGame: PropTypes.func.isRequired,
+  create: PropTypes.func.isRequired,
   joinGame: PropTypes.func.isRequired,
   editGame: PropTypes.func.isRequired,
   creating_game: PropTypes.bool,
@@ -114,7 +77,34 @@ function ShortGame(props) {
   game: PropTypes.object,
  };
 
- //    if (date !== null) {
+ const create = () => {
+  if (name != "") {
+   var gameBet = null;
+   if (isBet) {
+    if (bet == null || bet == "") {
+     console.log("error"); // ADD SOMETHING TO DISPLAY ERROR MSG
+    } else {
+     gameBet = {
+      bet: bet,
+      currency: cryptoCurrency,
+      type: null,
+     };
+    }
+   }
+
+   const rules = {
+    name: name,
+    public: Public,
+    start_amount: startAmount.value,
+    min_players: min.value,
+    duration: hour.value,
+    bet: gameBet,
+   };
+
+   props.create("short", rules);
+  }
+ };
+
  return (
   <>
    <div className='z-10 absolute top-16 right-0 bottom-3/4 sm:bottom-2/3 left-0 flex items-end sm:items-center justify-center'>
