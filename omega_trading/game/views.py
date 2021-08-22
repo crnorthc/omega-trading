@@ -24,8 +24,10 @@ class Create(APIView):
 
         if type == 'long':
             game = create_long_game(rules, request.user)
-        else:
+        elif type == 'short':
             game = create_short_game(rules, request.user)
+        elif type == 'tournament':
+            game = create_tournament(rules, request.user)
 
         return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
 
@@ -452,7 +454,7 @@ class CurrentGames(APIView):
         for _, player in enumerate(games_query):
             game = get_game(player)
 
-            info = game.get_info()
+            info = get_game_info(game, request.user)
 
             games.append(info)
 

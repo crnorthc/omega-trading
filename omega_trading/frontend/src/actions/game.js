@@ -43,7 +43,7 @@ function getDates(games) {
     return temp
 }
 
-export const createGame = (type, rules) => (dispatch) => {
+export const create= (type, rules) => (dispatch) => {
     dispatch({
         type: CREATING_GAME,
     })

@@ -2,7 +2,6 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import React, {useState} from 'react'
-import './Game.scss'
 
 // State Stuff
 import PropTypes from 'prop-types'
@@ -12,7 +11,6 @@ function GameRules(props) {
     const [zone, setZone] = useState(null)
 
     GameRules.propTypes = {
-        editGame: PropTypes.func.isRequired,
         game: PropTypes.object,
         user: PropTypes.object
     }
@@ -42,58 +40,157 @@ function GameRules(props) {
     
     }
 
-    const formatDuration = (duration) => {
-        var day = ' days '
-        if (duration.days == 1) {
-            day = ' day '
-        }
-
-        var hour = ' hours '
-        if (duration.hours == 1) {
-            hour = ' hour '
-        }
-
-        return duration.days + day + duration.hours + hour + duration.mins + ' mins' 
+    if (props.game.type == 'long') {
+        return (
+            <div className="z-10 absolute top-1/3 right-0 bottom-0 left-0 flex items-start justify-center ">
+                <div className="mx-2 w-full sm:w-4/5 ">
+                    <div className="mx-auto max-w-4xl rounded-xl bg-red-200 p-4">
+                        <div className="grid grid-cols-12 gap-x-4 gap-y-5 sm:gap-y-10 ">
+                            <div className="col-span-12 sm:col-span-8">
+                                <label className="block font-medium" htmlFor="">
+                                    {props.game.name + ': ' + props.game.code}
+                                </label>
+                            </div>
+                            <div className="col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col">
+                                <div className="block font-medium">
+                                    {props.game.public ? 'Public' : 'Private'}
+                                </div>
+                            </div>
+                            <div className="col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col">
+                                <div className="block font-medium" htmlFor="">
+                                    {props.game.options ? 'Options' : 'No Options'}
+                                </div>
+                            </div>
+                            <div className="col-span-12 sm:col-span-4">
+                                <label className="block font-medium" htmlFor="">
+                                    Start Amount
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                ${props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                </div>
+                            </div>
+                            <div className="col-span-12 sm:col-span-4">
+                                <label className="block font-medium" htmlFor="">
+                                    Commision
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                    {props.game.commission == 0 ? 'Disabled' : props.game.commission}
+                                </div>
+                            </div>
+                            <div className="col-span-12 sm:col-span-4">
+                                <label className="block font-medium" htmlFor="">
+                                    Minimum Players
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                    {props.game.size}
+                                </div>
+                            </div>
+                            <div className="col-span-12 sm:col-span-6">
+                                <label className="block font-medium pb-2" htmlFor="">
+                                Duration
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                    {'From ' + formatDate(props.game.start_time) + ' to ' + formatDate(props.game.end_time)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
-    return (
-        <div className="game_rules fc jc-a">
-            <div className='fr jc-c ai-c'>
-                <div className='f24 bld'>Room Code:</div>
-                <div className='f24 lt sml'>{props.game.room_code}</div>
-            </div>
-            <div className='rules-row'>
-                <div className='fc jc-c ai-s'>
-                    <div className='f22 bld'>Start Amount</div>
-                    <div className='f22'>${props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+    if (props.game.type == 'short') {
+        return (
+            <div className='z-10 absolute top-1/3 right-0 bottom-0 left-0 flex items-start justify-center '>
+                <div className='mx-2 w-full sm:w-4/5 '>
+                    <div className='mx-auto max-w-4xl rounded-xl bg-red-200 p-4'>
+                        <div className='grid grid-cols-12 gap-x-4 gap-y-5 sm:gap-y-10 '>
+                            <div className='col-span-12 sm:col-span-8'>
+                                <label className="block font-medium" htmlFor="">
+                                    {props.game.name + ': ' + props.game.code}
+                                </label>
+                            </div>
+                            <div className='col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col'>
+                                <div className="block font-medium">
+                                    {props.game.public ? 'Public' : 'Private'}
+                                </div>
+                            </div>
+                            <div className='col-span-12 sm:col-span-6'>
+                                <label className="block font-medium" htmlFor="">
+                                    Start Amount
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                ${props.game.start_amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                </div>
+                            </div>
+                            <div className='col-span-12 sm:col-span-6'>
+                                <label className='block font-medium' htmlFor=''>
+                                    Size
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                    {props.game.size}
+                                </div>
+                            </div>
+                            <div className='col-span-12 sm:col-span-6'>
+                                <label className='block font-medium pb-2' htmlFor=''>
+                                    Duration
+                                </label>
+                                <div className="block font-medium" htmlFor="">
+                                    {props.game.duration + ' hours'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className='fc jc-c ai-e'>      
-                    <div className='f22 bld'>End Date: {zone}</div>
-                    <div className='f22'>
-                        {props.game.duration == undefined ? formatDate(props.game.time) : formatDuration(props.game.duration)}
-                    </div>                                        
-                </div>               
             </div>
-            <div className='rules-row'>
-                <div className='fc jc-c ai-s'>
-                    <div className='f22 bld'>Commision</div>
-                    <div className='f22'>{props.game.commission == null ? 'Disabled' : '$' + props.game.commission}</div>
+        )
+    }
+
+    if (props.game.type == 'tournament') {
+        return (
+            <>
+                <div className="z-10 absolute top-16 right-0 bottom-2/3 left-0 flex items-center justify-center">
+                    <h1 className="font-mono font-medium text-red-700 text-center text-4xl sm:text-6xl ">Create Game</h1>
                 </div>
-                <div className='fc jc-c ai-e'>
-                    <div className='f22 bld'>Options</div>
-                    <div className='f22'>{props.game.options ? 'Enabled' : 'Disabled'}</div>
+
+                <div className="z-10 absolute top-1/3 right-0 bottom-0 left-0 flex items-start justify-center ">
+                    <div className="mx-2 w-full sm:w-4/5 ">
+                        <div className="mx-auto max-w-4xl rounded-xl bg-red-200 p-4">
+                            <div className="grid grid-cols-12 gap-x-4 gap-y-5 sm:gap-y-10 ">
+                                <div className="col-span-12 sm:col-span-8">
+                                    <label className="block font-medium" htmlFor="">
+                                        {props.game.name + ': ' + props.game.code}
+                                    </label>
+                                </div>
+                                <div className="col-span-6 sm:col-span-2 flex items-left sm:items-center justify-center flex-col">
+                                    <div className="block font-medium" htmlFor="">
+                                        {props.game.options ? 'Options' : 'No Options'}
+                                    </div>
+                                </div>
+                                <div className="col-span-12 sm:col-span-6">
+                                    <label className="block font-medium" htmlFor="">
+                                    Commision
+                                    </label>                                
+                                    <div className="block font-medium" htmlFor="">
+                                        {props.game.commission == 0 ? 'Disabled' : props.game.commission}
+                                    </div>
+                                </div>
+                                <div className="col-span-12 sm:col-span-6">
+                                    <label className='block font-medium' htmlFor=''>
+                                    Size
+                                    </label>
+                                    <div className="block font-medium" htmlFor="">
+                                        {props.game.size}
+                                    </div>
+                                </div>      
+                            </div>                          
+                        </div>
+                    </div>
                 </div>
-            </div>
-            {props.user.username == props.game.host.username ? 
-                <div className='fr jc-c'>
-                    <button onClick={() => props.edit(true)} className='editButton'>Edit</button>
-                </div> 
-                :
-                null
-            }                         
-        </div>
-    )
-    
+            </>
+        )
+    }
 }
 
 

@@ -44,7 +44,7 @@ def create_short_game(rules, user):
     bet = rules['bet']
     code = get_code()
 
-    game = ShortGame(duration=hours, size=1, public=public, name=name, code=code, min_size=min_players, start_amount=start_amount)
+    game = ShortGame(duration=hours, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
 
     if bet != None:
         bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
@@ -70,7 +70,7 @@ def create_long_game(rules, user):
 
     code = get_code()
 
-    game = LongGame(start_time=dates['start'], size=1, end_time=dates['end'], options=options, commission=commission, public=public, name=name, code=code, min_size=min_players, start_amount=start_amount)
+    game = LongGame(start_time=dates['start'], end_time=dates['end'], options=options, commission=commission, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
 
     if bet != None:
         bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
@@ -84,11 +84,33 @@ def create_long_game(rules, user):
 
     return game
 
+def get_players(game):
+    players = Player.objects.filter(game_id=game.id).values()
+    formatted_players = {}
+
+    for _, value in enumerate(players):
+        user = User.objects.filter(id=value['user_id'])
+        user = user[0]
+
+        formatted_players[user.username] = {
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        }
+        
+        if value['is_host']:
+            host = {
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
+
+    return formatted_players, host
+
 def get_game_info(game, user):
     info = game.get_info()
-
     players, host = get_players(game)
 
+    info['current_size'] = len(players)
     info['host'] = host
     info['players'] = players
 
@@ -104,16 +126,35 @@ def get_game(player):
         return game[0]
     else:
         game = LongGame.objects.filter(competition_ptr_id=game_id)
-        return game[0]
+        
+        if game.exists():
+            return game[0]
+        else:
+            game = Tournament.objects.filter(competition_ptr_id=game_id)
+            return game[0]
 
+def create_tournament(rules, user):
+    rounds = rules['rounds']
+    options = rules['options']
+    commission = rules['commission']
+    name = rules['name']
+    size = rules['size']
+    bet = rules['bet']
+    code = get_code()
 
+    tournament = Tournament(name=name, code=code, options=options, commission=commission, size=size, round=rounds)
 
+    if bet != None:
+        bet = Ebet(bet=bet['bet'], crypto=bet['currency'], payout=bet['type'])
+        tournament.bet = bet
 
+    tournament.save()
 
+    player = Player(user=user, game=tournament, is_host=True)
 
+    player.save()
 
-
-
+    return tournament
 
 
 
@@ -153,27 +194,6 @@ def get_player(user):
         return player[0]
     else:
         return player
-
-def get_players(game):
-    players = Player.objects.filter(game_id=game.id).values()
-    formatted_players = {}
-
-    for _, value in enumerate(players):
-        user = User.objects.filter(id=value['user_id'])
-        user = user[0]
-
-        value['first_name'] = user.first_name
-        value['last_name'] = user.last_name
-        formatted_players[user.username] = value
-        
-        if value['is_host']:
-            host = {
-                'username': user.username,
-                'first_name': user.first_name,
-                'last_name': user.last_name
-            }
-
-    return formatted_players, host
 
 def get_holdings(player):
     holdings = Holdings.objects.filter(player_id=player.id).values()

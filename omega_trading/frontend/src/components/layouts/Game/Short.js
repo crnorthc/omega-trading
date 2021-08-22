@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import React, { useState, Fragment } from 'react'
-import { createGame, editGame, joinGame } from '../../../actions/game'
+import { create, editGame, joinGame } from '../../../actions/game'
 import {
   Tab,
   Switch,
@@ -76,7 +76,7 @@ function Short(props) {
   const [hour, setHour] = useState(hours[0])
 
   Short.propTypes = {
-    createGame: PropTypes.func.isRequired,
+    create: PropTypes.func.isRequired,
     joinGame: PropTypes.func.isRequired,
     editGame: PropTypes.func.isRequired,
     creating_game: PropTypes.bool,
@@ -111,7 +111,7 @@ const create = () => {
 			bet: gameBet
 		}
 
-		props.createGame('short', rules)
+		props.create('short', rules)
 	}
 }
 
@@ -529,4 +529,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game
 })
 
-export default connect(mapStateToProps, { createGame, editGame, joinGame })(Short)
+export default connect(mapStateToProps, { create, editGame, joinGame })(Short)
