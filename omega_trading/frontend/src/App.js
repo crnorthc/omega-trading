@@ -46,7 +46,7 @@ function App() {
     </Switch>
    </Auth>
    <Switch>
-    <Route exact path='/' component={SearchGame} />
+    <Route exact path='/' component={ShortGame} />
     <Route exact path='/forgot-password' component={ForgotPassword} />
     <Route exact path='/login' component={Login} />
     <Route exact path='/sign-up' component={SignUp} />
