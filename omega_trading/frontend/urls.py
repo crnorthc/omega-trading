@@ -13,17 +13,6 @@ urlpatterns = [
     path('forgot-password', index),
     path('chart', index),
     path('account', index),
-    path('new-game', index),
-    path('join-game', index),
-    path('game-mode', index),
-    path('normal-mode', index),
-    path('game-length', index),
-    path('short-game', index),
-    path('long-game', index),
-    path('tournament-mode', index),
-    path('game', index),
-    path('my-games', index),
-    path('search', index),
     re_path(r'^games/*.', index),
     re_path(r'^account/*.', index)
 ]

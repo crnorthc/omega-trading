@@ -1,45 +1,45 @@
 /* eslint-disable indent */
 
-import React, { useEffect, useState } from "react";
-import { ArrowSmRightIcon } from "@heroicons/react/solid";
+import React, { useEffect, useState } from 'react'
+import { ArrowSmRightIcon } from '@heroicons/react/solid'
 
 function GameItem({ game, index }) {
-  let [isPublic, setIsPublic] = useState(true);
-  let [isLong, setIsLong] = useState(true);
-  let [isTournament, setIsTournament] = useState(true);
-  let [startAmount, setStartAmount] = useState("$100,000");
-  let [options, setOptions] = useState("OFF");
-  let [currentPlayers, setCurrentPlayers] = useState("75");
-  let [totalPlayers, setTotalPlayers] = useState("100");
-  let [commsion, setCommsion] = useState("$0.99");
-  let [cryptoType, setCryptoType] = useState("WBNB");
-  let [cryptoSplit, setCryptoSplit] = useState("Winner Takes All");
+  let [isPublic, setIsPublic] = useState(true)
+  let [isLong, setIsLong] = useState(true)
+  let [isTournament, setIsTournament] = useState(true)
+  let [startAmount, setStartAmount] = useState('$100,000')
+  let [options, setOptions] = useState('OFF')
+  let [currentPlayers, setCurrentPlayers] = useState('75')
+  let [totalPlayers, setTotalPlayers] = useState('100')
+  let [commsion, setCommsion] = useState('$0.99')
+  let [cryptoType, setCryptoType] = useState('WBNB')
+  let [cryptoSplit, setCryptoSplit] = useState('Winner Takes All')
   // let [startDate, setStartDate] = useState("03/27/2021");
-  let [startDate, setStartDate] = useState(false);
-  let [endDate, setEndDate] = useState("08/27/2021");
-  let [duration, setDuration] = useState("4 hours");
+  let [startDate, setStartDate] = useState(false)
+  let [endDate, setEndDate] = useState('08/27/2021')
+  let [duration, setDuration] = useState('4 hours')
 
   return (
     <div className='bg-gray-800 rounded-lg p-3 sm:p-4 space-y-2 sm:space-y-3 text-white text-center'>
       <div className='flex items-center justify-between'>
         <span
           className={`${
-            isPublic ? "bg-green-500" : "bg-blue-500"
+            isPublic ? 'bg-green-500' : 'bg-blue-500'
           } px-2 py-1 rounded-full text-sm`}
         >
-          {isPublic ? "Public" : "Private"}
+          {isPublic ? 'Public' : 'Private'}
         </span>
 
         <span
           className={`${
             isTournament
-              ? "bg-yellow-500"
+              ? 'bg-yellow-500'
               : isLong
-              ? "bg-green-500"
-              : "bg-blue-500"
+              ? 'bg-green-500'
+              : 'bg-blue-500'
           } px-2 py-1 rounded-full text-sm`}
         >
-          {isTournament ? "Tournament" : isLong ? "Long" : "Short"}
+          {isTournament ? 'Tournament' : isLong ? 'Long' : 'Short'}
         </span>
       </div>
       <div className='flex flex-col items-center justify-center'>
@@ -90,7 +90,7 @@ function GameItem({ game, index }) {
 
       {startDate && (
         <div className='flex flex-col items-center justify-center px-2 '>
-          {" "}
+          {' '}
           <p className='text-lg'>Date</p>
           <div className='w-full flex items-center justify-evenly bg-gray-700 rounded-md'>
             <span className='flex flex-col items-center justify-evenly text-center'>
@@ -111,7 +111,7 @@ function GameItem({ game, index }) {
 
       {duration && (
         <div className='flex flex-col items-center justify-center px-2 '>
-          {" "}
+          {' '}
           <p className='text-lg'>Duration</p>
           <div className='w-full flex items-center justify-evenly bg-gray-700 rounded-md'>
             <p className='text-md'>{duration}</p>
@@ -120,7 +120,7 @@ function GameItem({ game, index }) {
       )}
 
       <div className='flex flex-col items-center justify-center px-2 '>
-        {" "}
+        {' '}
         <button className='w-full py-2 sm:py-4 bg-blue-400 rounded-md'>
           Join Game
         </button>
@@ -139,7 +139,7 @@ function GameItem({ game, index }) {
         </td>
       </tr> */}
     </div>
-  );
+  )
 }
 
-export default GameItem;
+export default GameItem

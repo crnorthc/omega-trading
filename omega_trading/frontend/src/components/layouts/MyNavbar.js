@@ -2,18 +2,18 @@
 /* eslint-disable indent */
 /* eslint-disable no-mixed-spaces-and-tabs */
 /* eslint-disable react/jsx-key */
-import React, { Fragment, useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import React, { Fragment, useState } from 'react';
+import { Link, Redirect } from 'react-router-dom';
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { searchSymbols } from "../../actions/securities.js";
-import { logout } from "../../actions/auth.js";
-import { currentGames, loadGame, noGame } from "../../actions/game.js";
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { searchSymbols } from '../../actions/securities.js';
+import { logout } from '../../actions/auth.js';
+import { currentGames, loadGame, noGame } from '../../actions/game.js';
 
 // Styling stuff
-import { Dialog, Listbox, Transition } from "@headlessui/react";
+import { Dialog, Listbox, Transition } from '@headlessui/react';
 import {
  SelectorIcon,
  CheckIcon,
@@ -22,7 +22,7 @@ import {
  SparklesIcon,
  ViewListIcon,
  StarIcon,
-} from "@heroicons/react/outline";
+} from '@heroicons/react/outline';
 
 // --------------------------------
 
@@ -85,7 +85,7 @@ function MyNavbar(props) {
    <div className='bg-white divide-y-2 divide-gray-200 divide-dashed py-2'>
     {props.results.map((symbol) => (
      <div>
-      <Link onClick={closeModal} to={"/chart?symbol=" + symbol.displaySymbol}>
+      <Link onClick={closeModal} to={'/chart?symbol=' + symbol.displaySymbol}>
        <div className='hover:bg-green-100 hover:text-green-900 px-4 py-3'>
         <div>{symbol.displaySymbol}</div>
         <div>{symbol.description}</div>
@@ -99,10 +99,10 @@ function MyNavbar(props) {
 
  const no_game = (
   <Listbox.Option
-   key={"bitch"}
+   key={'bitch'}
    className={({ active }) =>
     `${
-     active ? "text-gray-800 bg-gray-200" : "text-gray-900"
+     active ? 'text-gray-800 bg-gray-200' : 'text-gray-900'
     } cursor-pointer select-none relative py-2 pl-10 pr-4`
    }
    value={null}
@@ -110,14 +110,14 @@ function MyNavbar(props) {
    {({ selected, active }) => (
     <>
      <span
-      className={`${selected ? "font-medium" : "font-normal"} block truncate`}
+      className={`${selected ? 'font-medium' : 'font-normal'} block truncate`}
      >
       No Game
      </span>
      {selected ? (
       <span
        className={`${
-        active ? "text-amber-600" : "text-amber-600"
+        active ? 'text-amber-600' : 'text-amber-600'
        } absolute inset-y-0 left-0 flex items-center pl-3`}
       >
        <CheckIcon className='w-5 h-5' aria-hidden='true' />
@@ -140,7 +140,7 @@ function MyNavbar(props) {
        key={game}
        className={({ active }) =>
         `${
-         active ? "text-yellow-900 bg-yellow-200" : "text-gray-900"
+         active ? 'text-yellow-900 bg-yellow-200' : 'text-gray-900'
         } cursor-pointer select-none relative py-2 pl-10 pr-4`
        }
        value={game}
@@ -149,7 +149,7 @@ function MyNavbar(props) {
         <>
          <span
           className={`${
-           selected ? "font-medium" : "font-normal"
+           selected ? 'font-medium' : 'font-normal'
           } block truncate`}
          >
           {props.games[game].name}
@@ -157,7 +157,7 @@ function MyNavbar(props) {
          {selected ? (
           <span
            className={`${
-            active ? "text-amber-600" : "text-amber-600"
+            active ? 'text-amber-600' : 'text-amber-600'
            } absolute inset-y-0 left-0 flex items-center pl-3`}
           >
            <CheckIcon className='w-5 h-5' aria-hidden='true' />
@@ -184,35 +184,35 @@ function MyNavbar(props) {
      <div className='flex items-center h-full justify-center sm:justify-between shadow-sm'>
       <div className='flex items-center justify-center px-7 sm:px-5'>
        <Link
-        to={"new-game"}
+        to={'/games'}
         className='text-yellow-500 font-bold hover:text-yellow-600'
        >
         Starbet
        </Link>
        <div className='w-40 sm:w-52 ml-5'>
         <Listbox value={selected} onChange={setSelected}>
-         <div className={"relative "}>
+         <div className={'relative '}>
           <div className='flex'>
            <div
             className={`${
              selected === null || selected == undefined
-              ? "bg-gray-900 cursor-none border-r-2 border-white"
-              : "bg-yellow-200 hover:bg-yellow-300 cursor-pointer border-transparent"
+              ? 'bg-gray-900 cursor-none border-r-2 border-white'
+              : 'bg-yellow-200 hover:bg-yellow-300 cursor-pointer border-transparent'
             } flex-1 flex items-center py-2 pl-3 pr-10 text-left rounded-l-lg   focus:outline-none  sm:text-sm`}
            >
             <Link
              to={
               selected == null
                ? null
-               : "/game?room_code=" + props.games[selected].room_code
+               : '/game?room_code=' + props.games[selected].room_code
              }
              className={`${
               selected === null || selected == undefined
-               ? "text-gray-50 hover:text-gray-50 cursor-default"
-               : "text-yellow-800 hover:text-yellow-900 cursor-pointer"
+               ? 'text-gray-50 hover:text-gray-50 cursor-default'
+               : 'text-yellow-800 hover:text-yellow-900 cursor-pointer'
              }`}
             >
-             {selected == null ? "No Game" : props.games[selected].name}
+             {selected == null ? 'No Game' : props.games[selected].name}
             </Link>
            </div>
            <Listbox.Button className='relative'>
@@ -240,12 +240,12 @@ function MyNavbar(props) {
       </div>
       <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
        <Link
-        to='/my-games'
+        to='/games/current'
         className='text-sm text-gray-50 hover:text-gray-300'
        >
         My Games
        </Link>
-       <Link to='new-game' className='text-sm text-gray-50 hover:text-gray-300'>
+       <Link to='/games/new' className='text-sm text-gray-50 hover:text-gray-300'>
         New Game
        </Link>
        <div className='relative  flex items-center justify-center'>
@@ -272,7 +272,7 @@ function MyNavbar(props) {
      <div className='flex items-center h-full justify-center sm:justify-between'>
       <div className='flex items-center justify-center px-5'>
        <Link
-        to={"/join"}
+        to={'/join'}
         className='text-gray-500 font-bold hover:text-gray-600'
        >
         Omega Trading

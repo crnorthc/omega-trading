@@ -2,6 +2,8 @@
 import React, { useState } from 'react'
 import Loader from '../Tools/Loader'
 import './Account.scss'
+import '../../../custom.scss'
+import '../../../variables.scss'
 
 // State Stuff
 import PropTypes from 'prop-types'

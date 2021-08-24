@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import profilePic from '../../../static/profilePic.png'
 import { loadUser } from '../../../actions/user.js'
+import '../../../custom.scss'
+import '../../../variables.scss'
 
 
 function Account(props) {

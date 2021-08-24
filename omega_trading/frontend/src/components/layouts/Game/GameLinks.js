@@ -1,15 +1,14 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
-import CreateGame from './CreateGame'
 import CurrentGames from './CurrentGames'
 import Game from './Game'
-import JoinGame from './JoinGame'
 import NewGame from './NewGame'
 import SearchGame from './SearchGame'
-import Short from './Short'
-import Long from './Long'
+import ShortGame from './ShortGame'
+import LongGame from './LongGame'
 import Tournament from './Tournament'
-import NewComp from './NewComp'
+import GameMode from './GameMode'
+import GameLength from './GameLength'
 
 function GameLinks() {
     return (
@@ -18,12 +17,11 @@ function GameLinks() {
             <Route exact path='/games/search' component={SearchGame} />
             <Route exact path='/games/current' component={CurrentGames} />
             <Route exact path='/games/new' component={NewGame} />
-            <Route exact path='/games/new/short' component={Short} />
-            <Route exact path='/games/new/competition' component={NewComp} />
-            <Route exact path='/games/new/tournament' component={Tournament} />
-            <Route exact path='/games/new/long' component={Long} />
-            <Route exact path='/games/new/search' component={JoinGame} />      
-            <Route exact path='/games/new/create' component={CreateGame} />    
+            <Route exact path='/games/create' component={GameMode} />
+            <Route exact path='/games/create/length' component={GameLength} /> 
+            <Route exact path='/games/create/short' component={ShortGame} />
+            <Route exact path='/games/create/long' component={LongGame} />   
+            <Route exact path='/games/create/tournament' component={Tournament} />     
         </Switch>
     )
 }
