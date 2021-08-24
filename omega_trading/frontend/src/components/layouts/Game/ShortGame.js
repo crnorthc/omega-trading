@@ -9,8 +9,6 @@ import {
  ArrowSmRightIcon,
 } from "@heroicons/react/solid";
 
-// import './Rules.scss'
-
 // State Stuff
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
@@ -22,14 +20,14 @@ const startAmounts = [
  { insert: "$1,000,000", value: 1000000 },
 ];
 
-const payout = [
+const paySplits = [
  { insert: "Winner Takes All", value: 1 }, // Always an option
- { insert: "Top 3", value: 2 }, // Games with min of 10
- { insert: "10% Split", value: 3 }, // Games with min of 50
- { insert: "10% Ranked", value: 4 }, // Games with min of 50
+ { insert: "Top 3", value: 2 }, // Games with totalPlayer of 10
+ { insert: "10% Split", value: 3 }, // Games with totalPlayer of 50
+ { insert: "10% Ranked", value: 4 }, // Games with totalPlayer of 50
 ];
 
-const minPlayers = [
+const totalPlayers = [
  { insert: "2", value: 2 },
  { insert: "10", value: 10 },
  { insert: "25", value: 25 },
@@ -56,17 +54,25 @@ const hours = [
  { insert: "48", value: 48 },
 ];
 
-const cryptoCurrencies = ["ETH", "BTC", "DOGE", "TITS"];
+const totalPlayerutes = [
+ { insert: "0", value: 0 },
+ { insert: "15", value: 15 },
+ { insert: "30", value: 30 },
+ { insert: "45", value: 45 },
+];
+
+const cryptocurrencies = ["ETH", "BTC", "DOGE", "TITS"];
 
 function ShortGame(props) {
  const [name, setName] = useState("");
- const [Public, setPublic] = useState(true);
- const [min, setMin] = useState(minPlayers[0]);
+ const [isPublic, setIsPublic] = useState(true);
+ const [totalPlayer, setTotalPlayer] = useState(totalPlayers[0]);
  const [startAmount, setStartAmount] = useState(startAmounts[0]);
- const [isBet, setIsBet] = useState(true);
+ const [hasBet, setHasBet] = useState(true);
  const [bet, setBet] = useState(null);
- const [cryptoCurrency, setCryptoCurrency] = useState(cryptoCurrencies[0]);
+ const [cryptoCurrency, setCryptoCurrency] = useState(cryptocurrencies[0]);
  const [hour, setHour] = useState(hours[0]);
+ const [paySplit, setPaySplit] = useState(paySplits[0]);
 
  ShortGame.propTypes = {
   create: PropTypes.func.isRequired,
@@ -81,7 +87,7 @@ function ShortGame(props) {
  const create = () => {
   if (name != "") {
    var gameBet = null;
-   if (isBet) {
+   if (hasBet) {
     if (bet == null || bet == "") {
      console.log("error"); // ADD SOMETHING TO DISPLAY ERROR MSG
     } else {
@@ -95,9 +101,9 @@ function ShortGame(props) {
 
    const rules = {
     name: name,
-    public: Public,
+    public: isPublic,
     start_amount: startAmount.value,
-    min_players: min.value,
+    min_players: totalPlayer.value,
     duration: hour.value,
     bet: gameBet,
    };
@@ -123,7 +129,7 @@ function ShortGame(props) {
          Name
         </label>
         <input
-         className='h-10 w-full text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-yellow-300'
+         className='h-10 w-full text-sm block px-2 rounded-md  shadow-md border-transparent focus:outline-none focus:ring focus:ring-yellow-300'
          placeholder="ex: Sabean's Tatties"
          onChange={(e) => setName(e.target.value)}
          type='text'
@@ -135,19 +141,19 @@ function ShortGame(props) {
           className='block font-medium text-white text-lg'
           htmlFor=''
          >
-          {Public ? "Public" : "Private"}
+          {isPublic ? "isPublic" : "Private"}
          </Switch.Label>
 
          <Switch
-          checked={Public}
-          onChange={setPublic}
-          className={`${Public ? "bg-green-500" : "bg-blue-500"} shadow-md
+          checked={isPublic}
+          onChange={setIsPublic}
+          className={`${isPublic ? "bg-green-500" : "bg-blue-500"} shadow-md
 relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
          >
           <span className='sr-only'>Use setting</span>
           <span
            aria-hidden='true'
-           className={`${Public ? "translate-x-10" : "translate-x-0"}
+           className={`${isPublic ? "translate-x-10" : "translate-x-0"}
 pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
           />
          </Switch>
@@ -214,10 +220,10 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
         <label className='block font-medium text-white text-lg' htmlFor=''>
          Players
         </label>
-        <Listbox value={min} onChange={setMin}>
+        <Listbox value={totalPlayer} onChange={setTotalPlayer}>
          <div className='relative mt-1'>
           <Listbox.Button className='relative w-full h-10 py-2 pl-3 pr-10 text-left bg-white rounded-md shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm'>
-           <span className='block truncate'>{min.insert}</span>
+           <span className='block truncate'>{totalPlayer.insert}</span>
            <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
             <SelectorIcon
              className='w-5 h-5 text-gray-400'
@@ -232,14 +238,14 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
            leaveTo='opacity-0'
           >
            <Listbox.Options className='z-10 absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
-            {minPlayers.map((min, minIdx) => (
+            {totalPlayers.map((totalPlayer, totalPlayerIdx) => (
              <Listbox.Option
-              key={minIdx}
+              key={totalPlayerIdx}
               className={({ active }) =>
                `${active ? "text-yellow-700 bg-yellow-100" : "text-gray-900"}
 cursor-pointer select-none relative py-2 pl-10 pr-4`
               }
-              value={min}
+              value={totalPlayer}
              >
               {({ selected, active }) => (
                <>
@@ -248,7 +254,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                   selected ? "font-medium" : "font-normal"
                  } block truncate`}
                 >
-                 {min.insert}
+                 {totalPlayer.insert}
                 </span>
                 {selected ? (
                  <span
@@ -272,7 +278,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
          Duration
         </label>
         <Listbox value={hour} onChange={setHour}>
-         <div className='relative mt-1'>
+         <div className='relative mt-1 flex-1'>
           <Listbox.Button className='relative w-full h-10 py-2 pl-3 pr-10 text-left bg-white rounded-md shadow-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm'>
            <span className='block truncate'>{hour.insert} hours</span>
            <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
@@ -362,93 +368,155 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
          </Tab.List>
          <Tab.Panels>
           <Tab.Panel>
-           <div className='flex items-center justify-center space-x-2'>
-            <div className='relative rounded-md shadow-sm sm:flex-1 w-20 sm:w-full'>
-             <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-              <span className='text-gray-500 sm:text-sm'>$</span>
+           <div className='grid grid-cols-12 gap-x-4 gap-y-2'>
+            <div className='col-span-12 sm:col-span-8 flex items-center justify-center space-x-2'>
+             <div className='relative rounded-md shadow-sm sm:flex-1 w-20 sm:w-full'>
+              <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+               <span className='text-gray-500 sm:text-sm'>$</span>
+              </div>
+              <input
+               type='text'
+               name='price'
+               id='price'
+               className='h-10 border-transparent focus:outline-none block w-full pl-7 pr-2 rounded-md text-sm  bg-white'
+               placeholder='0.00'
+              />
              </div>
-             <input
-              type='text'
-              name='price'
-              id='price'
-              className='h-10 border-transparent focus:outline-none block w-full pl-7 pr-2 rounded-md text-sm  bg-white'
-              placeholder='0.00'
+             <ArrowSmRightIcon
+              className='w-5 h-5 text-yellow-500'
+              aria-hidden='true'
              />
-            </div>
-            <ArrowSmRightIcon
-             className='w-5 h-5 text-yellow-500'
-             aria-hidden='true'
-            />
-            <div className='relative rounded-md shadow-sm flex-1'>
-             <input
-              disabled
-              type='number'
-              name='price'
-              id='price'
-              className='h-10 text-sm border-transparent focus:outline-none bg-white focus:ring focus:ring-yellow-300 block w-full pl-2 pr-12 sm:text-sm  rounded-md'
-              placeholder='0.00'
-             />
-             <div className='absolute inset-y-0 right-0 flex items-center'>
-              <label htmlFor='currency' className='sr-only text-white text-lg'>
-               Currency
-              </label>
-              <Listbox value={cryptoCurrency} onChange={setCryptoCurrency}>
-               <div className='relative'>
-                <Listbox.Button className='relative w-full h-10 py-2 pl-3 pr-10 text-left bg-white rounded-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm'>
-                 <span className='block truncate'>{cryptoCurrency}</span>
-                 <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
-                  <SelectorIcon
-                   className='w-5 h-5 text-gray-400'
-                   aria-hidden='true'
-                  />
-                 </span>
-                </Listbox.Button>
-                <Transition
-                 as={Fragment}
-                 leave='transition ease-in duration-100'
-                 leaveFrom='opacity-100'
-                 leaveTo='opacity-0'
-                >
-                 <Listbox.Options className='z-10 absolute right-0 w-28 py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
-                  {cryptoCurrencies.map((crypto, cryptoIndex) => (
-                   <Listbox.Option
-                    key={cryptoIndex}
-                    className={({ active }) =>
-                     `${
-                      active ? "text-yellow-900 bg-yellow-100" : "text-gray-900"
-                     }
+             <div className='relative rounded-md shadow-sm flex-1'>
+              <input
+               disabled
+               type='number'
+               name='price'
+               id='price'
+               className='h-10 text-sm border-transparent focus:outline-none bg-white focus:ring focus:ring-yellow-300 block w-full pl-2 pr-12 sm:text-sm  rounded-md'
+               placeholder='0.00'
+              />
+              <div className='absolute inset-y-0 right-0 flex items-center'>
+               <label htmlFor='currency' className='sr-only text-white text-lg'>
+                Currency
+               </label>
+               <Listbox value={cryptoCurrency} onChange={setCryptoCurrency}>
+                <div className='relative'>
+                 <Listbox.Button className='relative w-full h-10 py-2 pl-3 pr-10 text-left bg-white rounded-md cursor-default focus:outline-none focus-visible:ring-2 focus-visible:ring-opacity-75 focus-visible:ring-white focus-visible:ring-offset-orange-300 focus-visible:ring-offset-2 focus-visible:border-indigo-500 sm:text-sm'>
+                  <span className='block truncate'>{cryptoCurrency}</span>
+                  <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+                   <SelectorIcon
+                    className='w-5 h-5 text-gray-400'
+                    aria-hidden='true'
+                   />
+                  </span>
+                 </Listbox.Button>
+                 <Transition
+                  as={Fragment}
+                  leave='transition ease-in duration-100'
+                  leaveFrom='opacity-100'
+                  leaveTo='opacity-0'
+                 >
+                  <Listbox.Options className='z-10 absolute right-0 w-28 py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
+                   {cryptocurrencies.map((crypto, cryptoIndex) => (
+                    <Listbox.Option
+                     key={cryptoIndex}
+                     className={({ active }) =>
+                      `${
+                       active
+                        ? "text-yellow-900 bg-yellow-100"
+                        : "text-gray-900"
+                      }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
-                    }
-                    value={crypto}
-                   >
-                    {({ selected, active }) => (
-                     <>
-                      <span
-                       className={`${
-                        selected ? "font-medium" : "font-normal"
-                       } block truncate`}
-                      >
-                       {crypto}
-                      </span>
-                      {selected ? (
+                     }
+                     value={crypto}
+                    >
+                     {({ selected, active }) => (
+                      <>
                        <span
                         className={`${
-                         active ? "text-amber-600" : "text-amber-600"
-                        }
-absolute inset-y-0 left-0 flex items-center pl-3`}
+                         selected ? "font-medium" : "font-normal"
+                        } block truncate`}
                        >
-                        <CheckIcon className='w-5 h-5' aria-hidden='true' />
+                        {crypto}
                        </span>
-                      ) : null}
-                     </>
-                    )}
-                   </Listbox.Option>
-                  ))}
-                 </Listbox.Options>
-                </Transition>
-               </div>
-              </Listbox>
+                       {selected ? (
+                        <span
+                         className={`${
+                          active ? "text-amber-600" : "text-amber-600"
+                         }
+absolute inset-y-0 left-0 flex items-center pl-3`}
+                        >
+                         <CheckIcon className='w-5 h-5' aria-hidden='true' />
+                        </span>
+                       ) : null}
+                      </>
+                     )}
+                    </Listbox.Option>
+                   ))}
+                  </Listbox.Options>
+                 </Transition>
+                </div>
+               </Listbox>
+              </div>
              </div>
+            </div>
+            <div className='col-span-12 sm:col-span-4'>
+             <Listbox value={paySplit} onChange={setPaySplit}>
+              <div className='relative w-full'>
+               <Listbox.Button className='relative w-full h-10 py-2 pl-3 pr-10 text-left bg-white rounded-md shadow-md cursor-pointer focus:outline-none  sm:text-sm'>
+                <span className='block truncate'>{paySplit.insert}</span>
+                <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+                 <SelectorIcon
+                  className='w-5 h-5 text-gray-400'
+                  aria-hidden='true'
+                 />
+                </span>
+               </Listbox.Button>
+               <Transition
+                as={Fragment}
+                leave='transition ease-in duration-100'
+                leaveFrom='opacity-100'
+                leaveTo='opacity-0'
+               >
+                <Listbox.Options className='z-10 absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm'>
+                 {paySplits.map((paySplit, paySplitIdx) => (
+                  <Listbox.Option
+                   key={paySplitIdx}
+                   className={({ active }) =>
+                    `${
+                     active ? "text-yellow-700 bg-yellow-100" : "text-gray-900"
+                    }
+cursor-pointer select-none relative py-2 pl-10 pr-4`
+                   }
+                   value={paySplit}
+                  >
+                   {({ selected, active }) => (
+                    <>
+                     <span
+                      className={`${
+                       selected ? "font-medium" : "font-normal"
+                      } block truncate`}
+                     >
+                      {paySplit.insert}
+                     </span>
+                     {selected ? (
+                      <span
+                       className={`${
+                        active ? "text-amber-600" : "text-amber-600"
+                       }
+absolute inset-y-0 left-0 flex items-center pl-3`}
+                      >
+                       <CheckIcon className='w-5 h-5' aria-hidden='true' />
+                      </span>
+                     ) : null}
+                    </>
+                   )}
+                  </Listbox.Option>
+                 ))}
+                </Listbox.Options>
+               </Transition>
+              </div>
+             </Listbox>
             </div>
            </div>
           </Tab.Panel>

@@ -3,7 +3,7 @@ import SignUp from "./components/layouts/Auth/SignUp.js";
 import VerifyAccount from "./components/layouts/Auth/VerifyAccount.js";
 import ForgotPassword from "./components/layouts/Auth/ForgotPassword.js";
 import ResetPassword from "./components/layouts/Auth/ResetPassword.js";
-import CurrentGames from "./components/layouts/Game/CurrentGames.js";
+import MyGames from "./components/layouts/Game/MyGames.js";
 import Symbol from "./components/layouts/Securities/Symbol.js";
 import MyNavbar from "./components/layouts/MyNavbar.js";
 import Account from "./components/layouts/Account.js";
@@ -23,6 +23,7 @@ import GameLength from "./components/layouts/Game/GameLength";
 import ShortGame from "./components/layouts/Game/ShortGame";
 import LongGame from "./components/layouts/Game/LongGame";
 import TournamentMode from "./components/layouts/Game/TournamentMode";
+import Tournament from "./components/layouts/Game/Tournament";
 
 function App() {
  return (
@@ -35,7 +36,7 @@ function App() {
      <Route exact path='/reset-password' component={ResetPassword} />
      <Route exact path='/account' component={Account} />
      <Route exact path='/game' component={Game} />
-     <Route exact path='/games' component={CurrentGames} />
+     <Route exact path='/my-games' component={MyGames} />
      <Route exact path='/new-game' component={NewGame} />
      <Route exact path='/game-mode' component={GameMode} />
      <Route exact path='/normal-mode' component={NormalMode} />
@@ -46,7 +47,7 @@ function App() {
     </Switch>
    </Auth>
    <Switch>
-    <Route exact path='/' component={ShortGame} />
+    <Route exact path='/' component={SearchGame} />
     <Route exact path='/forgot-password' component={ForgotPassword} />
     <Route exact path='/login' component={Login} />
     <Route exact path='/sign-up' component={SignUp} />

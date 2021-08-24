@@ -494,31 +494,14 @@ class SearchGames(APIView):
 class Populate(APIView):
     
     def post(self, request, format=None):
-        games = Game.objects.filter(active=False)[:50]
-
         results = []
+        short_games = ShortGame.objects.filter(active=False)[:15]
+        results.extend([get_game_info(game) for _, game in enumerate(short_games)])
+        long_games = LongGame.objects.filter(active=False)[:15]
+        results.extend([get_game_info(game) for _, game in enumerate(long_games)])
+        tournaments = Tournament.objects.filter(active=False)[:15]
+        results.extend([get_game_info(game) for _, game in enumerate(tournaments)])
 
-        for game in games:
-            players = Player.objects.filter(game_id=game.id).count()
-
-            info = {
-                'room_code': game.room_code,
-                'name': game.name,
-                'size': players,
-                'status': game.start_time != 0,
-                'host': get_host_username(game),
-                'eBet': game.e_bet
-            }
-
-            if game.duration == None:
-                info['end'] = get_end_time(int(game.end_time))
-            else:
-                info['duration'] = get_duration(game)
-
-            results.append(info)
+        results = random.shuffle(results)
 
         return Response({'search': results}, status=status.HTTP_200_OK)
-
-
-
-        

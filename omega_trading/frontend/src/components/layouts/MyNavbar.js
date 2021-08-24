@@ -184,7 +184,7 @@ function MyNavbar(props) {
      <div className='flex items-center h-full justify-center sm:justify-between shadow-sm'>
       <div className='flex items-center justify-center px-7 sm:px-5'>
        <Link
-        to={"/games/new"}
+        to={"new-game"}
         className='text-yellow-500 font-bold hover:text-yellow-600'
        >
         Starbet
@@ -240,15 +240,12 @@ function MyNavbar(props) {
       </div>
       <div className=' space-x-7 hidden sm:flex sm:mr-7 items-center'>
        <Link
-        to='/games/current'
+        to='/my-games'
         className='text-sm text-gray-50 hover:text-gray-300'
        >
         My Games
        </Link>
-       <Link
-        to='/games/new'
-        className='text-sm text-gray-50 hover:text-gray-300'
-       >
+       <Link to='new-game' className='text-sm text-gray-50 hover:text-gray-300'>
         New Game
        </Link>
        <div className='relative  flex items-center justify-center'>

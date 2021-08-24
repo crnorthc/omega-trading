@@ -10,11 +10,11 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import "../../../variables.scss";
-import "../../../custom.scss";
+// import "../../../variables.scss";
+// import "../../../custom.scss";
 
-function CurrentGame(props) {
- CurrentGame.propTypes = {
+function MyGames(props) {
+ MyGames.propTypes = {
   // eslint-disable-next-line indent
   currentGames: PropTypes.func.isRequired,
   selecting_game: PropTypes.bool,
@@ -145,4 +145,4 @@ const mapStateToProps = (state) => ({
  games: state.game.games,
 });
 
-export default connect(mapStateToProps, { currentGames })(CurrentGame);
+export default connect(mapStateToProps, { currentGames })(MyGames);

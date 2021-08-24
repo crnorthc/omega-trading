@@ -3,22 +3,22 @@
 /* eslint-disable indent */
 import axios from "axios";
 import {
-    GAME_CREATED,
-    CREATING_GAME,
-    GAME_LOADED,
-    GAME_LOADING,
-    HISTORY_LOADED,
-    GAME_INFO_LOADED,
-    HISTORY_LOADING,
-    NO_HISTORY,
-    NO_GAME,
-    GAMES_LOADED,
-    SEARCH_LOADED,
-    MAKING_SEARCH,
-    SELECTING_GAME,
-    GAME_SELECTED,
-    MAKING_EDIT
-} from './types'
+ GAME_CREATED,
+ CREATING_GAME,
+ GAME_LOADED,
+ GAME_LOADING,
+ HISTORY_LOADED,
+ GAME_INFO_LOADED,
+ HISTORY_LOADING,
+ NO_HISTORY,
+ NO_GAME,
+ GAMES_LOADED,
+ SEARCH_LOADED,
+ MAKING_SEARCH,
+ SELECTING_GAME,
+ GAME_SELECTED,
+ MAKING_EDIT,
+} from "./types";
 
 function getCookie() {
  const value = `; ${document.cookie}`;
@@ -46,173 +46,174 @@ function getDates(games) {
  return temp;
 }
 
-export const create= (type, rules) => (dispatch) => {
+export const create = (type, rules) => (dispatch) => {
+ dispatch({
+  type: CREATING_GAME,
+ });
+
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
+
+ var body = JSON.stringify({ type, rules });
+
+ axios.post("/game/create", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_CREATED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
+
+export const editGame =
+ (amount, date, endOn, commission, options, code) => (dispatch) => {
+  dispatch({
+   type: MAKING_EDIT,
+  });
+
+  const config = {
+   headers: {
+    "Content-Type": "application/json",
+    Authorization: "Token " + getCookie(),
+   },
+  };
+
+  var body = JSON.stringify({ amount, date, endOn, commission, options, code });
+
+  axios.post("/game/edit", body, config).then((res) => {
+   if (res.data.Error) {
+    console.log("oops");
+   } else {
     dispatch({
-        type: CREATING_GAME,
-    })
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ type, rules })
-
-    axios.post('/game/create', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_CREATED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
-
-export const editGame = (amount, date, endOn, commission, options, code) => (dispatch) => {
-    dispatch({
-        type: MAKING_EDIT,
-    })
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({amount, date, endOn, commission, options, code})
-
-    axios.post('/game/edit', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+     type: GAME_LOADED,
+     payload: res.data.game,
+    });
+   }
+  });
+ };
 
 export const loadGame = (room_code) => (dispatch) => {
-    dispatch({
-        type: GAME_LOADING,
-    })
+ dispatch({
+  type: GAME_LOADING,
+ });
 
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    var body = JSON.stringify({ room_code })
+ var body = JSON.stringify({ room_code });
 
-    axios.post('/game/load', body, config).then((res) => {
-        if (res.status == 204) {
-            dispatch({
-                type: NO_GAME,
-            })
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/load", body, config).then((res) => {
+  if (res.status == 204) {
+   dispatch({
+    type: NO_GAME,
+   });
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const joinGame = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    const body = JSON.stringify({ room_code })
+ const body = JSON.stringify({ room_code });
 
-    axios.post('/game/join', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/join", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const declineGame = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    const body = JSON.stringify({ room_code })
+ const body = JSON.stringify({ room_code });
 
-    axios.post('/game/decline', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/decline", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const leaveGame = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    const body = JSON.stringify({ room_code })
+ const body = JSON.stringify({ room_code });
 
-    axios.post('/game/leave', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/leave", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const removePlayer = (username, room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    const body = JSON.stringify({ username, room_code })
+ const body = JSON.stringify({ username, room_code });
 
-    axios.post('/game/remove', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/remove", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const sendGameInvite = (username, unadd, room_code) => (dispatch) => {
  const config = {
@@ -310,54 +311,6 @@ export const gameBuy = (symbol, quantity, dollars, room_code) => (dispatch) => {
 };
 
 export const startGame = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ room_code })
-
-    axios.post('/game/start', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-
-}
-
-export const loadHistory = () => (dispatch) => {
-    dispatch({
-     type: GAME_LOADED,
-     payload: getData(res.data.game),
-    });
-   }
-  });
- } else {
-  axios.post("/game/start-bet", body, config).then((res) => {
-   if (res.data.Error) {
-    console.log("oops");
-   } else {
-    dispatch({
-     type: GAME_LOADED,
-     payload: res.data.game,
-    });
-   }
-  });
- }
-};
-
-export const loadHistory = () => (dispatch) => {
- dispatch({
-  type: HISTORY_LOADING,
- });
-
  const config = {
   headers: {
    "Content-Type": "application/json",
@@ -365,17 +318,15 @@ export const loadHistory = () => (dispatch) => {
   },
  };
 
- var body = JSON.stringify({});
+ var body = JSON.stringify({ room_code });
 
- axios.post("/game/history", body, config).then((res) => {
-  if (res.status == 204) {
-   dispatch({
-    type: NO_HISTORY,
-   });
+ axios.post("/game/start", body, config).then((res) => {
+  if (res.data.Error) {
+   console.log("oops");
   } else {
    dispatch({
-    type: HISTORY_LOADED,
-    payload: getDates(res.data.games),
+    type: GAME_LOADED,
+    payload: res.data.game,
    });
   }
  });
@@ -494,51 +445,51 @@ export const searchNameCode = (code, name) => (dispatch) => {
 };
 
 export const changeType = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    var body = JSON.stringify({ room_code })
+ var body = JSON.stringify({ room_code });
 
-    axios.post('/game/type', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/type", body, config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const invite = (username, room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
+ const config = {
+  headers: {
+   "Content-Type": "application/json",
+   Authorization: "Token " + getCookie(),
+  },
+ };
 
-    var body = JSON.stringify({ username, room_code })
+ var body = JSON.stringify({ username, room_code });
 
-    axios.post('/game/invite', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
+ axios.post("/game/invite", body, config).then((res) => {
+  if (res.data.error) {
+   console.log("oops");
+  } else {
+   dispatch({
+    type: GAME_LOADED,
+    payload: res.data.game,
+   });
+  }
+ });
+};
 
 export const noGame = () => (dispatch) => {
-    dispatch({
-        type: NO_GAME
-    })
-}
+ dispatch({
+  type: NO_GAME,
+ });
+};

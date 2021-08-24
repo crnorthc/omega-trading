@@ -22,7 +22,7 @@ urlpatterns = [
     path('long-game', index),
     path('tournament-mode', index),
     path('game', index),
-    path('games', index),
+    path('my-games', index),
     path('search', index),
     re_path(r'^games/*.', index)
 ]
