@@ -63,7 +63,7 @@ function TournamentMode(props) {
     };
 
     if (props.game_created) {
-        return <Redirect to={'/game?room_code=' + props.game.code} />;
+        return <Redirect to={'/game?code=' + props.game.code} />;
     }
 
     const create = () => {

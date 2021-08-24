@@ -37,13 +37,13 @@ function Game(props) {
         }
         else {
             if (keys.length != 0) {
-                props.loadGame(values.room_code)
+                props.loadGame(values.code)
             }
         }
     }
     else {
-        if (props.game.room_code !== values.room_code) {
-            props.loadGame(values.room_code)
+        if (props.game.code !== values.code) {
+            props.loadGame(values.code)
         }
     }
 
