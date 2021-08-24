@@ -4,7 +4,7 @@ import React, { useState, Fragment } from 'react';
 import { create } from '../../../actions/game';
 import { Tab, Switch, Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon, ArrowSmRightIcon } from '@heroicons/react/solid';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 // State Stuff
 import PropTypes from 'prop-types';
@@ -51,14 +51,7 @@ const hours = [
     { insert: '48', value: 48 },
 ];
 
-const totalPlayerutes = [
-    { insert: '0', value: 0 },
-    { insert: '15', value: 15 },
-    { insert: '30', value: 30 },
-    { insert: '45', value: 45 },
-];
-
-const cryptocurrencies = ['ETH', 'BTC', 'DOGE', 'TITS'];
+const cryptocurrencies = ['BTC', 'ETH', 'LTC', 'BNB'];
 
 function ShortGame(props) {
     const [name, setName] = useState('');
@@ -80,7 +73,7 @@ function ShortGame(props) {
     };
 
     if (props.game_created) {
-      return <Redirect to={'/game?room_code=' + props.game.code} />
+        return <Redirect to={'/game?room_code=' + props.game.code} />;
     }
 
     const create = () => {
@@ -109,6 +102,44 @@ function ShortGame(props) {
 
             props.create('short', rules);
         }
+    };
+
+    const payouts = () => {
+        var values = [];
+        var payTypes;
+        if (totalPlayer.value < 10) {
+            payTypes = paySplits.slice(0, 1);
+        } else {
+            if (totalPlayer.value >= 50) {
+                payTypes = paySplits;
+            } else {
+                payTypes = paySplits.slice(0, 2);
+            }
+        }
+        for (const payout in payTypes) {
+            values.push(
+                <Listbox.Option
+                    key={payout}
+                    className={({ active }) => `${active ? 'text-yellow-700 bg-yellow-100' : 'text-gray-900'} cursor-pointer select-none relative py-2 pl-10 pr-4`}
+                    value={payTypes[payout]}
+                >
+                    {({ selected, active }) => (
+                        <>
+                            <span className={`${selected ? 'font-medium' : 'font-normal'} block truncate`}>{payTypes[payout].insert}</span>
+                            {selected ? (
+                                <span
+                                    className={`${active ? 'text-amber-600' : 'text-amber-600'}
+absolute inset-y-0 left-0 flex items-center pl-3`}
+                                >
+                                    <CheckIcon className="w-5 h-5" aria-hidden="true" />
+                                </span>
+                            ) : null}
+                        </>
+                    )}
+                </Listbox.Option>
+            );
+        }
+        return values;
     };
 
     return (
@@ -294,6 +325,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-l-lg`
                                                 }
+                                                onClick={() => setHasBet(true)}
                                             >
                                                 Active
                                             </Tab>
@@ -302,6 +334,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-r-lg`
                                                 }
+                                                onClick={() => setHasBet(false)}
                                             >
                                                 Disabled
                                             </Tab>
@@ -321,6 +354,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                             id="price"
                                                             className="h-10 border-transparent focus:outline-none block w-full pl-7 pr-2 rounded-md text-sm  bg-white"
                                                             placeholder="0.00"
+                                                            onChange={(e) => setBet(e.target.value)}
                                                         />
                                                     </div>
                                                     <ArrowSmRightIcon className="w-5 h-5 text-yellow-500" aria-hidden="true" />
@@ -389,30 +423,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                             </Listbox.Button>
                                                             <Transition as={Fragment} leave="transition ease-in duration-100" leaveFrom="opacity-100" leaveTo="opacity-0">
                                                                 <Listbox.Options className="z-10 absolute w-full py-1 mt-1 overflow-auto text-base bg-white rounded-md shadow-lg max-h-60 ring-1 ring-black  ring-opacity-5 focus:outline-none sm:text-sm">
-                                                                    {paySplits.map((paySplit, paySplitIdx) => (
-                                                                        <Listbox.Option
-                                                                            key={paySplitIdx}
-                                                                            className={({ active }) =>
-                                                                                `${active ? 'text-yellow-700 bg-yellow-100' : 'text-gray-900'}
-cursor-pointer select-none relative py-2 pl-10 pr-4`
-                                                                            }
-                                                                            value={paySplit}
-                                                                        >
-                                                                            {({ selected, active }) => (
-                                                                                <>
-                                                                                    <span className={`${selected ? 'font-medium' : 'font-normal'} block truncate`}>{paySplit.insert}</span>
-                                                                                    {selected ? (
-                                                                                        <span
-                                                                                            className={`${active ? 'text-amber-600' : 'text-amber-600'}
-absolute inset-y-0 left-0 flex items-center pl-3`}
-                                                                                        >
-                                                                                            <CheckIcon className="w-5 h-5" aria-hidden="true" />
-                                                                                        </span>
-                                                                                    ) : null}
-                                                                                </>
-                                                                            )}
-                                                                        </Listbox.Option>
-                                                                    ))}
+                                                                    {payouts()}
                                                                 </Listbox.Options>
                                                             </Transition>
                                                         </div>

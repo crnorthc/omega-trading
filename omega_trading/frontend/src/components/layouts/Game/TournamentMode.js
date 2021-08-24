@@ -4,7 +4,7 @@ import React, { useState, Fragment } from 'react';
 import { create } from '../../../actions/game';
 import { Tab, Switch, Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, SelectorIcon, ArrowSmRightIcon } from '@heroicons/react/solid';
-import { Redirect } from 'react-router-dom'
+import { Redirect } from 'react-router-dom';
 
 // State Stuff
 import PropTypes from 'prop-types';
@@ -41,11 +41,11 @@ const roundDurations = [
     { insert: 'Week', value: 'week' },
 ];
 
-const cryptocurrencies = ['ETH', 'BTC', 'DOGE', 'TITS'];
+const cryptocurrencies = ['BTC', 'ETH', 'LTC', 'BNB'];
 
 function TournamentMode(props) {
     const [name, setName] = useState('');
-    const [isPublic, setIsPublic] = useState('');
+    const [isPublic, setIsPublic] = useState(true);
     const [totalPlayer, setTotalPlayer] = useState(totalPlayers[5]);
     const [hasBet, setHasBet] = useState(true);
     const [bet, setBet] = useState(null);
@@ -63,7 +63,7 @@ function TournamentMode(props) {
     };
 
     if (props.game_created) {
-      return <Redirect to={'/game?room_code=' + props.game.code} />
+        return <Redirect to={'/game?room_code=' + props.game.code} />;
     }
 
     const create = () => {
@@ -104,7 +104,7 @@ function TournamentMode(props) {
                 <div className="mx-2 w-full sm:w-4/5 ">
                     <div className="mx-auto max-w-4xl rounded-xl sm:bg-gray-800 p-4">
                         <div className="grid grid-cols-12 gap-x-4 gap-y-5 sm:gap-y-10 ">
-                            <div className="col-span-8 sm:col-span-10">
+                            <div className="col-span-6 sm:col-span-8">
                                 <label className="block text-lg font-medium text-white" htmlFor="">
                                     Name
                                 </label>
@@ -115,10 +115,10 @@ function TournamentMode(props) {
                                     type="text"
                                 />
                             </div>
-                            <div className="col-span-4 sm:col-span-2 flex items-left sm:items-center justify-center flex-col">
+                            <div className="col-span-2 sm:col-span-2 flex items-left sm:items-center justify-center flex-col">
                                 <Switch.Group>
                                     <Switch.Label className="block font-medium text-white text-lg" htmlFor="">
-                                        {isPublic ? 'isPublic' : 'Private'}
+                                        {isPublic ? 'Public' : 'Private'}
                                     </Switch.Label>
 
                                     <Switch
@@ -136,9 +136,29 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
                                     </Switch>
                                 </Switch.Group>
                             </div>
+                            <div className="col-span-2 sm:col-span-2 flex items-left sm:items-center justify-center flex-col">
+                                <Switch.Group>
+                                    <Switch.Label className="block font-medium text-white text-lg" htmlFor="">
+                                        {options ? 'Options' : 'No Options'}
+                                    </Switch.Label>
+                                    <Switch
+                                        checked={options}
+                                        onChange={setOptions}
+                                        className={`${options ? 'bg-green-500' : 'bg-blue-500'} shadow-md
+                      relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
+                                    >
+                                        <span className="sr-only">Use setting</span>
+                                        <span
+                                            aria-hidden="true"
+                                            className={`${options ? 'translate-x-10' : 'translate-x-0'}
+                      pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
+                                        />
+                                    </Switch>
+                                </Switch.Group>
+                            </div>
                             <div className="col-span-12 sm:col-span-4">
                                 <label className="block font-medium text-white text-lg" htmlFor="">
-                                    Start Amount
+                                    Commission
                                 </label>
                                 <Listbox value={commission} onChange={seCommission}>
                                     <div className="relative mt-1">
@@ -277,6 +297,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-l-lg`
                                                 }
+                                                onClick={() => setHasBet(true)}
                                             >
                                                 Active
                                             </Tab>
@@ -285,6 +306,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-r-lg`
                                                 }
+                                                onClick={() => setHasBet(false)}
                                             >
                                                 Disabled
                                             </Tab>
@@ -303,6 +325,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                         id="price"
                                                         className="h-10 border-transparent focus:outline-none block w-full pl-7 pr-2 rounded-md text-sm  bg-white"
                                                         placeholder="0.00"
+                                                        onChange={(e) => setBet(e.target.value)}
                                                     />
                                                 </div>
                                                 <ArrowSmRightIcon className="w-5 h-5 text-yellow-500" aria-hidden="true" />

@@ -52,7 +52,7 @@ const min_players = [
     { insert: '1000', value: 1000 },
 ]
 
-const cryptocurrencies = ['ETH', 'BTC', 'DOGE', 'TITS']
+const cryptocurrencies = ['BTC', 'ETH', 'LTC', 'BNB']
 
 function Long(props) {
     const [name, setName] = useState('')
@@ -60,7 +60,7 @@ function Long(props) {
     const [options, setOptions] = useState(true)
     const [commission, setCommission] = useState(commissionAmounts[0])
     const [startAmount, setStartAmount] = useState(startAmounts[0])
-    const [isBet, setIsBet] = useState(true)
+    const [isBet, setHasBet] = useState(true)
     const [bet, setBet] = useState(null)
     const [cryptocurrency, setCryptocurrency] = useState(cryptocurrencies[0])
     const [startDate, setStartDate] = useState(null)
@@ -108,8 +108,10 @@ function Long(props) {
         }
 
         setStartTime(hour + ':' + '00')
+        setEndTime(hour + ':' + '00')
         setMax(year + 1 + '-' + month + '-' + day)
         setMin(year + '-' + month + '-' + day)
+        setEndDate(year + '-' + month + '-' + day)
         setStartDate(year + '-' + month + '-' + day)
     }
 
@@ -225,7 +227,7 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
                                         <Switch
                                             checked={options}
                                             onChange={setOptions}
-                                            className={`${options ? 'bg-green-500' : 'bg-red-500'} shadow-md
+                                            className={`${options ? 'bg-green-500' : 'bg-blue-500'} shadow-md
 relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
                                         >
                                             <span className="sr-only">Use setting</span>
@@ -418,6 +420,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     <input
                                                         className="flex-1 h-10 text-sm block px-2 shadow-md border-transparent focus:outline-none focus:ring focus:ring-yellow-300"
                                                         type="time"
+                                                        value={endTime}
                                                         onChange={(e) => setEndTime(e.target.value)}
                                                     ></input>
                                                 </div>
@@ -431,15 +434,27 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                             Crypto Bet
                                         </label>
                                         <Tab.List className="flex items-start justify-start pb-2">
-                                            <span className="flex shadow-md rounded-md">
-                                                <Tab className={({ selected }) => `${selected ? 'bg-white text-gray-900' : ' text-gray-500'} p-2 rounded-l-lg`} onClick={() => setIsBet(true)}>
-                                                    Active
-                                                </Tab>
-                                                <Tab className={({ selected }) => `${selected ? 'bg-white text-gray-900' : ' text-gray-500'} p-2 rounded-r-lg`} onClick={() => setIsBet(false)}>
-                                                    Disabled
-                                                </Tab>
-                                            </span>
-                                        </Tab.List>
+                                        <span className="flex shadow-md rounded-md">
+                                            <Tab
+                                                className={({ selected }) =>
+                                                    `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
+    p-2 rounded-l-lg`
+                                                }
+                                                onClick={() => setHasBet(true)}
+                                            >
+                                                Active
+                                            </Tab>
+                                            <Tab
+                                                className={({ selected }) =>
+                                                    `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
+    p-2 rounded-r-lg`
+                                                }
+                                                onClick={() => setHasBet(false)}
+                                            >
+                                                Disabled
+                                            </Tab>
+                                        </span>
+                                    </Tab.List>
                                         <Tab.Panels>
                                             <Tab.Panel>
                                                 <div className="col-span-12 sm:col-span-8 flex items-center justify-center space-x-2">
@@ -464,6 +479,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                             id="price"
                                                             className="h-10 text-sm border-transparent focus:outline-none bg-white focus:ring focus:ring-yellow-300 block w-full pl-2 pr-12 sm:text-sm  rounded-md"
                                                             placeholder="0.00"
+                                                            onChange={(e) => setBet(e.target.value)}
                                                         />
                                                         <div className="absolute inset-y-0 right-0 flex items-center">
                                                             <label htmlFor="currency" className="sr-only text-white text-lg">
