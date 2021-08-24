@@ -72,9 +72,11 @@ function ShortGame(props) {
         game: PropTypes.object,
     };
 
+    /*
     if (props.game_created) {
         return <Redirect to={'/game?code=' + props.game.code} />;
     }
+    */
 
     const create = () => {
         if (name != '') {
@@ -314,7 +316,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                 </Listbox>
                             </div>
                             <div className="col-span-12">
-                                <Tab.Group>
+                                <Tab.Group onChange={() => setHasBet(!hasBet)}>
                                     <label className="block font-medium pb-2 text-white text-lg" htmlFor="">
                                         Crypto Bet
                                     </label>
@@ -324,8 +326,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                 className={({ selected }) =>
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-l-lg`
-                                                }
-                                                onClick={() => setHasBet(true)}
+                                                }                                                
                                             >
                                                 Active
                                             </Tab>
@@ -333,8 +334,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                 className={({ selected }) =>
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-r-lg`
-                                                }
-                                                onClick={() => setHasBet(false)}
+                                                }                                                
                                             >
                                                 Disabled
                                             </Tab>

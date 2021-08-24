@@ -43,7 +43,7 @@ const roundDurations = [
 
 const cryptocurrencies = ['BTC', 'ETH', 'LTC', 'BNB'];
 
-function TournamentMode(props) {
+function Tournament(props) {
     const [name, setName] = useState('');
     const [isPublic, setIsPublic] = useState(true);
     const [totalPlayer, setTotalPlayer] = useState(totalPlayers[5]);
@@ -54,7 +54,7 @@ function TournamentMode(props) {
     const [cryptocurrency, setCryptocurrency] = useState(cryptocurrencies[0]);
     const [roundDuration, setRoundDuration] = useState(roundDurations[1]);
 
-    TournamentMode.propTypes = {
+    Tournament.propTypes = {
         create: PropTypes.func.isRequired,
         creating_game: PropTypes.bool,
         game_created: PropTypes.bool,
@@ -62,9 +62,11 @@ function TournamentMode(props) {
         game: PropTypes.object,
     };
 
+    /*
     if (props.game_created) {
         return <Redirect to={'/game?code=' + props.game.code} />;
     }
+    */
 
     const create = () => {
         if (name != '') {
@@ -88,6 +90,7 @@ function TournamentMode(props) {
                 size: totalPlayer.value,
                 options: options,
                 bet: gameBet,
+                public: isPublic
             };
 
             props.create('tournament', rules);
@@ -286,7 +289,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                 </Listbox>
                             </div>
                             <div className="col-span-12">
-                                <Tab.Group>
+                                <Tab.Group onChange={() => setHasBet(!hasBet)}>
                                     <label className="block font-medium pb-2 text-white text-lg" htmlFor="">
                                         Crypto Bet
                                     </label>
@@ -296,8 +299,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                 className={({ selected }) =>
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-l-lg`
-                                                }
-                                                onClick={() => setHasBet(true)}
+                                                }                                               
                                             >
                                                 Active
                                             </Tab>
@@ -305,8 +307,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                 className={({ selected }) =>
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-r-lg`
-                                                }
-                                                onClick={() => setHasBet(false)}
+                                                }                                                
                                             >
                                                 Disabled
                                             </Tab>
@@ -407,4 +408,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game,
 });
 
-export default connect(mapStateToProps, { create })(TournamentMode);
+export default connect(mapStateToProps, { create })(Tournament);

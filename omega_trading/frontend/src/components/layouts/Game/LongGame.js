@@ -60,7 +60,7 @@ function Long(props) {
     const [options, setOptions] = useState(true)
     const [commission, setCommission] = useState(commissionAmounts[0])
     const [startAmount, setStartAmount] = useState(startAmounts[0])
-    const [isBet, setHasBet] = useState(true)
+    const [hasBet, setHasBet] = useState(true)
     const [bet, setBet] = useState(null)
     const [cryptocurrency, setCryptocurrency] = useState(cryptocurrencies[0])
     const [startDate, setStartDate] = useState(null)
@@ -79,9 +79,11 @@ function Long(props) {
         game: PropTypes.object,
     }
 
+    /*
     if (props.game_created) {
-      return <Redirect to={'/game?code=' + props.game.code} />
+        return <Redirect to={'/game?code=' + props.game.code} />;
     }
+    */
 
     if (startDate == null) {
         const current = new Date()
@@ -429,7 +431,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                     </Tab.Group>
                                 </div>
                                 <div className="col-span-12 sm:col-span-6">
-                                    <Tab.Group>
+                                    <Tab.Group onChange={() => setHasBet(!hasBet)}>
                                         <label className="block text-lg font-medium text-white pb-2" htmlFor="">
                                             Crypto Bet
                                         </label>
@@ -440,7 +442,6 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-l-lg`
                                                 }
-                                                onClick={() => setHasBet(true)}
                                             >
                                                 Active
                                             </Tab>
@@ -449,7 +450,6 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                                                     `${selected ? 'bg-white text-md text-gray-900' : ' text-gray-500 text-md'}
     p-2 rounded-r-lg`
                                                 }
-                                                onClick={() => setHasBet(false)}
                                             >
                                                 Disabled
                                             </Tab>

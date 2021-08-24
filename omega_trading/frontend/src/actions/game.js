@@ -53,7 +53,6 @@ export const create = (type, rules) => (dispatch) => {
             });
         })
         .catch((error) => {
-            console.log("here");
             dispatch({
                 type: GAME_ERROR,
                 payload: error.response.data.Error,

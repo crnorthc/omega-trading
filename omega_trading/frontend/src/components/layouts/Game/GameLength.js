@@ -4,19 +4,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 
-// State Stuff
-import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { loadGame } from '../../../actions/game'
-import Loader from '../Tools/Loader'
 
-function GameLength(props) {
-    GameLength.propTypes = {
-        loadGame: PropTypes.func.isRequired,
-        selecting_game: PropTypes.bool,
-        game: PropTypes.string,
-    }
-
+function GameLength() {
     return (
         <>
             <div className='z-0 absolute top-16 right-0 bottom-3/4 sm:bottom-2/3 left-0 flex items-end sm:items-center justify-center'>
@@ -40,9 +29,5 @@ function GameLength(props) {
     )
 }
 
-const mapStateToProps = (state) => ({
-    selecting_game: state.game.selecting_game,
-    game: state.game.game,
-})
 
-export default connect(mapStateToProps, { loadGame })(GameLength)
+export default (GameLength)
