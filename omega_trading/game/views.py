@@ -414,7 +414,7 @@ class CurrentGames(APIView):
         games = []
 
         for _, player in enumerate(games_query):
-            game = get_game(player)
+            game = get_game_from_player(player)
 
             info = get_game_info(game)
 

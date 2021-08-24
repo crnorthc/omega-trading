@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.apps import apps
 from .TopSecret import *
 from .bets import *
@@ -51,12 +52,12 @@ def get_players(game):
 def get_game(competition):
     try:
         game = competition.game
-    except Competition.DoesNotExists:
+    except ObjectDoesNotExist:
         return competition.tournament
 
     try:
         return game.shortgame
-    except ShortGame.DoesNotExist:
+    except ObjectDoesNotExist:
         return game.longgame
 
 def get_game_from_code(code):
