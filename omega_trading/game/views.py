@@ -480,7 +480,3 @@ class Populate(APIView):
         results = random.shuffle(results)
 
         return Response({'search': results}, status=status.HTTP_200_OK)
-
-
-
-        

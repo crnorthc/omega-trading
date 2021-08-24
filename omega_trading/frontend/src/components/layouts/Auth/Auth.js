@@ -28,7 +28,7 @@ function Auth(props) {
     }
 
     return (
-        <div className='pageContainer'>
+        <div>
             {props.children}
         </div>
     )   
