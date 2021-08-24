@@ -108,12 +108,13 @@ def create_short_game(rules, user):
 
     game = ShortGame(duration=hours, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
 
-    bet = determine_bet(user, bet, code)
+    if bet != None:
+        bet = determine_bet(user, bet, code)
 
-    if not bet:
-        return {'Error': 'Insufficient Funds'}
-    else:
-        game.bet = bet
+        if not bet:
+            return {'Error': 'Insufficient Funds'}
+        else:
+            game.bet = bet
         
     player = Player(user=user, game=game, is_host=True)
     game.save()
@@ -133,14 +134,17 @@ def create_long_game(rules, user):
 
     code = get_code()
 
-    game = LongGame(start_time=dates['start'], end_time=dates['end'], options=options, commission=commission, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
+    game = LongGame(start_time=int(dates['start']), end_time=int(dates['end']), options=options, commission=commission, public=public, name=name, code=code, size=min_players, start_amount=start_amount)
+    
 
-    bet = determine_bet(user, bet, code)
+    if bet != None:
+        bet = determine_bet(user, bet, code)
 
-    if not bet:
-        return {'Error': 'Insufficient Funds'}
-    else:
-        game.bet = bet
+        if not bet:
+            return {'Error': 'Insufficient Funds'}
+        else:
+            game.bet = bet
+
         
     player = Player(user=user, game=game, is_host=True)
     game.save()
@@ -160,12 +164,14 @@ def create_tournament(rules, user):
 
     tournament = Tournament(name=name, public=public, code=code, options=options, commission=commission, size=size, round=rounds)
 
-    bet = determine_bet(user, bet, code)
+    if bet != None:
+        bet = determine_bet(user, bet, code)
 
-    if not bet:
-        return {'Error': 'Insufficient Funds'}
-    else:
-        tournament.bet = bet
+        if not bet:
+            return {'Error': 'Insufficient Funds'}
+        else:
+            tournament.bet = bet
+
         
     player = Player(user=user, game=tournament, is_host=True)
     tournament.save()

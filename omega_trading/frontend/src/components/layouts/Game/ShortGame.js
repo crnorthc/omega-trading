@@ -1,70 +1,70 @@
 /* eslint-disable semi */
 /* eslint-disable indent */
-import React, { useState, Fragment } from "react";
-import { create, editGame, joinGame } from "../../../actions/game";
-import { Tab, Switch, Listbox, Transition } from "@headlessui/react";
+import React, { useState, Fragment } from 'react';
+import { create, editGame, joinGame } from '../../../actions/game';
+import { Tab, Switch, Listbox, Transition } from '@headlessui/react';
 import {
  CheckIcon,
  SelectorIcon,
  ArrowSmRightIcon,
-} from "@heroicons/react/solid";
+} from '@heroicons/react/solid';
 
 // State Stuff
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 const startAmounts = [
- { insert: "$10,000", value: 10000 },
- { insert: "$100,000", value: 100000 },
- { insert: "$500,000", value: 500000 },
- { insert: "$1,000,000", value: 1000000 },
+ { insert: '$10,000', value: 10000 },
+ { insert: '$100,000', value: 100000 },
+ { insert: '$500,000', value: 500000 },
+ { insert: '$1,000,000', value: 1000000 },
 ];
 
 const paySplits = [
- { insert: "Winner Takes All", value: 1 }, // Always an option
- { insert: "Top 3", value: 2 }, // Games with totalPlayer of 10
- { insert: "10% Split", value: 3 }, // Games with totalPlayer of 50
- { insert: "10% Ranked", value: 4 }, // Games with totalPlayer of 50
+ { insert: 'Winner Takes All', value: 1 }, // Always an option
+ { insert: 'Top 3', value: 2 }, // Games with totalPlayer of 10
+ { insert: '10% Split', value: 3 }, // Games with totalPlayer of 50
+ { insert: '10% Ranked', value: 4 }, // Games with totalPlayer of 50
 ];
 
 const totalPlayers = [
- { insert: "2", value: 2 },
- { insert: "10", value: 10 },
- { insert: "25", value: 25 },
- { insert: "50", value: 50 },
- { insert: "100", value: 100 },
- { insert: "250", value: 250 },
- { insert: "500", value: 500 },
- { insert: "1000", value: 1000 },
+ { insert: '2', value: 2 },
+ { insert: '10', value: 10 },
+ { insert: '25', value: 25 },
+ { insert: '50', value: 50 },
+ { insert: '100', value: 100 },
+ { insert: '250', value: 250 },
+ { insert: '500', value: 500 },
+ { insert: '1000', value: 1000 },
 ];
 
 const hours = [
- { insert: "1", value: 1 },
- { insert: "2", value: 2 },
- { insert: "3", value: 3 },
- { insert: "4", value: 4 },
- { insert: "5", value: 5 },
- { insert: "6", value: 6 },
- { insert: "12", value: 12 },
- { insert: "18", value: 18 },
- { insert: "24", value: 24 },
- { insert: "30", value: 30 },
- { insert: "36", value: 36 },
- { insert: "42", value: 42 },
- { insert: "48", value: 48 },
+ { insert: '1', value: 1 },
+ { insert: '2', value: 2 },
+ { insert: '3', value: 3 },
+ { insert: '4', value: 4 },
+ { insert: '5', value: 5 },
+ { insert: '6', value: 6 },
+ { insert: '12', value: 12 },
+ { insert: '18', value: 18 },
+ { insert: '24', value: 24 },
+ { insert: '30', value: 30 },
+ { insert: '36', value: 36 },
+ { insert: '42', value: 42 },
+ { insert: '48', value: 48 },
 ];
 
 const totalPlayerutes = [
- { insert: "0", value: 0 },
- { insert: "15", value: 15 },
- { insert: "30", value: 30 },
- { insert: "45", value: 45 },
+ { insert: '0', value: 0 },
+ { insert: '15', value: 15 },
+ { insert: '30', value: 30 },
+ { insert: '45', value: 45 },
 ];
 
-const cryptocurrencies = ["ETH", "BTC", "DOGE", "TITS"];
+const cryptocurrencies = ['ETH', 'BTC', 'DOGE', 'TITS'];
 
 function ShortGame(props) {
- const [name, setName] = useState("");
+ const [name, setName] = useState('');
  const [isPublic, setIsPublic] = useState(true);
  const [totalPlayer, setTotalPlayer] = useState(totalPlayers[0]);
  const [startAmount, setStartAmount] = useState(startAmounts[0]);
@@ -85,11 +85,11 @@ function ShortGame(props) {
  };
 
  const create = () => {
-  if (name != "") {
+  if (name != '') {
    var gameBet = null;
    if (hasBet) {
-    if (bet == null || bet == "") {
-     console.log("error"); // ADD SOMETHING TO DISPLAY ERROR MSG
+    if (bet == null || bet == '') {
+     console.log('error'); // ADD SOMETHING TO DISPLAY ERROR MSG
     } else {
      gameBet = {
       bet: bet,
@@ -108,7 +108,7 @@ function ShortGame(props) {
     bet: gameBet,
    };
 
-   props.create("short", rules);
+   props.create('short', rules);
   }
  };
 
@@ -141,19 +141,19 @@ function ShortGame(props) {
           className='block font-medium text-white text-lg'
           htmlFor=''
          >
-          {isPublic ? "isPublic" : "Private"}
+          {isPublic ? 'isPublic' : 'Private'}
          </Switch.Label>
 
          <Switch
           checked={isPublic}
           onChange={setIsPublic}
-          className={`${isPublic ? "bg-green-500" : "bg-blue-500"} shadow-md
+          className={`${isPublic ? 'bg-green-500' : 'bg-blue-500'} shadow-md
 relative inline-flex flex-shrink-0 h-10 w-20 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus-visible:ring-2  focus-visible:ring-white focus-visible:ring-opacity-75`}
          >
           <span className='sr-only'>Use setting</span>
           <span
            aria-hidden='true'
-           className={`${isPublic ? "translate-x-10" : "translate-x-0"}
+           className={`${isPublic ? 'translate-x-10' : 'translate-x-0'}
 pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transform ring-0 transition ease-in-out duration-200`}
           />
          </Switch>
@@ -185,7 +185,7 @@ pointer-events-none inline-block h-9 w-9 rounded-full bg-white shadow-lg transfo
              <Listbox.Option
               key={startAmountIdx}
               className={({ active }) =>
-               `${active ? "text-yellow-700 bg-yellow-100" : "text-gray-900"}
+               `${active ? 'text-yellow-700 bg-yellow-100' : 'text-gray-900'}
 cursor-pointer select-none relative py-2 pl-10 pr-4`
               }
               value={startAmount}
@@ -194,14 +194,14 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                <>
                 <span
                  className={`${
-                  selected ? "font-medium" : "font-normal"
+                  selected ? 'font-medium' : 'font-normal'
                  } block truncate`}
                 >
                  {startAmount.insert}
                 </span>
                 {selected ? (
                  <span
-                  className={`${active ? "text-amber-600" : "text-amber-600"}
+                  className={`${active ? 'text-amber-600' : 'text-amber-600'}
 absolute inset-y-0 left-0 flex items-center pl-3`}
                  >
                   <CheckIcon className='w-5 h-5' aria-hidden='true' />
@@ -242,7 +242,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
              <Listbox.Option
               key={totalPlayerIdx}
               className={({ active }) =>
-               `${active ? "text-yellow-700 bg-yellow-100" : "text-gray-900"}
+               `${active ? 'text-yellow-700 bg-yellow-100' : 'text-gray-900'}
 cursor-pointer select-none relative py-2 pl-10 pr-4`
               }
               value={totalPlayer}
@@ -251,14 +251,14 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                <>
                 <span
                  className={`${
-                  selected ? "font-medium" : "font-normal"
+                  selected ? 'font-medium' : 'font-normal'
                  } block truncate`}
                 >
                  {totalPlayer.insert}
                 </span>
                 {selected ? (
                  <span
-                  className={`${active ? "text-amber-600" : "text-amber-600"}
+                  className={`${active ? 'text-amber-600' : 'text-amber-600'}
 absolute inset-y-0 left-0 flex items-center pl-3`}
                  >
                   <CheckIcon className='w-5 h-5' aria-hidden='true' />
@@ -299,7 +299,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
              <Listbox.Option
               key={hourIdx}
               className={({ active }) =>
-               `${active ? "text-yellow-700 bg-yellow-100" : "text-gray-900"}
+               `${active ? 'text-yellow-700 bg-yellow-100' : 'text-gray-900'}
 cursor-pointer select-none relative py-2 pl-10 pr-4`
               }
               value={theHour}
@@ -308,14 +308,14 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                <>
                 <span
                  className={`${
-                  selected ? "font-medium" : "font-normal"
+                  selected ? 'font-medium' : 'font-normal'
                  } block truncate`}
                 >
                  {theHour.insert}
                 </span>
                 {selected ? (
                  <span
-                  className={`${active ? "text-amber-600" : "text-amber-600"}
+                  className={`${active ? 'text-amber-600' : 'text-amber-600'}
 absolute inset-y-0 left-0 flex items-center pl-3`}
                  >
                   <CheckIcon className='w-5 h-5' aria-hidden='true' />
@@ -344,8 +344,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
             className={({ selected }) =>
              `${
               selected
-               ? "bg-white text-md text-gray-900"
-               : " text-gray-500 text-md"
+               ? 'bg-white text-md text-gray-900'
+               : ' text-gray-500 text-md'
              }
     p-2 rounded-l-lg`
             }
@@ -356,8 +356,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
             className={({ selected }) =>
              `${
               selected
-               ? "bg-white text-md text-gray-900"
-               : " text-gray-500 text-md"
+               ? 'bg-white text-md text-gray-900'
+               : ' text-gray-500 text-md'
              }
     p-2 rounded-r-lg`
             }
@@ -423,8 +423,8 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                      className={({ active }) =>
                       `${
                        active
-                        ? "text-yellow-900 bg-yellow-100"
-                        : "text-gray-900"
+                        ? 'text-yellow-900 bg-yellow-100'
+                        : 'text-gray-900'
                       }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
                      }
@@ -434,7 +434,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                       <>
                        <span
                         className={`${
-                         selected ? "font-medium" : "font-normal"
+                         selected ? 'font-medium' : 'font-normal'
                         } block truncate`}
                        >
                         {crypto}
@@ -442,7 +442,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                        {selected ? (
                         <span
                          className={`${
-                          active ? "text-amber-600" : "text-amber-600"
+                          active ? 'text-amber-600' : 'text-amber-600'
                          }
 absolute inset-y-0 left-0 flex items-center pl-3`}
                         >
@@ -484,7 +484,7 @@ absolute inset-y-0 left-0 flex items-center pl-3`}
                    key={paySplitIdx}
                    className={({ active }) =>
                     `${
-                     active ? "text-yellow-700 bg-yellow-100" : "text-gray-900"
+                     active ? 'text-yellow-700 bg-yellow-100' : 'text-gray-900'
                     }
 cursor-pointer select-none relative py-2 pl-10 pr-4`
                    }
@@ -494,7 +494,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                     <>
                      <span
                       className={`${
-                       selected ? "font-medium" : "font-normal"
+                       selected ? 'font-medium' : 'font-normal'
                       } block truncate`}
                      >
                       {paySplit.insert}
@@ -502,7 +502,7 @@ cursor-pointer select-none relative py-2 pl-10 pr-4`
                      {selected ? (
                       <span
                        className={`${
-                        active ? "text-amber-600" : "text-amber-600"
+                        active ? 'text-amber-600' : 'text-amber-600'
                        }
 absolute inset-y-0 left-0 flex items-center pl-3`}
                       >

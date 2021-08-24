@@ -12,6 +12,7 @@ import time
 import math
 import requests
 import datetime
+import random
 import json
 
 Invites = apps.get_model('users', 'Invites')
@@ -24,7 +25,7 @@ class Create(APIView):
     def post(self, request, format=None):
         rules = request.data['rules']
         type = request.data['type']
-
+        
         if type == 'long':
             game = create_long_game(rules, request.user)
         elif type == 'short':
@@ -32,10 +33,11 @@ class Create(APIView):
         elif type == 'tournament':
             game = create_tournament(rules, request.user)
 
-        if 'Error' in game:
-            return Response(game, status=status.HTTP_403_FORBIDDEN)
-
-        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
+        try:
+            if 'Error' in game:
+                return Response(game, status=status.HTTP_403_FORBIDDEN)
+        except TypeError:
+            return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Load(APIView):
@@ -477,6 +479,6 @@ class Populate(APIView):
         tournaments = Tournament.objects.filter(active=False)[:15]
         results.extend([get_game_info(game) for _, game in enumerate(tournaments)])
 
-        results = random.shuffle(results)
+        random.shuffle(results)
 
         return Response({'search': results}, status=status.HTTP_200_OK)
