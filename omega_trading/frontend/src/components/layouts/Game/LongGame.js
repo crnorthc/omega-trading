@@ -3,7 +3,7 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/prop-types */
 import React, { useState, Fragment } from 'react'
-import { create, editGame, joinGame } from '../../../actions/game'
+import { create } from '../../../actions/game'
 import Loader from '../Tools/Loader'
 import { Tab, Switch, Listbox, Transition } from '@headlessui/react'
 import { CheckIcon, SelectorIcon, ArrowSmRightIcon } from '@heroicons/react/solid'
@@ -13,6 +13,7 @@ import { CheckIcon, SelectorIcon, ArrowSmRightIcon } from '@heroicons/react/soli
 // State Stuff
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
 
 const startAmounts = [
     { insert: '$10,000', value: 10000 },
@@ -72,12 +73,14 @@ function Long(props) {
 
     Long.propTypes = {
         create: PropTypes.func.isRequired,
-        joinGame: PropTypes.func.isRequired,
-        editGame: PropTypes.func.isRequired,
         creating_game: PropTypes.bool,
         game_created: PropTypes.bool,
         user: PropTypes.object,
         game: PropTypes.object,
+    }
+
+    if (props.game_created) {
+      return <Redirect to={'/game?room_code=' + props.game.code} />
     }
 
     if (startDate == null) {
@@ -167,7 +170,6 @@ function Long(props) {
                     dates: dates,
                     bet: gameBet,
                 }
-
                 props.create('long', rules)
             }
         }
@@ -535,4 +537,4 @@ const mapStateToProps = (state) => ({
     game: state.game.game,
 })
 
-export default connect(mapStateToProps, { create, editGame, joinGame })(Long)
+export default connect(mapStateToProps, { create })(Long)

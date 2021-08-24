@@ -81,6 +81,7 @@ export default function (state = initialState, action) {
             game_loading: false,
             game_loaded: true,
             making_edit: false,
+            game_created: false,
             game: action.payload,
         }
     case GAME_INFO_LOADED: 
