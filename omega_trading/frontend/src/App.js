@@ -23,7 +23,6 @@ import GameLength from './components/layouts/Game/GameLength'
 import ShortGame from './components/layouts/Game/ShortGame'
 import LongGame from './components/layouts/Game/LongGame'
 import TournamentMode from './components/layouts/Game/TournamentMode'
-import Tournament from './components/layouts/Game/Tournament'
 
 function App() {
     return (
