@@ -24,29 +24,62 @@ SECONDS_IN_DAY = 24 * 60 * 60
 SECONDS_IN_HOUR = 60 * 60
 SECONDS_IN_MINUTE = 60
 
-def determine_bet(user, bet, code):
-    wallet = Wallet.objects.filter(user_id=user.id, coin=bet['coin'])
+# Basic Utility
 
-    if not wallet.exists():
-        return False
-    else:
-        address = get_wallet(user.id, bet['coin'])
-        wallet = wallet[0]
+def get_players(game):
+    players = Player.objects.filter(game_id=game.id).values()
+    formatted_players = {}
 
-    frozen_funds = Frozen.objects.filter(wallet_id=wallet.id)
-    frozen = 0
+    for _, value in enumerate(players):
+        user = User.objects.filter(id=value['user_id'])
+        user = user[0]
 
-    for frozen_fund in frozen_funds:
-        frozen += frozen_fund.amount
+        formatted_players[user.username] = {
+            'first_name': user.first_name,
+            'last_name': user.last_name
+        }
+        
+        if value['is_host']:
+            host = {
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            }
+
+    return formatted_players, host
+
+def get_game(competition):
+    try:
+        game = competition.game
+    except Competition.DoesNotExists:
+        return competition.tournament
+
+    try:
+        return game.shortgame
+    except ShortGame.DoesNotExist:
+        return game.longgame
+
+def get_game_from_code(code):
+    competition = Competition.objects.filter(code=code)
+
+    return get_game(competition[0])
+
+def get_game_from_player(player):
+    competition = Competition.objects.filter(id=player['game_id'])
     
-    if bet['bet'] > (address['balance']- frozen):
-        return False
+    return get_game(competition[0])
 
-    freeze_funds(wallet, bet, code)
-    bet = Bet(bet=bet['bet'], coin=bet['coin'], payout=bet['type'])
-    bet.save()
+def get_game_info(game):
+    info = game.get_info()
+    players, host = get_players(game)
 
-    return bet
+    info['current_size'] = len(players)
+    info['host'] = host
+    info['players'] = players
+
+    return info
+
+# Creating Games
 
 def get_code():
     choices = string.ascii_uppercase + string.digits
@@ -114,55 +147,6 @@ def create_long_game(rules, user):
 
     return game
 
-def get_players(game):
-    players = Player.objects.filter(game_id=game.id).values()
-    formatted_players = {}
-
-    for _, value in enumerate(players):
-        user = User.objects.filter(id=value['user_id'])
-        user = user[0]
-
-        formatted_players[user.username] = {
-            'first_name': user.first_name,
-            'last_name': user.last_name
-        }
-        
-        if value['is_host']:
-            host = {
-                'username': user.username,
-                'first_name': user.first_name,
-                'last_name': user.last_name
-            }
-
-    return formatted_players, host
-
-def get_game_info(game, user):
-    info = game.get_info()
-    players, host = get_players(game)
-
-    info['current_size'] = len(players)
-    info['host'] = host
-    info['players'] = players
-
-    return info
-
-def get_game(player):
-    game = Competition.objects.filter(id=player['game_id'])
-    game_id = game[0].id
-
-    game = ShortGame.objects.filter(competition_ptr_id=game_id)
-
-    if game.exists():
-        return game[0]
-    else:
-        game = LongGame.objects.filter(competition_ptr_id=game_id)
-        
-        if game.exists():
-            return game[0]
-        else:
-            game = Tournament.objects.filter(competition_ptr_id=game_id)
-            return game[0]
-
 def create_tournament(rules, user):
     rounds = rules['rounds']
     options = rules['options']
@@ -170,9 +154,10 @@ def create_tournament(rules, user):
     name = rules['name']
     size = rules['size']
     bet = rules['bet']
+    public = rules['public']
     code = get_code()
 
-    tournament = Tournament(name=name, code=code, options=options, commission=commission, size=size, round=rounds)
+    tournament = Tournament(name=name, public=public, code=code, options=options, commission=commission, size=size, round=rounds)
 
     bet = determine_bet(user, bet, code)
 
@@ -187,6 +172,8 @@ def create_tournament(rules, user):
 
     return tournament
 
+# Bets
+
 def freeze_funds(wallet, bet, code):
     frozen = Frozen(wallet=wallet, amount=bet['coin'], code=code)
     frozen.save()
@@ -200,6 +187,245 @@ def unfreeze_funds(game, user):
         frozen = frozen[0]
         frozen.delete()
 
+def determine_bet(user, bet, code):
+    wallet = Wallet.objects.filter(user_id=user.id, coin=bet['coin'])
+
+    if not wallet.exists():
+        return False
+    else:
+        address = get_wallet(user.id, bet['coin'])
+        wallet = wallet[0]
+
+    frozen_funds = Frozen.objects.filter(wallet_id=wallet.id)
+    frozen = 0
+
+    for frozen_fund in frozen_funds:
+        frozen += frozen_fund.amount
+    
+    if bet['bet'] > (address['balance']- frozen):
+        return False
+
+    freeze_funds(wallet, bet, code)
+    bet = Bet(bet=bet['bet'], coin=bet['coin'], payout=bet['type'])
+    bet.save()
+
+    return bet
+
+def place_bets(game):
+    players = Player.objects.filter(game_id=game.id)
+    bet = Bet.objects.filter(id=game.bet_id)
+    bet = bet[0]
+    
+    bets = bet.bet * len(players)
+    coin = bet.coin
+
+    for player in enumerate(players):
+        user = User.objects.filter(id=player.user_id)
+        user = user[0]
+
+        address = get_user_address(user.id, coin)
+        address = Address.objects.filter(address=address)
+        address = address[0]
+        address.amount -= bet.bet
+        address.save()
+        unfreeze_funds(game, user)
+
+    game_address = get_game_address(game.id, coin)
+    game_address = Address(address=game_address, amount=bets)
+    game_address.save()
+
+# Search Games
+
+def bet_query(bet, joins):
+
+    if bet != None:
+        coin = bet['coin']
+        if coin != 'any':
+            coin_query = 'AND game_bet.coin={coin} AND'.format(coin=coin)
+        else: 
+            coin_query = 'AND' 
+
+        bet_query = ''
+        if bet['amount'] != 'any':
+            min = bet['amount']['min']
+            max = bet['amount']['max']
+            bet_query = '{coin} game_bet.bet >= {min} AND game_bet.bet <= {max}'.format(coin=coin_query, min=min, max=max)
+
+        return '(({joins}) FULL JOIN (SELECT * FROM game_bet WHERE 1=1{bet}) ON game.bet_id=game_bet.id) AS game'.format(bet=bet_query)
+    else:
+        return joins
+
+def list_to_query(variable, values):
+    query = ''
+    if values != 'any':
+        for value in values:
+            query += ' AND {variable}={value}'.format(variable=variable, value=value)
+
+    return query
+
+def commissions_query(commissions):
+    query = ''
+    if commissions != 'any':
+        query = ' AND game.commission!=0.00'
+        for commission in commissions:
+            query += ' AND game.commission={commish}'.format(comish=commission)
+    elif commissions == 'disabled':
+        query = ' AND game.commission=0.00'
+
+    return query
+
+def date_to_UNIX(date):
+    month = int(date['month'])
+    day = int(date['day'])
+    year = int(date['year'])
+
+    return int(datetime.datetime(year, month, day).timestamp())
+
+def search_tournaments(params, bet):
+    options = params['options']
+    commissions = params['commission']
+    players = params['players']
+    rounds = params['round']
+
+    if options:
+        options_query = ' game.options=TRUE'
+    else:
+        options_query = ' game.options=FALSE'
+
+    commission_query = commissions_query(commissions)
+    player_query = list_to_query('game.size', players)
+    round_query = list_to_query('game.round', rounds)
+
+    joins = '(game_competition FULL JOIN game_tournament ON game_tournament.competition_ptr_id=game_competition.id) AS game'
+    joins = bet_query(bet, joins)
+    query = 'SELECT * FROM {joins} WHERE{option}{commish}{player}{round}'.format(joins=joins, option=options_query, commish=commission_query, player=player_query, round=round_query)        
+
+    return Tournament.objects.raw(query)
+
+def search_short_games(params, bet):
+    players = params['players']
+    amounts = params['start_amount']
+    duration = params['duration']
+
+    player_query = list_to_query('game.size', players)
+    amounts_query = list_to_query('game.start_amount', amounts)
+    
+    duration_query = ''
+    if duration != 'any':
+        min = duration['min']
+        max = duration['max']
+        duration_query = ' AND game.duration >= {min} AND game.duration <= {max}'.format(min=min, max=max)
+
+    joins = '(game_competition FULL JOIN (game_game FULL JOIN game_shortgame ON game.id=game_shortgame.game_ptr_id AS game) ON game.competition_ptr_id=game_competition.id) AS game'
+    joins = bet_query(bet, joins)
+
+    query = 'SELECT * FROM {joins} WHERE 1=1{amounts}{player}{duration}'.format(joins=joins, amounts=amounts_query, player=player_query, duration=duration_query)
+
+    return ShortGame.objects.raw(query)
+
+def search_long_games(params, bet):
+    players = params['players']
+    amounts = params['start_amount']
+    options = params['options']
+    commissions = params['commission']
+    duration = params['duration']
+
+    if options:
+        options_query = ' game.options=TRUE'
+    else:
+        options_query = ' game.options=FALSE'
+
+    player_query = list_to_query('game.size', players)
+    amounts_query = list_to_query('game.start_amount', amounts)
+    commission_query = commissions_query(commissions)
+    
+    duration_query = ''
+    if duration != 'any':
+        start = duration['start']
+        if start != 'any':
+            if start['before']:
+                start_query = ' AND game.start_time <= {start}'.format(start=date_to_UNIX(start))
+            else:
+                start_query = ' AND game.start_time >= {start}'.format(start=date_to_UNIX(start))
+        else:
+            start_query = ''
+        
+        end = duration['end']
+        if end != 'any':
+            if end['before']:
+                end_query = ' AND game.end_time <= {end}'.format(end=date_to_UNIX(end))
+            else:
+                end_query = ' AND game.end_time >= {end}'.format(end=date_to_UNIX(end))
+        else:
+            end_query = ''
+
+        duration_query = start_query + end_query
+
+    joins = '(game_competition FULL JOIN (game_game FULL JOIN game_longgame ON game.id=game_longgame.game_ptr_id AS game) ON game.competition_ptr_id=game_competition.id) AS game'
+    joins = bet_query(bet, joins)
+
+    query = 'SELECT * FROM {joins} WHERE{options}{comission}{amounts}{player}{duration}'.format(joins=joins, comission=commission_query, options=options_query, amounts=amounts_query, player=player_query, duration=duration_query)
+
+    return LongGame.objects.raw(query)
+
+# Starting a Game
+
+def initialize_players(game):
+    players = Player.objects.filter(game_id=game.id)
+
+    for i, player in enumerate(players):
+        player = players[i]
+        player.cash = game.start_amount
+        player.save()
+        transaction = Transactions(player=player, bought=True, symbol='', quantity=0, price=0, time=round((time.time() - SECONDS_IN_DAY), 5), cash=game.start_amount, total_quantity=0)
+        transaction.save()
+
+def delete_game_invites(game):
+    invites = Invites.objects.filter(game_id=game)
+    for _, invite in enumerate(invites):
+        invite.delete()
+
+def should_start(game):
+    if game.type() != 'long':
+        size = Player.objects.filter(game_id=game.id).count()
+        if size >= game.size():
+            return True
+    
+    return False
+
+def start_game(game):
+    delete_game_invites(game)
+    current_time = time.time()
+    start_time = current_time + 60
+
+    if game.type() == 'tournament':
+        game.start_time = start_time
+
+        if game.round == 'min':
+            game.end_time = current_time + (SECONDS_IN_HOUR)
+        if game.round == 'hour':
+            game.end_time = current_time + (SECONDS_IN_HOUR * 4)
+        if game.round == 'day':
+            game.end_time = current_time + (SECONDS_IN_DAY * 4)
+        if game.round == 'week':
+            game.end_time = current_time + (SECONDS_IN_WEEK)
+
+    if game.type() == 'short':
+        game.start_time = start_time
+        game.end_time = SECONDS_IN_HOUR + game.duration
+
+    initialize_players(game)
+
+    if game.bet_id != None:
+        place_bets(game)
+
+    game.active = True
+
+    game.save()
+
+
+
+#### OLD USELESS PILES OF DOGSHIT ####
 
 def load_user(request=None, username=None):
     if request == None:
@@ -714,202 +940,6 @@ def format_duration(game_value):
         'hours': game_value['hours'],
         'mins': game_value['minutes']
     }
-
-def formulate_query(request):
-    amounts = request.data['metrics']['amounts']
-    commissions = request.data['metrics']['commission']
-    ebet = request.data['metrics']['ebet']
-    date = request.data['metrics']['date']
-    duration = request.data['metrics']['duration']
-    options = request.data['metrics']['options']
-
-    if options:
-        options = 'TRUE'
-    else:
-        options = 'FALSE'
-
-    if ebet == None:
-        select_ebet = 'FALSE'
-    else:
-        select_ebet = 'TRUE'
-
-    date_query = get_date_query(date)
-
-    if duration != None:
-        duration_query = ''
-    else:
-        duration_query = ' AND duration_id IS NULL'
-
-
-    amount = amounts_query(amounts)
-    commission = commissions_query(commissions)
-
-    return 'SELECT * FROM game_game ' \
-                    'WHERE options={options} AND e_bet={ebet}{duration}{date}{amount}'\
-                    '{commission}'.format(duration=duration_query, date=date_query, amount=amount, commission=commission, ebet=select_ebet, options=options)
-
-def matching_duration(game, duration):
-    if duration == None:
-        return True
-
-    game = Duration.objects.filter(id=game.duration_id)
-
-    if not game.exists():
-        return False
-
-    game = game[0]
-    days = game.days
-    hours = game.hours
-    mins = game.minutes
-    day = duration['days']
-    hour = duration['hours']
-    min = duration['mins']
-
-    if day != 'any':
-        if hour != 'any':
-            if min != 'any':
-                if int(day) == days and hours == int(hour) and mins == int(min):
-                    return True
-            else:
-                if int(day) == days and hours == int(hour):
-                    return True
-        else:
-            if int(day) == days:
-                return True
-    else:
-        return True
-
-def get_results(games, duration):
-    results = []
-
-    for _, game in enumerate(games):
-        players = Player.objects.filter(game_id=game.id).count()
-
-        info = {
-        'room_code': game.room_code,
-        'name': game.name,
-        'size': players,
-        'status': game.start_time != 0,
-        'host': get_host_username(game),
-        'eBet': game.e_bet
-        }
-
-        if game.duration == None:
-            info['end'] = get_end_time(int(game.end_time))
-            results.append(info)
-        else:
-            if matching_duration(game, duration):
-                info['duration'] = get_duration(game)
-                results.append(info)
-
-    return results
-
-def date_to_UNIX(date):
-    month = int(date['month'])
-    day = int(date['day'])
-    year = int(date['year'])
-    hour = int(date['hour'])
-    min = int(date['min'])
-    type = date['type']
-
-    if type == 'PM': 
-        hour += 12
-
-    return int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())
-
-def UNIX_range(date):
-
-    if date['year'] == 'any':
-        return 'any'
-    else:
-        month = int(date['month'])
-        day = int(date['day'])
-        year = int(date['year'])
-
-
-        if date['hour'] == 'any':            
-            return {
-                'min': int(datetime.datetime(year, month, day, 0).timestamp()),
-                'max': int(datetime.datetime(year, month, day, 22).timestamp())
-                }
-        else:
-            hour = int(date['hour'])
-            min = int(date['min'])
-            type = date['type']
-
-            if type == 'PM': 
-                hour += 12
-
-            return {'value': int(datetime.datetime(year, month, day, hour=hour, minute=min).timestamp())}
-
-def get_date_query(date):
-    if date != None:
-        range = UNIX_range(date)
-
-        if range == 'any':
-            return ''
-        else:
-            if 'min' in range:
-                return ' AND end_time>={floor} AND end_time<={ceil}'.format(floor=range['min'], ceil=range['max'])
-            else:
-                return ' AND end_time={time}'.format(time=range['value'])
-    else:
-        return ' AND end_time=0'
-
-def ebet_query(ebet, options):
-    if ebet != None:
-        crypto_query = '1=1'
-        if ebet['crypto'] != 'any':
-            crypto_query = 'crypto=' + ebet['crypto']
-
-        if ebet['amount'] == 'any':
-            return 'SELECT * FROM ' \
-                    '('\
-                        'SELECT * FROM game_game ' \
-                        'WHERE public=TRUE AND options={options} AND active=FALSE '\
-                    ') AS game'\
-                    'FULL JOIN game_ebet ON game.id=game_ebet ' \
-                    'WHERE {crypto}'.format(options=options, crypto=crypto_query)
-        else:
-            return 'SELECT * FROM '\
-                    '('\
-                        'SELECT * FROM game_game ' \
-                        'WHERE public=TRUE AND options={options} AND active=FALSE'\
-                    ') AS game' \
-                    'FULL JOIN game_ebet ON game.id=game_ebet ' \
-                    'WHERE {crypto} AND game_ebet.bet >= {floor} AND game_ebet.bet <= {ceil}'.format(floor=ebet['min'], ceil=ebet['max'], crypto=crypto_query, options=options)
-    else:
-        return 'SELECT * FROM game_game ' \
-                'WHERE public=TRUE AND options={options} AND active=FALSE'.format(options=options)
-
-def amounts_query(amounts):
-    query = ''
-
-    if amounts == 'any':
-        return query
-    
-    for amount in amounts:
-        amount = amount[1:].replace(',','')
-
-        query += ' AND start_amount={amount}'.format(amount=amount)
-
-    return query
-
-def commissions_query(commissions):
-    query = ''
-    
-    if commissions == 'any':
-        return query
-
-    for commission in commissions:
-        commission = float(commission[1:])
-
-        query += ' AND commission={commission}'.format(commission=commission)
-
-    return query
-
-
-
 
 
 

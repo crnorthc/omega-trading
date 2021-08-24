@@ -33,7 +33,9 @@ class Competition(models.Model):
 class Tournament(Competition):
     round = models.CharField(max_length=4, default='day')
     commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
-    options = models.BooleanField(default=True) 
+    public = models.BooleanField(default=True) 
+    options = models.BooleanField(default=True)
+    next_round = models.IntegerField(default=0)
 
     def get_info(self):
         return {
@@ -46,6 +48,9 @@ class Tournament(Competition):
             'options': self.options,
             'round': self.round
         } 
+    
+    def type():
+        return 'tournament'
 
 
 class Game(Competition):
@@ -70,6 +75,9 @@ class ShortGame(Game):
             'name': self.name,
         }
 
+    def type():
+        return 'short'
+
 
 class LongGame(Game):
     commission = models.DecimalField(max_digits=4, decimal_places=2, null=True)
@@ -89,6 +97,9 @@ class LongGame(Game):
             'commission': self.commission,
             'options': self.options,
         } 
+
+    def type():
+        return 'long'
 
 
 class Player(models.Model):

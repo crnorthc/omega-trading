@@ -27,7 +27,7 @@ def pay_winner(contract_address, abi, address):
     contract.functions.payWinner(address).transact()
 
 
-def place_bets(contract, players, bet_amount, fee):
+def place_betds(contract, players, bet_amount, fee):
     # Compile and Extract data from .sol
     bytecode = contract['bytecode']
     abi = contract['abi']

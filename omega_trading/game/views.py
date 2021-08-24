@@ -35,14 +35,14 @@ class Create(APIView):
         if 'Error' in game:
             return Response(game, status=status.HTTP_403_FORBIDDEN)
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Load(APIView):
 
     def post(self, request, format=None):
         code = request.data['room_code']
-        game = Game.objects.filter(room_code=code)        
+        game = get_game_from_code(code)        
 
         if not game.exists():
             return Response({'Error': "No Game Found"}, status=status.HTTP_204_NO_CONTENT)
@@ -55,70 +55,7 @@ class Load(APIView):
             if game.end_time <= current_time:
                 return game_over(game)
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
-
-
-class Edit(APIView):
-
-    def post(self, request, format=None):
-        date = request.data['date']
-        commission = request.data['commission']
-        code = request.data['code']
-        endOn = request.data['endOn']
-
-        game = Game.objects.filter(room_code=code)
-        game = game[0]
-        duration = Duration.objects.filter(id=game.duration_id)
-
-        if endOn == 'date':
-            game.end_time = date_to_UNIX(date)
-            
-            if duration.exists():
-                duration = duration[0]
-                duration.delete()                
-                game.duration_id = None
-        else:
-            days = int(date['days'])
-            hours = int(date['hours'])
-            mins = int(date['mins'])
-
-            if duration.exists():
-                duration = duration[0]
-                duration.days = days
-                duration.hours = hours
-                duration.minutes = mins
-            else:
-                game.end_time = ''
-                duration = Duration(days=days, hours=hours, minutes=mins)
-
-            duration.save()
-    
-        game.options = request.data['options']
-        game.start_amount = int(request.data['amount'][1:].replace(',',''))
-
-        if commission != None:
-            game.commission = float(commission[1:])
-        else:
-            game.commission = None
-
-        game.duration_id = duration.id
-
-        game.save()
-
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
-
-
-class ChangeType(APIView):
-
-    def post(self, request, format=None):
-        code = request.data['room_code']
-        game = Game.objects.filter(room_code=code)
-        game = game[0]
-
-        game.public = not game.public
-        game.save()
-
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class SendInvite(APIView):
@@ -129,12 +66,12 @@ class SendInvite(APIView):
 
         receiever_user = User.objects.filter(username=username)
         receiever_user = receiever_user[0]
-        game = get_game(room_code)
+        game = get_game_from_code(room_code)
 
         invite = Invites.objects.filter(game_id=game.id)
 
         if invite.exists():
-            return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+            return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
         current_time = round(time.time(), 5)
 
@@ -142,13 +79,13 @@ class SendInvite(APIView):
 
         invite.save()
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Join(APIView):
 
     def post(self, request, format=None):
-        game = get_game(request.data['room_code'])
+        game = get_game_from_code(request.data['room_code'])
 
         bet = Bet.objects.filter(id=game.bet_id)
 
@@ -170,38 +107,40 @@ class Join(APIView):
             invite = invite[0]
             invite.delete()
 
+        if should_start(game):
+            start_game(game)
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Decline(APIView):
 
     def post(self, request, format=None):
-        game = get_game(request.data['room_code'])
+        game = get_game_from_code(request.data['room_code'])
         invite = Invites.objects.filter(receiver_id=request.user.id, game_id=game.id)
         invite = invite[0]
         invite.delete()
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Leave(APIView):
 
     def post(self, request, format=None):
-        game = get_game(request.data['room_code'])
+        game = get_game_from_code(request.data['room_code'])
         player = Player.objects.filter(user_id=request.user.id, game_id=game.id)
         player = player[0]
         player.delete()
 
         unfreeze_funds(game, request.user)
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Remove(APIView):
 
     def post(self, request, format=None):
-        game = get_game(request.data['room_code'])
+        game = get_game_from_code(request.data['room_code'])
         user = User.objects.filter(username=request.data['username'])
         user = user[0]
         player = Player.objects.filter(user_id=user.id, game_id=game.id)
@@ -209,7 +148,7 @@ class Remove(APIView):
 
         unfreeze_funds(game, user)
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class StartGame(APIView):
@@ -233,7 +172,7 @@ class StartGame(APIView):
 
         game.save()
 
-        return Response({'game': get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({'game': get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Buy(APIView):
@@ -266,7 +205,7 @@ class Buy(APIView):
         trans.save()
         player.save()
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class Sell(APIView):
@@ -298,7 +237,7 @@ class Sell(APIView):
         trans.save()
         player.save()
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class GameHistory(APIView):
@@ -339,7 +278,7 @@ class MakeBet(APIView):
 
         player.save()
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class EtherQuote(APIView):
@@ -396,7 +335,7 @@ class SubmitContract(APIView):
 
         place_bets(contract.contract, contract_players(game), bet_amount, fee)
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class DefineContract(APIView):
@@ -428,7 +367,7 @@ class DefineContract(APIView):
         contract.save()
         player.save()
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class StartBets(APIView):
@@ -445,7 +384,7 @@ class StartBets(APIView):
 
         contract.save()
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class ReadyUp(APIView):
@@ -464,7 +403,7 @@ class ReadyUp(APIView):
             contract.ready_to_start = True
             contract.save()
 
-        return Response({"game": get_game_info(game, request.user)}, status=status.HTTP_200_OK)
+        return Response({"game": get_game_info(game)}, status=status.HTTP_200_OK)
 
 
 class CurrentGames(APIView):
@@ -477,7 +416,7 @@ class CurrentGames(APIView):
         for _, player in enumerate(games_query):
             game = get_game(player)
 
-            info = get_game_info(game, request.user)
+            info = get_game_info(game)
 
             games.append(info)
 
@@ -505,42 +444,40 @@ class GameInfo(APIView):
 class SearchGames(APIView):
 
     def post(self, request, format=None):
-        duration = request.data['metrics']['duration']
-        game = Game.objects.filter(id=22)
-        game = game[0]
-        query = formulate_query(request)
+        tournament = request.data['tournament']
+        short = request.data['short']
+        long = request.data['long']
+        bet = request.data['bet']
+        results = []
 
-        games = Game.objects.raw(query)
+        if tournament != None:
+            tournaments = search_tournaments(tournament, bet)
+            results.extend([get_game_info(tournament) for _, tournament in enumerate(tournaments)])
+
+        if short != None:
+            short_games = search_short_games(short, bet)
+            results.extend([get_game_info(short_game) for _, short_game in enumerate(short_games)])
+
+        if long != None:
+            long_games = search_long_games(long, bet)
+            results.extend([get_game_info(long_game) for _, long_game in enumerate(long_games)])
 
 
-        return Response({'search': get_results(games, duration)}, status=status.HTTP_200_OK)
+        return Response({'search': results}, status=status.HTTP_200_OK)
 
 
 class Populate(APIView):
     
     def post(self, request, format=None):
-        games = Game.objects.filter(active=False)[:50]
-
         results = []
+        short_games = ShortGame.objects.filter(active=False)[:15]
+        results.extend([get_game_info(game) for _, game in enumerate(short_games)])
+        long_games = LongGame.objects.filter(active=False)[:15]
+        results.extend([get_game_info(game) for _, game in enumerate(long_games)])
+        tournaments = Tournament.objects.filter(active=False)[:15]
+        results.extend([get_game_info(game) for _, game in enumerate(tournaments)])
 
-        for game in games:
-            players = Player.objects.filter(game_id=game.id).count()
-
-            info = {
-                'room_code': game.room_code,
-                'name': game.name,
-                'size': players,
-                'status': game.start_time != 0,
-                'host': get_host_username(game),
-                'eBet': game.e_bet
-            }
-
-            if game.duration == None:
-                info['end'] = get_end_time(int(game.end_time))
-            else:
-                info['duration'] = get_duration(game)
-
-            results.append(info)
+        results = random.shuffle(results)
 
         return Response({'search': results}, status=status.HTTP_200_OK)
 

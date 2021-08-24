@@ -14,7 +14,6 @@ urlpatterns = [
     path('buy', Buy.as_view()),
     path('sell', Sell.as_view()),
     path('history', GameHistory.as_view()),
-    path('edit', Edit.as_view()),
     path('quote-ether', EtherQuote.as_view()),
     path('quote-gas', GasQuote.as_view()),
     path('define-contract', DefineContract.as_view()),
@@ -24,6 +23,5 @@ urlpatterns = [
     path('info/<str:room_code>/', GameInfo.as_view()),
     path('search', SearchGames.as_view()),
     path('populate', Populate.as_view()),
-    path('type', ChangeType.as_view()),
     path('play', PlayGame.as_view())
 ]

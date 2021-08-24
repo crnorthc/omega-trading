@@ -72,32 +72,6 @@ export const create = (type, rules) => (dispatch) => {
         })
 }
 
-export const editGame = (amount, date, endOn, commission, options, code) => (dispatch) => {
-    dispatch({
-        type: MAKING_EDIT,
-    })
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({amount, date, endOn, commission, options, code})
-
-    axios.post('/game/edit', body, config).then((res) => {
-        if (res.data.Error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
-            })
-        }
-    })
-}
-
 export const loadGame = (room_code) => (dispatch) => {
     dispatch({
         type: GAME_LOADING,
@@ -470,28 +444,6 @@ export const searchNameCode = (code, name) => (dispatch) => {
             dispatch({
                 type: SEARCH_LOADED,
                 payload: res.data.search,
-            })
-        }
-    })
-}
-
-export const changeType = (room_code) => (dispatch) => {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Token ' + getCookie(),
-        },
-    }
-
-    var body = JSON.stringify({ room_code })
-
-    axios.post('/game/type', body, config).then((res) => {
-        if (res.data.error) {
-            console.log('oops')
-        } else {
-            dispatch({
-                type: GAME_LOADED,
-                payload: res.data.game,
             })
         }
     })
